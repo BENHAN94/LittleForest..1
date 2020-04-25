@@ -11,12 +11,13 @@
 
 
     <TextView
+        android:id="@+id/tvLogoLittle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Little"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
-        android:layout_above="@+id/tvLogo"
+        android:layout_above="@+id/tvLogoForest"
         android:fontFamily="@font/washyourhand"
         android:textSize="50sp"
         android:textColor="#FFFFFF"
@@ -26,7 +27,7 @@
 
 
     <TextView
-        android:id="@+id/tvLogo"
+        android:id="@+id/tvLogoForest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Forest"
@@ -52,7 +53,7 @@
         android:id="@+id/tvRegister"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/tvCenterBox"
-        android:layout_width="300sp"
+        android:layout_width="350sp"
         android:layout_height="35dp"
         android:background="@drawable/button_shape"
         android:layout_centerHorizontal="true"
@@ -68,7 +69,7 @@
         android:id="@+id/tvLogin"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/tvRegister"
-        android:layout_width="300sp"
+        android:layout_width="350sp"
         android:layout_height="35dp"
         android:textSize="15dp"
         android:layout_centerHorizontal="true"
