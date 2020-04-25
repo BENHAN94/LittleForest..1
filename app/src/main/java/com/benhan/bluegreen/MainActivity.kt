@@ -8,8 +8,7 @@ import android.widget.TextView
 class MainActivity : AppCompatActivity() {
 
 
-    val tvRegister: TextView = findViewById(R.id.tvRegister)
-    val tvLogin: TextView = findViewById(R.id.tvLogin)
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +16,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
+        val tvRegister: TextView = findViewById(R.id.tvRegister)
+        val tvLogin: TextView = findViewById(R.id.tvLogin)
 
         tvRegister.setOnClickListener {
             onRegisterClicked()

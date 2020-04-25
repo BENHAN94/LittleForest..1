@@ -90,11 +90,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/etPassword"
         android:fontFamily="@font/nixgonfonts_b"
-        android:textColor="#FFFFFF"
+        android:textColor="#B4FFFFFF"
         android:text="비밀번호를 잊으셨나요?"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="30dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         />
 
 
