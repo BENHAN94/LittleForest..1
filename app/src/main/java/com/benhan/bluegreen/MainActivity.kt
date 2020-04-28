@@ -1,12 +1,14 @@
 package com.benhan.bluegreen
 
 import android.content.Intent
+import android.icu.util.ULocale.ROOT
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
+import java.util.Locale.ROOT
 
 class MainActivity : AppCompatActivity() {
-
 
 
 
@@ -14,6 +16,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
 
 
         val tvRegister: TextView = findViewById(R.id.tvRegister)

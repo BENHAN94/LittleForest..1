@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Register1"
+    android:background="@color/background">
+
+
+    <TextView
+        android:id="@+id/askBirthday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="90dp"
+        android:fontFamily="@font/nixgonfonts_b"
+        android:text="생일이 언제인가요?"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="30dp" />
+
+    <TextView
+        android:id="@+id/isNotPublic"
+        android:layout_below="@id/askBirthday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/nixgonfonts_b"
+        android:text="생일은 공개되지 않아요."
+        android:gravity="center"
+        android:textColor="#A3FFFFFF"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/select_birthday"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/isNotPublic"
+        android:layout_width="350sp"
+        android:layout_height="35dp"
+        android:background="@drawable/button_shape"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="15dp"
+        android:hint="생일"
+        android:fontFamily="@font/nixgonfonts_b"
+        android:gravity="center_vertical"
+        android:textSize="15dp"
+        android:textColor="@color/background"
+
+        />
+
+    <Button
+        android:id="@+id/btnNext"
+
+        android:layout_width="350sp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/select_birthday"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="다음"
+        android:fontFamily="@font/nixgonfonts_b"
+        android:textColor="@color/disabled"
+        android:background="@drawable/button_shape_disable"
+
+        />
+
+
+
+</RelativeLayout>
