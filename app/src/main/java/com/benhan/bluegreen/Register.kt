@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
@@ -15,6 +14,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class Register : AppCompatActivity() {
+
 
 
     val TAG: String = "로그"
@@ -27,50 +27,56 @@ class Register : AppCompatActivity() {
         Log.d(TAG, "Register - onCreate() called")
 
 
-        val et_email = findViewById<EditText>(R.id.etEmail)
-        val et_password = findViewById<EditText>(R.id.etPassword)
-        val et_nickname = findViewById<EditText>(R.id.etNickName)
-        val tv_birthday = findViewById<EditText>(R.id.select_birthday)
+        val etEmail = findViewById<EditText>(R.id.etEmail)
+        val etPassword = findViewById<EditText>(R.id.etPassword)
+        val etNickname = findViewById<EditText>(R.id.etNickName)
+        val tvBirthday = findViewById<EditText>(R.id.select_birthday)
+        val registerBtn = findViewById<Button>(R.id.btnRegister)
 
 
 
-        val register_btn = findViewById<Button>(R.id.btnRegister)
+
+//        var registerBtn = object: View.OnClickListener
+
+        registerBtn.setOnClickListener(object: View.OnClickListener {
+
+            override fun onClick(v: View){
 
 
+                Log.d(TAG, "Register - onClick() called")
 
-        register_btn.setOnClickListener (View.OnClickListener(){
+                val email = etEmail.text.toString()
+                val password = etPassword.text.toString()
+                val nickname = etNickname.text.toString()
+                val birthday = tvBirthday.text.toString()
+
+                val responseListener = object: Response.Listener<String>{
 
 
-
-            @Override
-            fun onClick(view: View) {
-
-
-                Log.d(TAG, "Register - onNextButtonClicked() called")
-
-                val email = et_email.text.toString()
-                val password = et_password.text.toString()
-                val nickname = et_nickname.text.toString()
-                val birthday = tv_birthday.text.toString()
-
-                val responseListener = Response.Listener<String>() {
-
-                    @Override
-                    fun onResponse(response: String) {
+                    override fun onResponse(response: String) {
 
 
                         try {
+
                             val jsonObject = JSONObject(response)
                             val success: Boolean = jsonObject.getBoolean("success")
-                            if (success){
-                                Toast.makeText(applicationContext, "이메일 등록 완료!", Toast.LENGTH_SHORT).show()
+                            if (success) {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "회원가입 등록 완료!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 val intent = Intent(this@Register, LoginActivity2::class.java)
                                 startActivity(intent)
                             } else {
-                                Toast.makeText(applicationContext, "이메일을 확인해주세요.",Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    applicationContext,
+                                    "다시 한번 확인해주세요.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 return
                             }
-                        } catch (e: JSONException){
+                        } catch (e: JSONException) {
                             e.printStackTrace()
                         }
 
@@ -86,17 +92,27 @@ class Register : AppCompatActivity() {
 
                 //서버로 volley를 이용해 요청함.
                 val registerRequest = RegisterRequest(email, password, nickname, birthday, responseListener)
-                val queue = Volley.newRequestQueue(this)
+                val queue = Volley.newRequestQueue(this@Register)
                 queue.add(registerRequest)
 
 
 
             }
 
-
-
-
         })
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -19,7 +19,7 @@ class RegisterRequest(email: String, password: String, nickname: String, birthda
 
 
 
-    var map = mutableMapOf<String, String>(
+    private var map = mutableMapOf<String, String>(
 
         "email" to email, "password" to password, "nickname" to nickname, "birthday" to birthday
     )

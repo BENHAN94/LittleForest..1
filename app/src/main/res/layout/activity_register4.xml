@@ -39,7 +39,7 @@
         android:textSize="15dp" />
 
     <EditText
-        android:id="@+id/etNickName"
+        android:id="@+id/etNickNameRegister"
         android:layout_marginTop="40dp"
         android:layout_below="@+id/isNotPublic"
         android:layout_width="350sp"
@@ -56,11 +56,11 @@
         />
 
     <Button
-        android:id="@+id/btnRegister"
+        android:id="@+id/btnRegisterRegister"
         android:background="@drawable/button_shape"
         android:layout_width="350sp"
         android:layout_height="35dp"
-        android:layout_below="@+id/etNickName"
+        android:layout_below="@+id/etNickNameRegister"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="가입하기"

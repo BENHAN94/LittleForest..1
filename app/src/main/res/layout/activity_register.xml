@@ -157,6 +157,7 @@
     <Button
         android:id="@+id/btnRegister"
 
+        android:enabled="true"
         android:layout_width="350sp"
         android:layout_height="35dp"
 

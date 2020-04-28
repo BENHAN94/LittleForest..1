@@ -51,7 +51,7 @@
         />
 
     <EditText
-        android:id="@+id/etEmail"
+        android:id="@+id/etEmailLogin"
         android:layout_marginTop="-20dp"
         android:layout_below="@+id/tvCenterBox"
         android:layout_width="350sp"
@@ -68,9 +68,9 @@
         />
 
     <EditText
-        android:id="@+id/etPassword"
+        android:id="@+id/etPasswordLogin"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/etEmail"
+        android:layout_below="@+id/etEmailLogin"
         android:layout_width="350sp"
         android:layout_height="35dp"
         android:textSize="15dp"
@@ -89,7 +89,7 @@
         android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/etPassword"
+        android:layout_below="@+id/etPasswordLogin"
         android:fontFamily="@font/nixgonfonts_b"
         android:textColor="#B4FFFFFF"
         android:text="비밀번호를 잊으셨나요?"
