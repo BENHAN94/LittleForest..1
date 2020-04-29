@@ -74,26 +74,6 @@ class Register1 : AppCompatActivity() {
 
 
 
-                        if(year < Calendar.getInstance().get(Calendar.YEAR) - 8)
-                        {
-                            nextButton.isEnabled = true
-
-
-                            nextButton.setBackgroundResource(R.drawable.button_shape)
-                            val enabledTextColor = ContextCompat.getColor(this@Register1, R.color.background)
-                            nextButton.setTextColor(enabledTextColor)
-
-
-                        }
-
-                        else if (year > Calendar.getInstance().get(Calendar.YEAR) - 8) {
-
-                            nextButton.isEnabled = false
-
-                            nextButton.setBackgroundResource(R.drawable.button_shape_disable)
-                            val disabledTextColor = ContextCompat.getColor(this@Register1, R.color.disabled)
-                            nextButton.setTextColor(disabledTextColor)
-                        }
 
                     }
 

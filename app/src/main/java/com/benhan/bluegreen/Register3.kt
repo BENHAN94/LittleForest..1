@@ -68,52 +68,6 @@ class Register3 : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
 
-                if (passwordChar.length >= 6){
-
-                    btnNext.isEnabled = true
-                    btnStyle()
-
-                    if(isValidPassword(passwordChar)){
-
-                        btnNext.setOnClickListener {
-
-                            fun onClick(){
-
-                                val intent = Intent(this@Register3, Register4::class.java)
-                                intent.putExtra("birthday", birthday)
-                                intent.putExtra("email", email)
-                                intent.putExtra("password", passwordChar.toString())
-                                startActivity(intent)
-
-
-                            }
-
-                            onClick()
-
-                        }
-
-                    }
-
-                    else{
-                        btnNext.setOnClickListener {
-                            Toast.makeText(
-                                this@Register3,
-                                "영문, 숫자, 특수문자를 모두 쓰셨나요?",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-
-                        }
-                    }
-
-
-                }
-
-                else {
-
-                    btnNext.isEnabled = false
-                    btnStyle()
-                }
 
             }
 
