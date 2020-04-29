@@ -3,12 +3,14 @@ package com.benhan.bluegreen
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
@@ -40,6 +42,47 @@ class LoginActivity2 : AppCompatActivity() {
 
         val btn_login = findViewById<Button>(R.id.btnLogIn)
         val tvOnOtherWay:TextView = findViewById(R.id.tvLoginOtherWay)
+
+        btn_login.isEnabled = false
+
+
+
+
+        et_password.addTextChangedListener(object : TextWatcher{
+
+            override fun afterTextChanged(s: Editable?) {
+
+                if (et_password.text.isNotEmpty()){btn_login.isEnabled = true}
+
+                if(btn_login.isEnabled){
+
+                    btn_login.setBackgroundResource(R.drawable.button_shape)
+                    val enabledTextColor = ContextCompat.getColor(this@LoginActivity2, R.color.disabled)
+                    btn_login.setTextColor(enabledTextColor)
+
+
+                } else {
+
+                    btn_login.setBackgroundResource(R.drawable.button_shape_disable)
+                    val disabledTextColor = ContextCompat.getColor(this@LoginActivity2, R.color.background)
+                    btn_login.setTextColor(disabledTextColor)
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+        })
+
+
+
+
+
 
         tvOnOtherWay.setOnClickListener {
             onOtherWayClicked()

@@ -18,7 +18,7 @@ class Register3 : AppCompatActivity() {
 
         fun isValidPassword(password: CharSequence): Boolean {
 
-            val passwordPattern = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-z]).{9,12}$"
+            val passwordPattern = "(?=.*\\d{1,50})(?=.*[~`!@#\$%\\^&*()-+=]{1,50})(?=.*[a-zA-Z]{1,50}).{6,50}\$"
             return Pattern.compile(passwordPattern).matcher(password).matches()
 
 
