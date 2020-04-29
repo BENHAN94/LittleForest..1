@@ -78,75 +78,7 @@ class Register4 : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
-                if(nicknameChar.isNotEmpty()){
 
-                    btnRegister.isEnabled = true
-                    btnStyle()
-
-                    if (nicknameChar.length > 2){
-                        
-                        Log.d(TAG, "Register4 - onTextChanged() called")
-
-
-
-                        btnRegister.setOnClickListener(object : View.OnClickListener{
-
-                            override fun onClick(v: View?) {
-                                
-                                Log.d(TAG, "Register4 - onClick() called")
-
-
-                                val nickName = etNickname.text.toString()
-
-                                val responseListener = object : Response.Listener<String>{
-
-
-                                    override fun onResponse(response: String?) {
-                                        
-                                        Log.d(TAG, "Register4 - onResponse() called")
-
-
-                                        try {
-
-                                            val jsonObject = JSONObject(response)
-                                            val success: Boolean = jsonObject.getBoolean("success")
-                                            if(success){
-
-                                                Toast.makeText(
-                                                    applicationContext, "회원가입 완료!", Toast.LENGTH_SHORT
-                                                ).show()
-                                                val intent = Intent(this@Register4, LoginActivity2::class.java)
-                                                startActivity(intent)
-
-                                            } else{
-
-                                                return
-
-                                            }
-
-                                        } catch (e: JSONException){
-                                            e.printStackTrace()
-                                        }
-                                    }
-
-
-                                }
-
-                                val registerRequest = RegisterRequest(email, password, nickName, birthday, responseListener)
-                                val queue = Volley.newRequestQueue(this@Register4)
-                                queue.add(registerRequest)
-
-                            }
-
-                        })
-
-                    }
-
-                }else{
-
-                    btnRegister.isEnabled = false
-                    btnStyle()
-                }
 
             }
 
@@ -154,10 +86,13 @@ class Register4 : AppCompatActivity() {
 
                 if(nicknameChar.isNotEmpty()){
 
-                    btnRegister.isEnabled = true
-                    btnStyle()
 
-                    if (nicknameChar.length > 2){
+
+                    if (nicknameChar.length > 1){
+
+
+                        btnRegister.isEnabled = true
+                        btnStyle()
 
                         Log.d(TAG, "Register4 - afterTextChanged() called")
 
