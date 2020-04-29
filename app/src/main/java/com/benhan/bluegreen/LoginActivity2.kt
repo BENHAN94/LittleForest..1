@@ -2,6 +2,7 @@ package com.benhan.bluegreen
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -25,10 +26,17 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
+        val emailFromRegister4 = intent.getStringExtra("email")
+
 
         val et_email = findViewById<EditText>(R.id.etEmailLogin)
         val et_password = findViewById<EditText>(R.id.etPasswordLogin)
 
+
+        if (!emailFromRegister4.isNullOrEmpty()){
+
+            et_email.text = Editable.Factory.getInstance().newEditable(emailFromRegister4)
+        }
 
         val btn_login = findViewById<Button>(R.id.btnLogIn)
         val tvOnOtherWay:TextView = findViewById(R.id.tvLoginOtherWay)

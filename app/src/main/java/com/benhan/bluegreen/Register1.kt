@@ -57,7 +57,7 @@ class Register1 : AppCompatActivity() {
 
 
                 val calendar = Calendar.getInstance()
-                 calendar.set(year, monthOfYear+1 , dayOfMonth)
+                 calendar.set(year, monthOfYear , dayOfMonth)
                 val simpleDateFormat = object: SimpleDateFormat("yyyy - MM - dd"){}
                 val formatedDate = simpleDateFormat.format(calendar.time)
 

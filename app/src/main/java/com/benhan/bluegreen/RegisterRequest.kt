@@ -11,7 +11,7 @@ class RegisterRequest(email: String, password: String, nickname: String, birthda
     // 서버 URL 설정(PHP 파일 연동)
 
     companion object {
-        const val URL = "http://ec2-3-15-180-129.us-east-2.compute.amazonaws.com/register.php"
+        const val URL = "http://ec2-13-58-70-95.us-east-2.compute.amazonaws.com/register.php"
     }
 
 

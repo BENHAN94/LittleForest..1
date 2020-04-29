@@ -38,6 +38,8 @@ class Register2 : AppCompatActivity() {
 
 
 
+
+
         val birthday = intent.getStringExtra("birthday")
 
 
@@ -60,7 +62,7 @@ class Register2 : AppCompatActivity() {
                 val enabledTextColor = ContextCompat.getColor(this@Register2, R.color.background)
                 btnNext.setTextColor(enabledTextColor)
 
-            } else if (btnNext.isEnabled === false) {
+            } else if (!btnNext.isEnabled) {
 
 
                 btnNext.isEnabled = false
@@ -160,7 +162,7 @@ class Register2 : AppCompatActivity() {
 
                                 val intent = Intent(this@Register2, Register3::class.java)
 
-                                intent.putExtra("birtday", birthday)
+                                intent.putExtra("birthday", birthday)
                                 intent.putExtra("email", email.toString())
                                 startActivity(intent)
                             }
