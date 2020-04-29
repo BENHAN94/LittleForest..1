@@ -17,6 +17,7 @@
         android:layout_marginTop="100dp"
         android:text="email"
         android:textSize="30dp"
+        android:background="@color/background"
         />
 
     <TextView
@@ -28,6 +29,7 @@
         android:text="password"
         android:layout_centerHorizontal="true"
         android:textSize="30dp"
+        android:background="@color/background"
         />
 
 

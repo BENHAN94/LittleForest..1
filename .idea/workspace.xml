@@ -9,8 +9,7 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="로그" />
-    <option name="TOOL_WINDOW_LOG_LEVEL" value="verbose" />
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="error" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
@@ -26,14 +25,21 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/Register.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/Register.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/HomeActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/HomeActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/LoginActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/LoginActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/LoginActivity2.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/LoginActivity2.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/LoginRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/LoginRequest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/Register1.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/Register1.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/Register2.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/Register2.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/RegisterRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/benhan/bluegreen/RegisterRequest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/button_shape.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/button_shape.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_login2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_login2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_register.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_register.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_register1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_register1.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_register2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_register2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_register3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_register3.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_register4.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_register4.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

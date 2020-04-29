@@ -1,15 +1,13 @@
 package com.benhan.bluegreen
 
-import android.content.ContentValues
 import android.content.Intent
-import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.LoginFilter
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
@@ -28,8 +26,8 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
-        val et_email = findViewById<EditText>(R.id.etEmail)
-        val et_password = findViewById<EditText>(R.id.etPassword)
+        val et_email = findViewById<EditText>(R.id.etEmailLogin)
+        val et_password = findViewById<EditText>(R.id.etPasswordLogin)
 
 
         val btn_login = findViewById<Button>(R.id.btnLogIn)
@@ -40,59 +38,65 @@ class LoginActivity2 : AppCompatActivity() {
         }
 
 
-        btn_login.setOnClickListener {
+        btn_login.setOnClickListener(object: View.OnClickListener{
 
-        fun onClick(){
+            override fun onClick(v: View){
 
-            val password = et_password.text.toString()
-            var email = et_email.text.toString()
+                var password = et_password.text.toString()
+                var email = et_email.text.toString()
 
-            val responseListener = Response.Listener<String> {
+                val responseListener = object: Response.Listener<String> {
 
-                fun onResponse(response: String) {
-
-
-                    try {
-                        val jsonObject = JSONObject(response)
+                    override fun onResponse(response: String) {
 
 
-                        val success: Boolean = jsonObject.getBoolean("success")
-                        if (success){
-                            var email = jsonObject.getString("email")
-                            var password = jsonObject.getString("password")
-                            Toast.makeText(applicationContext, "로그인 완료!", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this, HomeActivity::class.java)
-                            startActivity(intent)
-                            intent.putExtra("email", email)
-                            intent.putExtra("password", password)
+                        try {
+                            val jsonObject = JSONObject(response)
 
 
-                        } else {
-                            Toast.makeText(applicationContext, "이메일 또는 비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show()
-                            return
+                            val success: Boolean = jsonObject.getBoolean("success")
+                            if (success){
+                                email = jsonObject.getString("email")
+                                password = jsonObject.getString("password")
+                                Toast.makeText(applicationContext, "로그인 완료!", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
+
+                                intent.putExtra("email", email)
+                                intent.putExtra("password", password)
+                                startActivity(intent)
 
 
+                            } else {
+                                Toast.makeText(applicationContext, "이메일 또는 비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show()
+                                return
+
+
+                            }
+                        } catch (e: JSONException){
+                            e.printStackTrace()
                         }
-                    } catch (e: JSONException){
-                        e.printStackTrace()
+
+
                     }
 
-
                 }
-
+                val loginRequest = LoginRequest(email, password, responseListener)
+                val queue = Volley.newRequestQueue(this@LoginActivity2)
+                queue.add(loginRequest)
             }
-            val loginRequest = LoginRequest(email, password, responseListener)
-            val queue = Volley.newRequestQueue(this)
-            queue.add(loginRequest)
-        }
 
-        }
+
+        } )
+
+
+
+
 
     }
 
 
 
-    fun onOtherWayClicked(){
+    private fun onOtherWayClicked(){
 
         val intent = Intent(this, LoginActivity::class.java)
 

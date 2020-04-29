@@ -46,7 +46,7 @@
         android:background="@drawable/button_shape"
         android:layout_centerHorizontal="true"
         android:paddingLeft="15dp"
-        android:hint="생일"
+        android:hint="1994 - 02 - 12"
         android:fontFamily="@font/nixgonfonts_b"
         android:gravity="center_vertical"
         android:textSize="15dp"
@@ -66,6 +66,23 @@
         android:fontFamily="@font/nixgonfonts_b"
         android:textColor="@color/disabled"
         android:background="@drawable/button_shape_disable"
+
+        />
+
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/date_picker"
+        android:layout_marginTop="100dp"
+        android:layout_below="@id/btnNext"
+        android:layout_centerHorizontal="true"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"
+        android:background="@color/background"
+        android:theme="@style/MyDatePicker"
+
+
 
         />
 

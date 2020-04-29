@@ -11,7 +11,7 @@ class LoginRequest(email: String, password: String, listener: Response.Listener<
     // 서버 URL 설정(PHP 파일 연동)
 
     companion object {
-        const val URL = "http://ec2-3-22-97-112.us-east-2.compute.amazonaws.com/login.php"
+        const val URL = "http://ec2-3-15-180-129.us-east-2.compute.amazonaws.com/login.php"
     }
 
 

@@ -48,12 +48,15 @@
         android:layout_centerHorizontal="true"
         android:paddingLeft="15dp"
         android:hint="이메일"
+        android:inputType="textEmailAddress"
         android:fontFamily="@font/nixgonfonts_b"
         android:gravity="center_vertical"
         android:textSize="15dp"
         android:textColor="@color/background"
 
         />
+
+
 
     <Button
         android:id="@+id/btnNext"

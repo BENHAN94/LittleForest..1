@@ -64,6 +64,7 @@
         android:gravity="center_vertical"
         android:textSize="15dp"
         android:textColor="@color/background"
+        android:inputType="textEmailAddress"
 
         />
 
@@ -81,6 +82,7 @@
         android:paddingLeft="15dp"
         android:background="@drawable/button_shape"
         android:textColor="@color/background"
+        android:inputType="textPassword"
 
         />
 

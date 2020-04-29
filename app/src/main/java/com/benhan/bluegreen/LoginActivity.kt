@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
 
     fun onClick() {
 
-        val intent = Intent(this, Register::class.java)
+        val intent = Intent(this, Register1::class.java)
         startActivity(intent)
 
     }
