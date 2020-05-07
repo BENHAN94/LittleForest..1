@@ -2,6 +2,7 @@ package com.benhan.bluegreen
 
 import android.app.Activity
 import android.content.Intent
+import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,15 +15,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 
-class HomeActivity() : AppCompatActivity() {
+class HomeActivity : AppCompatActivity() {
 
 
 
-    private val ivPlus: ImageView by lazy { findViewById<ImageView>(R.id.plus) }
+
 
     private val TAG: String = "로그"
-
-
 
 
 
@@ -41,10 +40,21 @@ class HomeActivity() : AppCompatActivity() {
         val fragmentSearch = FragmentSearch()
         val fragmentTree = FragmentTree()
         val fragmentUser = FragmentUser()
+
         val tree = findViewById<ImageView>(R.id.tree)
         val search = findViewById<ImageView>(R.id.search)
         val bell = findViewById<ImageView>(R.id.bell)
         val user = findViewById<ImageView>(R.id.user)
+        val plus = findViewById<ImageView>(R.id.plus)
+
+
+        plus.setOnClickListener {
+
+
+
+            onClicked()
+
+        }
 
         val transaction = fragmentManager.beginTransaction()
 
@@ -124,6 +134,16 @@ class HomeActivity() : AppCompatActivity() {
 
 
 
+
+    }
+
+    private fun onClicked( ) {
+        
+        Log.d(TAG, "HomeActivity - onClicked() called")
+
+        val intent = Intent(this, PlusActivity::class.java)
+
+        startActivity(intent)
 
     }
 

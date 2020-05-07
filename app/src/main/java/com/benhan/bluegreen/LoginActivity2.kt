@@ -125,7 +125,7 @@ class LoginActivity2 : AppCompatActivity() {
                             if (success){
                                 email = jsonObject.getString("email")
                                 password = jsonObject.getString("password")
-                                Toast.makeText(applicationContext, "로그인 완료!", Toast.LENGTH_SHORT).show()
+
                                 val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
 
                                 intent.putExtra("email", email)

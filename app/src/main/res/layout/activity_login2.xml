@@ -37,7 +37,7 @@
         android:layout_above="@+id/tvCenterBox"
         android:textSize="70sp"
         android:textColor="#FFFFFF"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="120dp"
 
         />
 
@@ -52,7 +52,7 @@
 
     <EditText
         android:id="@+id/etEmailLogin"
-        android:layout_marginTop="-80dp"
+        android:layout_marginTop="-100dp"
         android:layout_below="@+id/tvCenterBox"
         android:layout_width="300dp"
         android:layout_height="35dp"
