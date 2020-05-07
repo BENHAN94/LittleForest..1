@@ -4,11 +4,14 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
+import android.text.method.PasswordTransformationMethod
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import java.util.regex.Pattern
 
 class Register3 : AppCompatActivity() {
@@ -32,8 +35,8 @@ class Register3 : AppCompatActivity() {
 
         val birthday = intent.getStringExtra("birthday")
         val email = intent.getStringExtra("email")
-        val etPaswword = findViewById<EditText>(R.id.etPasswordRegister)
-        val passwordChar = etPaswword.text
+        val etPassword = findViewById<EditText>(R.id.etPasswordRegister)
+        val passwordChar = etPassword.text
         val btnNext = findViewById<Button>(R.id.btnNext)
 
 
@@ -59,7 +62,7 @@ class Register3 : AppCompatActivity() {
 
         }
 
-        etPaswword.addTextChangedListener(object : TextWatcher{
+        etPassword.addTextChangedListener(object : TextWatcher{
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -69,12 +72,13 @@ class Register3 : AppCompatActivity() {
 
 
 
+
             }
 
             override fun afterTextChanged(s: Editable?) {
 
 
-                if (passwordChar.length >= 6){
+                if (passwordChar.toString().length > 5){
 
                     btnNext.isEnabled = true
                     btnStyle()
@@ -103,6 +107,7 @@ class Register3 : AppCompatActivity() {
                     else{
 
 
+
                         btnNext.setOnClickListener {
                             Toast.makeText(
                                 this@Register3,
@@ -119,6 +124,7 @@ class Register3 : AppCompatActivity() {
 
                 else {
 
+                    etPassword.typeface = ResourcesCompat.getFont(this@Register3, R.font.washyourhand)
                     btnNext.isEnabled = false
                     btnStyle()
                 }

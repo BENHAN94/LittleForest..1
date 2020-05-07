@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="30dp"
         android:fontFamily="@font/nixgonfonts_b"
         android:text="생일이 언제인가요?"
         android:gravity="center"
@@ -41,7 +41,7 @@
         android:id="@+id/select_birthdayRegister"
         android:layout_marginTop="40dp"
         android:layout_below="@+id/isNotPublic"
-        android:layout_width="350sp"
+        android:layout_width="300dp"
         android:layout_height="35dp"
         android:background="@drawable/button_shape"
         android:layout_centerHorizontal="true"
@@ -57,7 +57,7 @@
     <Button
         android:id="@+id/btnNext"
 
-        android:layout_width="350sp"
+        android:layout_width="300dp"
         android:layout_height="35dp"
         android:layout_below="@+id/select_birthdayRegister"
         android:layout_centerHorizontal="true"

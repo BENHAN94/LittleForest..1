@@ -38,6 +38,7 @@
         android:layout_above="@+id/tvCenterBox"
         android:textSize="70sp"
         android:textColor="#FFFFFF"
+        android:layout_marginBottom="40dp"
 
         />
 
@@ -47,14 +48,15 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+
         android:background="@color/background"
         />
 
     <TextView
         android:id="@+id/tvRegister"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="-10dp"
         android:layout_below="@+id/tvCenterBox"
-        android:layout_width="350sp"
+        android:layout_width="300dp"
         android:layout_height="35dp"
         android:background="@drawable/button_shape"
         android:layout_centerHorizontal="true"
@@ -70,7 +72,7 @@
         android:id="@+id/tvLogin"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/tvRegister"
-        android:layout_width="350sp"
+        android:layout_width="300dp"
         android:layout_height="35dp"
         android:textSize="15dp"
         android:layout_centerHorizontal="true"

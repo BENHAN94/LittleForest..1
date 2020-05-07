@@ -122,7 +122,7 @@ class Register4 : AppCompatActivity() {
                                                 Toast.makeText(
                                                     applicationContext, "회원가입 완료!", Toast.LENGTH_SHORT
                                                 ).show()
-                                                val intent = Intent(this@Register4, LoginActivity2::class.java)
+                                                val intent = Intent(this@Register4, HomeActivity::class.java)
                                                 intent.putExtra("email", email)
                                                 startActivity(intent)
 

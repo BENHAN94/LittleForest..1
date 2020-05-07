@@ -5,6 +5,7 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="gray">#DCDCDC</color>
     <color name="background">#239E67</color>
+    <color name="navi">#8D239E67</color>
     <color name="disabled">#8A1D6847</color>
     <color name="white">#FFFFFF</color>
 </resources>
