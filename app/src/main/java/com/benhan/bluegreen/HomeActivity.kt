@@ -1,21 +1,19 @@
 package com.benhan.bluegreen
 
-import android.app.Activity
 import android.content.Intent
-import android.media.Image
-import android.net.Uri
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import androidx.core.content.ContextCompat
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 
 
 class HomeActivity : AppCompatActivity() {
+
 
 
 
@@ -31,7 +29,21 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
 
+        val permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
 
+        val permissionListener = object : PermissionListener{
+
+            override fun onPermissionGranted() {
+                Toast.makeText(this@HomeActivity, "권한 허가", Toast.LENGTH_SHORT).show()
+
+            }
+
+            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                Toast.makeText(this@HomeActivity, "권한 거부\n" + deniedPermissions.toString(),
+                Toast.LENGTH_SHORT).show()
+            }
+
+        }
 
 
         val fragmentManager = supportFragmentManager
@@ -52,8 +64,21 @@ class HomeActivity : AppCompatActivity() {
 
 
 
-            onClicked()
+            if(permissionCheck == PackageManager.PERMISSION_DENIED) {
 
+
+                TedPermission.with(this)
+                    .setPermissionListener(permissionListener)
+                    .setRationaleMessage("사진첩을 열기 위해서는 갤러리 접근 권한이 필요해요")
+                    .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있어요")
+                    .setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    .check()
+            }
+
+
+            else if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                onClicked()
+            }
         }
 
         val transaction = fragmentManager.beginTransaction()
@@ -138,12 +163,20 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun onClicked( ) {
+
+
+
+
         
         Log.d(TAG, "HomeActivity - onClicked() called")
 
         val intent = Intent(this, PlusActivity::class.java)
 
         startActivity(intent)
+
+    }
+
+    override fun onBackPressed() {
 
     }
 

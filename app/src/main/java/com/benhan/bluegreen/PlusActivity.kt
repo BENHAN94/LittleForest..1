@@ -1,17 +1,33 @@
 package com.benhan.bluegreen
 
+import android.app.Activity
+import android.content.ContentUris
+import android.content.Context
 import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
+import android.provider.MediaStore
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PlusActivity : AppCompatActivity() {
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_plus)
+
+
+
 
 
         val colorEnabled = ContextCompat.getColor(this, R.color.background)
@@ -89,6 +105,25 @@ class PlusActivity : AppCompatActivity() {
 
 
 
+        //
+
+
+
+
+
+
+
 
     }
+
+
+
+
+
+
+
+
 }
+
+
+

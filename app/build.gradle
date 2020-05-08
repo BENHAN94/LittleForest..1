@@ -63,7 +63,19 @@ dependencies {
 
     implementation 'com.github.zomato:androidphotofilters:1.0.2'
 
-    "com.android.support:design:24.2.0"
+    implementation 'gun0912.ted:tedpermission:2.2.2'
+
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+
+    implementation 'com.ssomai:android.scalablelayout:2.1.6'
+
+
+
+
+
+
+
+
 
 }
 
