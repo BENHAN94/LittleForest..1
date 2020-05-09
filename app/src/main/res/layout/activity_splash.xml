@@ -7,11 +7,11 @@
 
     <ImageView
         android:id="@+id/tree"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginTop="250dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/tree"
+        android:src="@drawable/tree_logo"
 
 
         />

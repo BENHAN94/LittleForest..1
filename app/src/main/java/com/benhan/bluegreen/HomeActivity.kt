@@ -83,6 +83,7 @@ class HomeActivity : AppCompatActivity() {
 
         val transaction = fragmentManager.beginTransaction()
 
+
         transaction.replace(R.id.frameLayout, fragmentTree)
             .commitAllowingStateLoss()
 
@@ -101,7 +102,7 @@ class HomeActivity : AppCompatActivity() {
 
 
 
-                    tree.setImageResource(R.drawable.tree)
+                    tree.setImageResource(R.drawable.tree_selected)
                     search.setImageResource(R.drawable.search)
                     bell.setImageResource(R.drawable.bell)
                     user.setImageResource(R.drawable.user)
@@ -111,7 +112,7 @@ class HomeActivity : AppCompatActivity() {
                     transaction.replace(R.id.frameLayout, fragmentSearch)
 
 
-                    tree.setImageResource(R.drawable.tree_empty)
+                    tree.setImageResource(R.drawable.tree)
                     search.setImageResource(R.drawable.search_selected)
                     bell.setImageResource(R.drawable.bell)
                     user.setImageResource(R.drawable.user)
@@ -122,16 +123,16 @@ class HomeActivity : AppCompatActivity() {
 
 
 
-                    tree.setImageResource(R.drawable.tree_empty)
+                    tree.setImageResource(R.drawable.tree)
                     search.setImageResource(R.drawable.search)
-                    bell.setImageResource(R.drawable.bell_selected_1)
+                    bell.setImageResource(R.drawable.bell_selected)
                     user.setImageResource(R.drawable.user)
                 }
                 R.id.user -> {
                     transaction.replace(R.id.frameLayout, fragmentUser)
 
 
-                    tree.setImageResource(R.drawable.tree_empty)
+                    tree.setImageResource(R.drawable.tree)
                     search.setImageResource(R.drawable.search)
                     bell.setImageResource(R.drawable.bell)
                     user.setImageResource(R.drawable.user_selected)

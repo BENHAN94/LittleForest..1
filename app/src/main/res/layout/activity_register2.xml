@@ -9,6 +9,25 @@
     android:background="@color/background">
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:gravity="center"
+
+        >
+
+
+
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8.5"
+            >
+
 
     <TextView
         android:id="@+id/askEmail"
@@ -16,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="30dp"
+
         android:layout_marginTop="30dp"
         android:fontFamily="@font/nixgonfonts_b"
         android:text="이메일을 알려주세요"
@@ -30,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="30dp"
+
         android:layout_marginTop="10dp"
         android:fontFamily="@font/nixgonfonts_b"
         android:text="이메일로 로그인을 할 수 있어요."
@@ -43,7 +62,7 @@
 
 
     <RelativeLayout
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:id="@+id/etEmailRegisterContainer"
         android:layout_centerHorizontal="true"
@@ -55,7 +74,7 @@
 
     <EditText
         android:id="@+id/etEmailRegister"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:background="@drawable/button_shape"
         android:layout_centerHorizontal="true"
@@ -101,7 +120,7 @@
     <Button
         android:id="@+id/btnNext"
         android:background="@drawable/button_shape_disable"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_below="@+id/etEmailRegisterContainer"
         android:layout_centerHorizontal="true"
@@ -112,5 +131,8 @@
 
 
         />
+
+        </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

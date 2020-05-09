@@ -3,9 +3,7 @@ package com.benhan.bluegreen
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.widget.TextView
-import com.nhn.android.naverlogin.OAuthLogin
 
 class LoginActivity : AppCompatActivity() {
 

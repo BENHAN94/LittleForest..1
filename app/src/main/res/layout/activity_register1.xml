@@ -9,39 +9,87 @@
     android:background="@color/background">
 
 
-    <TextView
-        android:id="@+id/askBirthday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="30dp"
-        android:fontFamily="@font/nixgonfonts_b"
-        android:text="생일이 언제인가요?"
-        android:gravity="center"
-        android:textColor="#FFFFFF"
-        android:textSize="30dp" />
+<!--    <TextView-->
+<!--        android:id="@+id/askBirthday"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentLeft="true"-->
+<!--        android:layout_marginLeft="30dp"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:fontFamily="@font/nixgonfonts_b"-->
+<!--        android:text="생일이 언제인가요?"-->
+<!--        android:gravity="center"-->
+<!--        android:textColor="#FFFFFF"-->
+<!--        android:textSize="30dp" />-->
 
-    <TextView
-        android:id="@+id/isNotPublic"
-        android:layout_below="@id/askBirthday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/nixgonfonts_b"
-        android:text="생일은 공개되지 않아요."
+<!--    <TextView-->
+<!--        android:id="@+id/isNotPublic"-->
+<!--        android:layout_below="@id/askBirthday"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentLeft="true"-->
+<!--        android:layout_marginLeft="30dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:fontFamily="@font/nixgonfonts_b"-->
+<!--        android:text="생일은 공개되지 않아요."-->
+<!--        android:gravity="center"-->
+<!--        android:textColor="#A3FFFFFF"-->
+<!--        android:textSize="15dp" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="10"
         android:gravity="center"
-        android:textColor="#A3FFFFFF"
-        android:textSize="15dp" />
+
+        >
+
+
+
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8.5"
+            >
+
+
+            <TextView
+                android:id="@+id/askBirthday_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:text="생일이 언제인가요?"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/isNotPublic_in"
+                android:layout_below="@id/askBirthday_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:text="생일은 공개되지 않아요."
+                android:gravity="center"
+                android:textColor="#A3FFFFFF"
+                android:textSize="15dp" />
 
     <TextView
         android:id="@+id/select_birthdayRegister"
         android:layout_marginTop="40dp"
-        android:layout_below="@+id/isNotPublic"
-        android:layout_width="300dp"
+        android:layout_below="@+id/isNotPublic_in"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:background="@drawable/button_shape"
         android:layout_centerHorizontal="true"
@@ -57,7 +105,7 @@
     <Button
         android:id="@+id/btnNext"
 
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_below="@+id/select_birthdayRegister"
         android:layout_centerHorizontal="true"
@@ -86,6 +134,8 @@
 
         />
 
+        </RelativeLayout>
+    </LinearLayout>
 
 
 </RelativeLayout>

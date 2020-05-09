@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -56,22 +56,37 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/logo"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:gravity="center"
 
         >
 
 
-    </LinearLayout>
 
 
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8.5"
+        >
+
+        <TextView
+            android:id="@+id/tvCenter_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            />
 
     <FrameLayout
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:id="@+id/loginNaver"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/tvCenter"
+        android:layout_below="@+id/tvCenter_in"
         android:layout_marginTop="-40dp"
 
         >
@@ -103,7 +118,7 @@
 
 
     <FrameLayout
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_below="@+id/loginNaver"
         android:layout_centerHorizontal="true"
@@ -146,7 +161,7 @@
 
     <FrameLayout
         android:id="@+id/loginFacebook"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_below="@+id/loginKakao"
         android:layout_centerHorizontal="true"
@@ -190,7 +205,7 @@
     <TextView
 
         android:id="@+id/tv_register"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:textSize="15sp"
         android:fontFamily="@font/nixgonfonts_b"
@@ -203,6 +218,9 @@
         android:text="이메일로 가입하기"
         />
 
+    </RelativeLayout>
+
+    </LinearLayout>
 
 
 

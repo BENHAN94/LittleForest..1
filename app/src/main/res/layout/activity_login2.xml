@@ -50,11 +50,40 @@
         android:background="@color/background"
         />
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:gravity="center"
+
+        >
+
+
+
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8.5"
+            >
+
+            <TextView
+                android:id="@+id/tvCenterBox_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@color/background"
+                />
+
     <EditText
         android:id="@+id/etEmailLogin"
         android:layout_marginTop="-100dp"
-        android:layout_below="@+id/tvCenterBox"
-        android:layout_width="300dp"
+        android:layout_below="@+id/tvCenterBox_in"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:background="@drawable/button_shape"
         android:layout_centerHorizontal="true"
@@ -73,7 +102,7 @@
         android:id="@+id/etPasswordLogin"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/etEmailLogin"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:textSize="15dp"
         android:layout_centerHorizontal="true"
@@ -91,14 +120,15 @@
 
     <TextView
         android:id="@+id/tvForgotPassword"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/etPasswordLogin"
         android:fontFamily="@font/nixgonfonts_b"
         android:textColor="#B4FFFFFF"
         android:text="비밀번호를 잊으셨나요?"
+        android:gravity="end"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="30dp"
+
         android:layout_marginTop="10dp"
         />
 
@@ -107,7 +137,7 @@
     <Button
         android:id="@+id/btnLogIn"
         android:background="@drawable/button_shape_disable"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_below="@+id/tvForgotPassword"
         android:layout_centerHorizontal="true"
@@ -148,5 +178,7 @@
 <!--        />-->
 
 
+        </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>
