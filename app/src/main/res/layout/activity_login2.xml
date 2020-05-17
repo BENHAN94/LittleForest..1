@@ -20,6 +20,7 @@
         android:fontFamily="@font/dearsunshine"
         android:textSize="50sp"
         android:textColor="#FFFFFF"
+        android:layout_marginBottom="-10dp"
 
 
 
@@ -37,7 +38,7 @@
         android:layout_above="@+id/tvCenterBox"
         android:textSize="70sp"
         android:textColor="#FFFFFF"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="50dp"
 
         />
 
@@ -81,7 +82,7 @@
 
     <EditText
         android:id="@+id/etEmailLogin"
-        android:layout_marginTop="-100dp"
+        android:layout_marginTop="-35dp"
         android:layout_below="@+id/tvCenterBox_in"
         android:layout_width="match_parent"
         android:layout_height="35dp"
@@ -159,7 +160,7 @@
         android:textColor="#FFFFFF"
         android:text="다른 방법으로 로그인 하기 "
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="10dp"
         />
 
 

@@ -1,15 +1,11 @@
 package com.benhan.bluegreen
 
 import android.content.Intent
-import android.graphics.fonts.FontFamily
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
-import android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
-import android.text.method.TransformationMethod
-import android.view.Gravity.apply
 import android.view.View
 import android.widget.Button
 import android.widget.EditText

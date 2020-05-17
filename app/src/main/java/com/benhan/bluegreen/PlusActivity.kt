@@ -13,12 +13,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PlusActivity : AppCompatActivity() {
+
+
+
 
 
 
@@ -40,12 +46,7 @@ class PlusActivity : AppCompatActivity() {
         val gallery = findViewById<TextView>(R.id.gallery)
         val photo = findViewById<TextView>(R.id.photo)
         val video = findViewById<TextView>(R.id.video)
-        val ivX = findViewById<ImageView>(R.id.ivX)
 
-        ivX.setOnClickListener {
-
-            finish()
-        }
 
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
@@ -115,12 +116,6 @@ class PlusActivity : AppCompatActivity() {
 
 
     }
-
-
-
-
-
-
 
 
 }

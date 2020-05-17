@@ -36,9 +36,9 @@ class GetImageUri(context: Context) {
         formatter -> formatter.parse("$year.$month.$day")?.time ?: 0
     }
 
-    fun getImageUri(): ArrayList<Uri>{
+    fun getImageUri(): ArrayList<PhotoVO>{
 
-        val imageUriList = arrayListOf<Uri>()
+        val photoList = arrayListOf<PhotoVO>()
 
         cursor?.use {
             val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
@@ -55,7 +55,11 @@ class GetImageUri(context: Context) {
                 val contentUris = ContentUris.withAppendedId(uri, id)
 
 
-                imageUriList.add(contentUris)
+//                imageUriList.add(contentUris)
+
+                val photoVO = PhotoVO(contentUris, false)
+
+                photoList.add(photoVO)
 
 
 
@@ -67,9 +71,15 @@ class GetImageUri(context: Context) {
 
 
 
-        return imageUriList
+        return photoList
+
 
 
     }
+
+
+
+
+
 
 }
