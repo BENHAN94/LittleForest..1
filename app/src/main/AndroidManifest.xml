@@ -23,8 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".PlusActivity"></activity>
-        <activity android:name=".HomeActivity" />
+        <activity android:name=".PlusActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:fitsSystemWindows="true"
+           />
+        <activity android:name=".HomeActivity"
+            />
         <activity android:name=".Register4" />
         <activity android:name=".Register3" />
         <activity android:name=".Register2" />
@@ -37,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity2"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:fitsSystemWindows="true"/>
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity" />

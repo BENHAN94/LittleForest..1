@@ -10,6 +10,7 @@ import android.view.*
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.activity_plus.*
 import kotlinx.android.synthetic.main.plus_fragment_gallery.*
+import java.nio.channels.Selector
 
 
 class PlusFragmentGallery: Fragment() {
@@ -157,10 +159,7 @@ class PlusFragmentGallery: Fragment() {
 
                 ivNext.setOnClickListener {
 
-                    val selectedPhoto: PhotoVO? = galleryAdapter.list.find{
-                        it.selected
-                    }
-                    onNextClicked(selectedPhoto!!)
+                    onNextClicked(galleryAdapter.list[position])
 
                 }
 
@@ -192,14 +191,15 @@ class PlusFragmentGallery: Fragment() {
 
 
 
-    private val passSelectedPhoto = PassSelectedPhoto()
-
 
 
     fun onNextClicked(selectedPhoto: PhotoVO) {
 
 
+
+       val passSelectedPhoto = ViewModelProvider(requireActivity())[PassSelectedPhoto::class.java]
         passSelectedPhoto.passSelectedPhoto(selectedPhoto)
+
 
         val fragmentUpload = PhotoUploadFragment()
         val fragmentManager = childFragmentManager

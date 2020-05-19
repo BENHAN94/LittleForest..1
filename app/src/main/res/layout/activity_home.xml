@@ -55,7 +55,7 @@
         <ImageView
             android:id="@+id/plus"
             android:layout_width="0dp"
-            android:layout_height="27dp"
+            android:layout_height="30dp"
             android:layout_weight="2"
             android:src="@drawable/plus_logo"
 

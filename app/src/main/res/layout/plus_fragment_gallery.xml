@@ -20,7 +20,7 @@
         android:orientation="horizontal"
         android:weightSum="10"
         android:gravity="center_vertical"
-        android:layout_weight="0.7"
+        android:layout_weight="0.6"
         >
 
 
@@ -102,7 +102,7 @@
         sothree:umanoShadowHeight="0dp"
         app:umanoDragView = "@id/selectedImage"
         app:umanoScrollableView="@id/selectedImage"
-        android:layout_weight="9.5"
+        android:layout_weight="9.4"
 
         app:umanoOverlay="true"
         app:umanoParallaxOffset="400dp">
