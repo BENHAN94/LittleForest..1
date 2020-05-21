@@ -11,13 +11,14 @@ import java.util.Locale.ROOT
 class MainActivity : AppCompatActivity() {
 
 
-
+//    lateinit var prefConfig: PrefConfig
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
 
+//        prefConfig = PrefConfig(this)
 
 
 

@@ -9,21 +9,31 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
 
 class Register4 : AppCompatActivity() {
 
     val TAG: String = "로그"
+
+    private lateinit var apiInterface : ApiInterface
+//    val prefConfig = PrefConfig(this)
+
+    val apiClient = ApiClient()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register4)
 
+        val etNickname = findViewById<EditText>(R.id.etNickNameRegister)
+        val nicknameChar = etNickname.text
 
         //
 
@@ -31,12 +41,53 @@ class Register4 : AppCompatActivity() {
         val email = intent.getStringExtra("email")
         val password = intent.getStringExtra("password")
 
+        val checkSign = findViewById<ImageView>(R.id.check)
+
+        val warningSign = findViewById<ImageView>(R.id.warning)
+
+
+
+        checkSign.visibility = View.INVISIBLE
+        warningSign.visibility = View.INVISIBLE
+
+
+
 
 
         //
 
-        val etNickname = findViewById<EditText>(R.id.etNickNameRegister)
-        val nicknameChar = etNickname.text
+
+        apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
+
+
+        fun performRegistration() {
+
+            val name = etNickname.text.toString()
+            val call: Call<User> = this.apiInterface.performRegistration(email, password, name, birthday)
+
+            call.enqueue(object : Callback<User>{
+                override fun onFailure(call: Call<User>, t: Throwable) {
+
+                }
+
+                override fun onResponse(call: Call<User>, response: retrofit2.Response<User>) {
+
+                    if (response.body()?.success == true) {
+                      Toast.makeText(this@Register4, "가입완료!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@Register4, HomeActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+
+
+            })
+
+
+        }
+
+
+
+
 
 
         //button
@@ -87,12 +138,17 @@ class Register4 : AppCompatActivity() {
                 if(nicknameChar.isNotEmpty()){
 
 
+                    checkSign.visibility = View.INVISIBLE
+                    warningSign.visibility = View.INVISIBLE
+
 
                     if (nicknameChar.length > 1){
 
 
                         btnRegister.isEnabled = true
                         btnStyle()
+
+
 
                         Log.d(TAG, "Register4 - afterTextChanged() called")
 
@@ -103,53 +159,56 @@ class Register4 : AppCompatActivity() {
                                 Log.d(TAG, "Register4 - onClick() called")
 
 
-                                val nickName = etNickname.text.toString()
-
-                                val responseListener = object : Response.Listener<String>{
 
 
-                                    override fun onResponse(response: String?) {
-                                        
-                                        Log.d(TAG, "Register4 - onResponse() called")
 
 
-                                        try {
+                                fun nameCheck(){
 
-                                            val jsonObject = JSONObject(response)
-                                            val success: Boolean = jsonObject.getBoolean("success")
-                                            if(success){
 
-                                                Toast.makeText(
-                                                    applicationContext, "회원가입 완료!", Toast.LENGTH_SHORT
-                                                ).show()
-                                                val intent = Intent(this@Register4, HomeActivity::class.java)
-                                                intent.putExtra("email", email)
-                                                startActivity(intent)
+                                    val name = etNickname.text.toString()
+
+                                    val call: Call<User> = this@Register4.apiInterface.nameCheck(name)
+                                    call.enqueue(object : Callback<User> {
+                                        override fun onFailure(call: Call<User>, t: Throwable) {
+
+                                            Log.d("에러", t.message)
+
+                                        }
+
+                                        override fun onResponse(call: Call<User>, response: retrofit2.Response<User>) {
+
+
+                                            val success: Boolean = response.body()!!.success!!
+
+                                            if (!success){
+
+                                                checkSign.visibility = View.VISIBLE
+                                                warningSign.visibility = View.INVISIBLE
+                                                performRegistration()
 
                                             } else{
 
-                                                return
+                                                checkSign.visibility = View.INVISIBLE
+                                                warningSign.visibility = View.VISIBLE
+
+
+
 
                                             }
 
-                                        } catch (e: JSONException){
-                                            e.printStackTrace()
+
                                         }
-                                    }
+
+
+                                    })
 
 
                                 }
 
+                                nameCheck()
 
-                                    val registerRequest = RegisterRequest(
-                                        email,
-                                        password,
-                                        nickName,
-                                        birthday,
-                                        responseListener
-                                    )
-                                    val queue = Volley.newRequestQueue(this@Register4)
-                                    queue.add(registerRequest)
+
 
                             }
 

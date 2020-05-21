@@ -17,4 +17,8 @@
     <string name="filter_normal">Normal</string>
     <string name="action_save">SAVE</string>
     <string name="action_open">OPEN</string>
+
+    <string name="pref_file">com.benhan.bluegreen_file</string>
+    <string name="pref_login_status">com.benhan.bluegreen_login_status</string>
+    <string name="pref_name">com.benhan.bluegreen_name</string>
 </resources>

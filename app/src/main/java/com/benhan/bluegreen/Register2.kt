@@ -1,13 +1,19 @@
 package com.benhan.bluegreen
 
+import android.content.Context
 import android.content.Intent
+import android.inputmethodservice.InputMethodService
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -15,6 +21,8 @@ import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
 import java.util.regex.Pattern
 
 class Register2 : AppCompatActivity() {
@@ -27,15 +35,23 @@ class Register2 : AppCompatActivity() {
             return Patterns.EMAIL_ADDRESS.matcher(email).matches()
         }
 
+
     }
 
+    val apiClient = ApiClient()
+    lateinit var apiInterface: ApiInterface
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register2)
 
 
 
+        window.decorView.importantForAutofill= View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
 
+
+        apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
 
 
 
@@ -49,17 +65,25 @@ class Register2 : AppCompatActivity() {
         warningSign.visibility = View.INVISIBLE
 
 
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+
 
 
 
         val birthday = intent.getStringExtra("birthday")
 
 
-        val etEmail = findViewById<EditText>(R.id.etEmailRegister)
-
-        val email = etEmail.text
+        val etEmail = findViewById<EditText>(R.id.etRegister)
 
 
+        val emailText = etEmail.text
+
+
+
+        etEmail.requestFocus()
 
 
         val btnNext = findViewById<Button>(R.id.btnNext)
@@ -112,44 +136,46 @@ class Register2 : AppCompatActivity() {
 
 
 
-
-
             }
 
 
             override fun afterTextChanged(s: Editable?) {
 
 
-                if (email.isNotEmpty()){
+                if (emailText.isNotEmpty()){
 
                     btnNext.isEnabled = true
                     btnStyle()
 
-                    if (isValidEmail(email)) {
+                    if (isValidEmail(emailText)) {
 
 
-                        val responseListener = object: Response.Listener<String> {
+                        fun performEmailCheck(){
 
 
-                            override fun onResponse(response: String?) {
+                            val email = etEmail.text.toString()
+
+                            val call: Call<User> = this@Register2.apiInterface.performEmailCheck(email)
+                            call.enqueue(object : Callback<User> {
+                                override fun onFailure(call: Call<User>, t: Throwable) {
+
+                                    Log.d("에러", t.message)
+
+                                }
+
+                                override fun onResponse(call: Call<User>, response: retrofit2.Response<User>) {
 
 
-                                try {
+                                    val success: Boolean = response.body()!!.success!!
 
-                                    val jsonResponse = JSONObject(response)
-                                    val success: Boolean = jsonResponse.getBoolean("success")
-                                    if(success){
-
+                                    if (!success){
 
                                         checkSign.visibility = View.VISIBLE
                                         warningSign.visibility = View.INVISIBLE
 
                                         btnNext.isEnabled = true
                                         btnStyle()
-
-
                                     } else{
-
 
                                         checkSign.visibility = View.INVISIBLE
                                         warningSign.visibility = View.VISIBLE
@@ -157,24 +183,24 @@ class Register2 : AppCompatActivity() {
                                         btnNext.isEnabled = false
                                         btnStyle()
 
+                                        btnNext.setOnClickListener {
 
-
+                                        }
 
                                     }
 
 
-                                } catch (e: JSONException){
-
-                                    e.printStackTrace()
                                 }
 
-                            }
+
+                            })
+
 
                         }
 
-                        val validateRequest = ValidateRequest(etEmail.text.toString(), responseListener )
-                        val queue = Volley.newRequestQueue(this@Register2)
-                        queue.add(validateRequest)
+                        performEmailCheck()
+
+
 
                         btnNext.setOnClickListener {
                             fun onClick() {
@@ -182,7 +208,7 @@ class Register2 : AppCompatActivity() {
                                 val intent = Intent(this@Register2, Register3::class.java)
 
                                 intent.putExtra("birthday", birthday)
-                                intent.putExtra("email", email.toString())
+                                intent.putExtra("email", emailText.toString())
                                 startActivity(intent)
                             }
                             onClick()
@@ -217,7 +243,6 @@ class Register2 : AppCompatActivity() {
                     btnStyle()
 
                 }
-
 
 
             }

@@ -73,7 +73,7 @@
 
 
     <EditText
-        android:id="@+id/etEmailRegister"
+        android:id="@+id/etRegister"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:background="@drawable/button_shape"
@@ -86,7 +86,10 @@
         android:textSize="15dp"
         android:textColor="@color/background"
         android:textCursorDrawable="@drawable/cursor_color"
-       />
+
+        >
+        <requestFocus/>
+    </EditText>
 
 
         <ImageView

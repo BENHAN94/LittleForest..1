@@ -1,16 +1,19 @@
 package com.benhan.bluegreen
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -18,9 +21,19 @@ import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.create
 
 class LoginActivity2 : AppCompatActivity() {
 
+
+
+    private lateinit var apiInterface: ApiInterface
+
+//    val prefConfig = PrefConfig(this)
+
+    private val apiClient = ApiClient()
 
 
 
@@ -31,11 +44,61 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
+        apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
+
+
         val emailFromRegister4 = intent.getStringExtra("email")
 
 
         val et_email = findViewById<EditText>(R.id.etEmailLogin)
         val et_password = findViewById<EditText>(R.id.etPasswordLogin)
+
+
+
+
+
+
+        //
+        fun performLogin(){
+
+            val password = et_password.text.toString()
+            val email = et_email.text.toString()
+
+            val call: Call<User> = this.apiInterface.performUserLogin(email, password)
+            call.enqueue(object : Callback<User>{
+                override fun onFailure(call: Call<User>, t: Throwable) {
+
+                    Log.d("에러", t.message)
+
+                }
+
+                override fun onResponse(call: Call<User>, response: retrofit2.Response<User>) {
+
+                    if (response.body()?.success == true){
+
+
+                        val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
+                        startActivity(intent)
+                    } else{
+
+                        Toast.makeText(this@LoginActivity2, "이메일 또는 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
+
+                    }
+
+                }
+
+
+            })
+
+
+        }
+
+
+
+
+
+        //
+
 
 
         et_password.inputType = InputType.TYPE_CLASS_TEXT
@@ -54,6 +117,7 @@ class LoginActivity2 : AppCompatActivity() {
         val tvOnOtherWay:TextView = findViewById(R.id.tvLoginOtherWay)
 
         btn_login.isEnabled = false
+
 
 
 
@@ -96,6 +160,7 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
+
         tvOnOtherWay.setOnClickListener {
             onOtherWayClicked()
         }
@@ -105,47 +170,11 @@ class LoginActivity2 : AppCompatActivity() {
 
             override fun onClick(v: View){
 
-                var password = et_password.text.toString()
-                var email = et_email.text.toString()
-
-                val responseListener = object: Response.Listener<String> {
-
-                    override fun onResponse(response: String) {
 
 
-                        try {
-                            val jsonObject = JSONObject(response)
+                performLogin()
 
 
-                            val success: Boolean = jsonObject.getBoolean("success")
-                            if (success){
-                                email = jsonObject.getString("email")
-                                password = jsonObject.getString("password")
-
-                                val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
-
-                                intent.putExtra("email", email)
-                                intent.putExtra("password", password)
-                                startActivity(intent)
-
-
-                            } else {
-                                Toast.makeText(applicationContext, "이메일 또는 비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show()
-                                return
-
-
-                            }
-                        } catch (e: JSONException){
-                            e.printStackTrace()
-                        }
-
-
-                    }
-
-                }
-                val loginRequest = LoginRequest(email, password, responseListener)
-                val queue = Volley.newRequestQueue(this@LoginActivity2)
-                queue.add(loginRequest)
             }
 
 

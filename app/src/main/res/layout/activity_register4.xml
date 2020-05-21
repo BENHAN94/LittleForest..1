@@ -54,30 +54,70 @@
         android:textColor="#A3FFFFFF"
         android:textSize="15dp" />
 
-    <EditText
-        android:id="@+id/etNickNameRegister"
-        android:layout_marginTop="40dp"
-        android:layout_below="@+id/isNotPublic"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:background="@drawable/button_shape"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="15dp"
-        android:hint="닉네임"
-        android:fontFamily="@font/nixgonfonts_b"
-        android:gravity="center_vertical"
-        android:textSize="15dp"
-        android:textColor="@color/background"
-        android:textCursorDrawable="@drawable/cursor_color"
 
-        />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/etNickNameRegisterContainer"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/isNotPublic"
+                android:layout_marginTop="40dp"
+
+                >
+
+
+                <EditText
+                    android:id="@+id/etNickNameRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:background="@drawable/button_shape"
+                    android:layout_centerHorizontal="true"
+                    android:paddingLeft="15dp"
+                    android:hint="닉네임"
+                    android:inputType="textEmailAddress"
+                    android:fontFamily="@font/nixgonfonts_b"
+                    android:gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textColor="@color/background"
+                    android:textCursorDrawable="@drawable/cursor_color"
+
+                    >
+                    <requestFocus/>
+                </EditText>
+
+
+                <ImageView
+                    android:id="@+id/check"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/check"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/warning"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/warning"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    />
+
+
+
+
+
+            </RelativeLayout>
 
     <Button
         android:id="@+id/btnRegisterRegister"
         android:background="@drawable/button_shape"
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:layout_below="@+id/etNickNameRegister"
+        android:layout_below="@+id/etNickNameRegisterContainer"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="가입하기"

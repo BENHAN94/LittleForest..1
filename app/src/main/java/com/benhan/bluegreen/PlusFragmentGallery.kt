@@ -34,6 +34,12 @@ class PlusFragmentGallery: Fragment() {
     }
 
 
+    fun close(){
+
+        requireActivity().supportFragmentManager.popBackStack()
+
+    }
+
 
 
 
