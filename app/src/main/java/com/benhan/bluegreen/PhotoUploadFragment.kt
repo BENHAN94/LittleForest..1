@@ -1,9 +1,9 @@
 package com.benhan.bluegreen
 
 import android.app.Activity
-import android.net.Uri
+import android.database.Cursor
 import android.os.Bundle
-import android.os.FileUtils
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,23 +17,26 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import okhttp3.MediaType
-import java.io.File
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class PhotoUploadFragment: Fragment() {
 
+    val userData = ViewModelProvider(this)[UserData::class.java]
     val apiClient = ApiClient()
     private lateinit var apiInterface: ApiInterface
+    val currentTime = Calendar.getInstance().time
+    var df: SimpleDateFormat = SimpleDateFormat("dd-MMM-yyyy")
+    var formattedDate: String = df.format(currentTime)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +52,9 @@ class PhotoUploadFragment: Fragment() {
 
         val rootView = inflater.inflate(R.layout.plus_fragment_gallery_upload, container, false)
         as ViewGroup
+
+
+
 
 
 
@@ -73,17 +79,26 @@ class PhotoUploadFragment: Fragment() {
         // POST Image file to Server
 
 
+        var selectedPhotoPath: String? = null
+
+        val cursor: Cursor? = activity!!.contentResolver.query(
+            selectedPhoto!!.imgPath, null, null, null, null
+        )
+        if (cursor !== null) {
+            cursor.moveToFirst()
+            val idx: Int = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            selectedPhotoPath = cursor.getString(idx)
+        }
 
 
 
 
-        
 
         tvPost.setOnClickListener {
 
-        uploadToServer(selectedPhoto!!.imgPath.path!!, etDescription)
+        uploadToServer(selectedPhotoPath!!, etDescription)
 
-
+            Log.d("경로 ", selectedPhotoPath)
 
         }
 
@@ -132,35 +147,56 @@ class PhotoUploadFragment: Fragment() {
     fun uploadToServer(imgPath: String, editText: EditText) {
 
         val text = editText.text.toString()
-        val imagefile = File(imgPath)
-        val imagePath = imagefile.absoluteFile
-
-        val requestBody = imagePath.asRequestBody("image/*".toMediaTypeOrNull())
-        val part = MultipartBody.Part.createFormData("images", imagePath.name, requestBody)
-        val description = text.toRequestBody(MultipartBody.FORM)
+        val file = File(imgPath)
 
 
-        val call: Call<ResponseBody> = this.apiInterface.uploadImage(part, description)
-        call.enqueue(object : Callback<ResponseBody>{
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val fileToUpload = MultipartBody.Part.createFormData("file", file.name, requestBody)
+        val filename = file.name.toRequestBody("text/plain".toMediaTypeOrNull())
+
+
+
+        val callUpload: Call<ServerResonse> = this.apiInterface.uploadImage(fileToUpload, filename)
+        callUpload.enqueue(object : Callback<ServerResonse>{
+            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
 
                 Log.d("에러 ", t.message)
 
             }
 
             override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
+                call: Call<ServerResonse>,
+                response: Response<ServerResonse>
             ) {
 
-                (parentFragment as PlusFragmentGallery).close()
+
                 Log.d("코드", response.message())
+
 
 
             }
 
 
         })
+
+
+
+        val callPostData: Call<ServerResonse> = this.apiInterface.uploadPostData(userData.userData.value?.email,
+        formattedDate, text )
+
+        callPostData.enqueue(object : Callback<ServerResonse>{
+            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+                Log.d("에러 ", t.message)
+            }
+
+            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
+
+                Log.d("코드", response.message())
+            }
+
+
+        })
+
 
 
 

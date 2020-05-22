@@ -30,9 +30,17 @@ interface ApiInterface {
     fun nameCheck(@Field("name")name: String): Call<User>
 
     @Multipart
-    @POST("images")
-    fun uploadImage(@Part image: MultipartBody.Part,
-                    @Part("description") description: RequestBody): Call<ResponseBody>
+    @POST("post.php")
+    fun uploadImage(@Part file: MultipartBody.Part,
+                    @Part("file")name: RequestBody
+                    ): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("post.php")
+    fun uploadPostData(@Field("email")email: String?,
+                       @Field("added_date")currentTime: String?,
+                       @Field("description")description: String?): Call<ServerResonse>
+
 
 
 

@@ -1,5 +1,6 @@
 package com.benhan.bluegreen
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.ViewModelProvider
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
@@ -55,6 +57,9 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
+        val userData = ViewModelProvider(this)[UserData::class.java]
+
+
 
 
 
@@ -76,6 +81,15 @@ class LoginActivity2 : AppCompatActivity() {
 
                     if (response.body()?.success == true){
 
+
+                        val user = User()
+                        user.email = response.body()?.email
+                        user.name = response.body()?.name
+                        user.birthday = response.body()?.birthday
+                        user.password = response.body()?.password
+                        user.success = response.body()?.success
+
+                        userData.saveUserData(user)
 
                         val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
                         startActivity(intent)
