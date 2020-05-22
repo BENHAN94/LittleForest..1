@@ -42,6 +42,7 @@ class PlusActivity : AppCompatActivity() {
         val fragmentGallery = PlusFragmentGallery()
         val fragmentPhoto = PlusFragmentPhoto()
         val fragmentVideo = PlusFragmentVideo()
+        val fragmentPhotoUpload = PhotoUploadFragment()
 
         val gallery = findViewById<TextView>(R.id.gallery)
         val photo = findViewById<TextView>(R.id.photo)
@@ -53,6 +54,8 @@ class PlusActivity : AppCompatActivity() {
 
         transaction.replace(R.id.plusFrame, fragmentGallery)
             .commitAllowingStateLoss()
+
+
 
         fun clickHandler(view: TextView){
 
@@ -116,7 +119,6 @@ class PlusActivity : AppCompatActivity() {
 
 
     }
-
 
 }
 

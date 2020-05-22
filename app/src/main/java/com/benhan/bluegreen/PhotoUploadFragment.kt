@@ -31,12 +31,15 @@ import java.util.*
 
 class PhotoUploadFragment: Fragment() {
 
-    val userData = ViewModelProvider(this)[UserData::class.java]
+
     val apiClient = ApiClient()
     private lateinit var apiInterface: ApiInterface
-    val currentTime = Calendar.getInstance().time
+
     var df: SimpleDateFormat = SimpleDateFormat("dd-MMM-yyyy")
-    var formattedDate: String = df.format(currentTime)
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +56,13 @@ class PhotoUploadFragment: Fragment() {
         val rootView = inflater.inflate(R.layout.plus_fragment_gallery_upload, container, false)
         as ViewGroup
 
+        val currentTime = Calendar.getInstance().time
+        var formattedDate: String = df.format(currentTime)
 
 
+       val userData = ViewModelProvider(requireActivity())[UserLiveData::class.java]
 
+        val email = userData.userData.value?.email
 
 
 
@@ -65,6 +72,7 @@ class PhotoUploadFragment: Fragment() {
         val passSelectedPhoto = ViewModelProvider(requireActivity())[PassSelectedPhoto::class.java]
         val selectedPhoto: PhotoVO? = passSelectedPhoto.selectedPhotoData.value
         val etDescription = rootView.findViewById<EditText>(R.id.descriptionUpload)
+        val desc = etDescription.text.toString()
 
 
         val ivSelectedPhoto = rootView.findViewById<ImageView>(R.id.selectedImageUpload)
@@ -96,7 +104,7 @@ class PhotoUploadFragment: Fragment() {
 
         tvPost.setOnClickListener {
 
-        uploadToServer(selectedPhotoPath!!, etDescription)
+        uploadToServer(selectedPhotoPath!!, email!!, desc, formattedDate)
 
             Log.d("경로 ", selectedPhotoPath)
 
@@ -144,9 +152,9 @@ class PhotoUploadFragment: Fragment() {
     }
 
 
-    fun uploadToServer(imgPath: String, editText: EditText) {
+    fun uploadToServer(imgPath: String,  email: String, desc: String, date: String) {
 
-        val text = editText.text.toString()
+
         val file = File(imgPath)
 
 
@@ -181,8 +189,8 @@ class PhotoUploadFragment: Fragment() {
 
 
 
-        val callPostData: Call<ServerResonse> = this.apiInterface.uploadPostData(userData.userData.value?.email,
-        formattedDate, text )
+        val callPostData: Call<ServerResonse> = this.apiInterface.uploadPostData(email,
+        date, desc)
 
         callPostData.enqueue(object : Callback<ServerResonse>{
             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
@@ -192,6 +200,8 @@ class PhotoUploadFragment: Fragment() {
             override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
 
                 Log.d("코드", response.message())
+
+
             }
 
 

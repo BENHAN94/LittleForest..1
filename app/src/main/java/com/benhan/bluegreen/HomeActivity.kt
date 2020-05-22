@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 
@@ -58,6 +60,7 @@ class HomeActivity : AppCompatActivity() {
         val fragmentTree = FragmentTree()
         val fragmentUser = FragmentUser()
 
+
         val tree = findViewById<ImageView>(R.id.tree)
         val search = findViewById<ImageView>(R.id.search)
         val bell = findViewById<ImageView>(R.id.bell)
@@ -87,6 +90,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         val transaction = fragmentManager.beginTransaction()
+
+
 
 
         transaction.replace(R.id.frameLayout, fragmentTree)
@@ -185,7 +190,6 @@ class HomeActivity : AppCompatActivity() {
     override fun onBackPressed() {
 
     }
-
 
 
 

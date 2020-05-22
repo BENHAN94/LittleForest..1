@@ -89,7 +89,7 @@ class PlusFragmentGallery: Fragment() {
 
         ivX.setOnClickListener {
 
-            val intent = Intent(requireContext(), HomeActivity::class.java)
+            val intent = Intent(requireActivity(), HomeActivity::class.java)
             startActivity(intent)
         }
 
@@ -208,15 +208,19 @@ class PlusFragmentGallery: Fragment() {
 
 
         val fragmentUpload = PhotoUploadFragment()
-        val fragmentManager = childFragmentManager
-        val transaction = fragmentManager.beginTransaction()
+
 
 
         val navi = requireActivity().findViewById<LinearLayout>(R.id.plusNavigaiion)
         navi.visibility = View.GONE
 
 
-        transaction.replace(R.id.plus_fragment_gallery, fragmentUpload).commit()
+        val childFragManager = childFragmentManager
+        val childFragTrans = childFragManager.beginTransaction()
+        childFragTrans.add(R.id.plus_fragment_gallery, fragmentUpload)
+        childFragTrans.addToBackStack("B")
+        childFragTrans.commit()
+
 
 
 

@@ -1,8 +1,6 @@
 package com.benhan.bluegreen
 
-import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -14,18 +12,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.android.volley.Response
-import com.android.volley.toolbox.Volley
-import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.create
 
 class LoginActivity2 : AppCompatActivity() {
 
@@ -57,14 +50,14 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
-        val userData = ViewModelProvider(this)[UserData::class.java]
+        val userData = ViewModelProvider(this)[UserLiveData::class.java]
 
 
 
 
 
         //
-        fun performLogin(){
+        fun performLogin(viewModel: UserLiveData){
 
             val password = et_password.text.toString()
             val email = et_email.text.toString()
@@ -82,14 +75,15 @@ class LoginActivity2 : AppCompatActivity() {
                     if (response.body()?.success == true){
 
 
-                        val user = User()
-                        user.email = response.body()?.email
-                        user.name = response.body()?.name
-                        user.birthday = response.body()?.birthday
-                        user.password = response.body()?.password
-                        user.success = response.body()?.success
+                        val user = UserDataClass(response.body()?.email,
+                            response.body()?.password, response.body()?.name, response.body()?.birthday
+                        ,response.body()?.success)
 
-                        userData.saveUserData(user)
+
+                        viewModel.saveUserData(user)
+
+
+
 
                         val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
                         startActivity(intent)
@@ -186,7 +180,7 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
-                performLogin()
+                performLogin(userData)
 
 
             }
