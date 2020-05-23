@@ -34,14 +34,8 @@ interface ApiInterface {
     fun uploadImage(@Part file: MultipartBody.Part,
                     @Part("file")name: RequestBody,
                     @Part("email")email: RequestBody,
-                    @Part("added_date")currentTime: RequestBody,
+                    @Part("date")currentTime: RequestBody,
                     @Part("description")description: RequestBody): Call<ServerResonse>
-
-    @FormUrlEncoded
-    @POST("post.php")
-    fun uploadPostData(@Field("email")email: String?,
-                       @Field("added_date")currentTime: String?,
-                       @Field("description")description: String?): Call<ServerResonse>
 
 
 

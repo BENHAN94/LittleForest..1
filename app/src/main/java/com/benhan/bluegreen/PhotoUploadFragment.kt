@@ -1,16 +1,15 @@
 package com.benhan.bluegreen
 
 import android.app.Activity
+import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -75,7 +74,8 @@ class PhotoUploadFragment: Fragment() {
         val passSelectedPhoto = ViewModelProvider(requireActivity())[PassSelectedPhoto::class.java]
         val selectedPhoto: PhotoVO? = passSelectedPhoto.selectedPhotoData.value
         val etDescription = rootView.findViewById<EditText>(R.id.descriptionUpload)
-        var desc: String? = null
+
+        var desc = ""
 
 
         etDescription.addTextChangedListener(object : TextWatcher{
@@ -97,7 +97,27 @@ class PhotoUploadFragment: Fragment() {
 
 
 
+        etDescription.setOnEditorActionListener(object : TextView.OnEditorActionListener{
+            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                if(actionId== EditorInfo.IME_ACTION_DONE){
+                    etDescription.clearFocus()
+                }
+                return false
+            }
+
+
+        })
         val ivSelectedPhoto = rootView.findViewById<ImageView>(R.id.selectedImageUpload)
+
+        ivSelectedPhoto.setOnTouchListener(object : View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                hideKeyboard(requireActivity())
+                etDescription.clearFocus()
+                return false
+            }
+
+
+        })
 
         Glide.with(requireContext()).load(selectedPhoto?.imgPath).centerCrop()
             .into(ivSelectedPhoto)
@@ -131,6 +151,8 @@ class PhotoUploadFragment: Fragment() {
         uploadToServer(selectedPhotoPath!!, email!!, desc!!, formattedDate)
 
             Log.d("시간 ", formattedDate)
+
+            startActivity(Intent(requireContext(), HomeActivity::class.java))
 
         }
 
@@ -176,7 +198,7 @@ class PhotoUploadFragment: Fragment() {
     }
 
 
-    fun uploadToServer(imgPath: String,  email: String, desc: String, date: String) {
+    private fun uploadToServer(imgPath: String, email: String, desc: String, date: String) {
 
 
         val file = File(imgPath)
