@@ -50,14 +50,14 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
-        val userData = ViewModelProvider(this)[UserLiveData::class.java]
+
 
 
 
 
 
         //
-        fun performLogin(viewModel: UserLiveData){
+        fun performLogin(){
 
             val password = et_password.text.toString()
             val email = et_email.text.toString()
@@ -74,19 +74,16 @@ class LoginActivity2 : AppCompatActivity() {
 
                     if (response.body()?.success == true){
 
-
-                        val user = UserDataClass(response.body()?.email,
-                            response.body()?.password, response.body()?.name, response.body()?.birthday
-                        ,response.body()?.success)
-
-
-                        viewModel.saveUserData(user)
-
-
-
+                        val sharedPreference = SharedPreference()
+                        sharedPreference.setString(this@LoginActivity2, "email", response.body()?.email!!)
+                        sharedPreference.setString(this@LoginActivity2, "password", response.body()?.password!!)
+                        sharedPreference.setString(this@LoginActivity2, "name", response.body()?.name!!)
+                        sharedPreference.setString(this@LoginActivity2, "birthday", response.body()?.birthday!!)
+                        sharedPreference.setBoolean(this@LoginActivity2, "success", response.body()?.success!!)
 
                         val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
                         startActivity(intent)
+
                     } else{
 
                         Toast.makeText(this@LoginActivity2, "이메일 또는 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
@@ -180,7 +177,7 @@ class LoginActivity2 : AppCompatActivity() {
 
 
 
-                performLogin(userData)
+                performLogin()
 
 
             }

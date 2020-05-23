@@ -4,6 +4,8 @@ import android.app.Activity
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -35,7 +37,7 @@ class PhotoUploadFragment: Fragment() {
     val apiClient = ApiClient()
     private lateinit var apiInterface: ApiInterface
 
-    var df: SimpleDateFormat = SimpleDateFormat("dd-MMM-yyyy")
+
 
 
 
@@ -57,12 +59,13 @@ class PhotoUploadFragment: Fragment() {
         as ViewGroup
 
         val currentTime = Calendar.getInstance().time
+        var df: SimpleDateFormat = SimpleDateFormat("yyyy-MMM-dd")
         var formattedDate: String = df.format(currentTime)
 
 
-       val userData = ViewModelProvider(requireActivity())[UserLiveData::class.java]
 
-        val email = userData.userData.value?.email
+        val sharedPreference = SharedPreference()
+        val email = sharedPreference.getString(requireActivity(), "email")
 
 
 
@@ -72,7 +75,26 @@ class PhotoUploadFragment: Fragment() {
         val passSelectedPhoto = ViewModelProvider(requireActivity())[PassSelectedPhoto::class.java]
         val selectedPhoto: PhotoVO? = passSelectedPhoto.selectedPhotoData.value
         val etDescription = rootView.findViewById<EditText>(R.id.descriptionUpload)
-        val desc = etDescription.text.toString()
+        var desc: String? = null
+
+
+        etDescription.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                desc = etDescription.text.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+
+        })
+
+
 
 
         val ivSelectedPhoto = rootView.findViewById<ImageView>(R.id.selectedImageUpload)
@@ -104,9 +126,11 @@ class PhotoUploadFragment: Fragment() {
 
         tvPost.setOnClickListener {
 
-        uploadToServer(selectedPhotoPath!!, email!!, desc, formattedDate)
 
-            Log.d("경로 ", selectedPhotoPath)
+
+        uploadToServer(selectedPhotoPath!!, email!!, desc!!, formattedDate)
+
+            Log.d("시간 ", formattedDate)
 
         }
 
@@ -161,10 +185,14 @@ class PhotoUploadFragment: Fragment() {
         val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
         val fileToUpload = MultipartBody.Part.createFormData("file", file.name, requestBody)
         val filename = file.name.toRequestBody("text/plain".toMediaTypeOrNull())
+        val mEmail = email.toRequestBody("text/plain".toMediaTypeOrNull())
+        val mDate = date.toRequestBody("text/plain".toMediaTypeOrNull())
+        val mdesc = desc.toRequestBody("text/plain".toMediaTypeOrNull())
 
 
 
-        val callUpload: Call<ServerResonse> = this.apiInterface.uploadImage(fileToUpload, filename)
+        val callUpload: Call<ServerResonse> = this.apiInterface.uploadImage(fileToUpload, filename,mEmail,
+            mDate, mdesc)
         callUpload.enqueue(object : Callback<ServerResonse>{
             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
 
@@ -187,25 +215,25 @@ class PhotoUploadFragment: Fragment() {
 
         })
 
-
-
-        val callPostData: Call<ServerResonse> = this.apiInterface.uploadPostData(email,
-        date, desc)
-
-        callPostData.enqueue(object : Callback<ServerResonse>{
-            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-                Log.d("에러 ", t.message)
-            }
-
-            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
-
-                Log.d("코드", response.message())
-
-
-            }
-
-
-        })
+//
+//
+//        val callPostData: Call<ServerResonse> = this.apiInterface.uploadPostData(email,
+//        date, desc)
+//
+//        callPostData.enqueue(object : Callback<ServerResonse>{
+//            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+//                Log.d("에러 ", t.message)
+//            }
+//
+//            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
+//
+//                Log.d("유저데이터", response.message())
+//
+//
+//            }
+//
+//
+//        })
 
 
 

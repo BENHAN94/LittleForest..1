@@ -32,6 +32,8 @@ class FragmentUser: Fragment() {
 
 //            prefConfig.writeLoginStatus(false)
 //            prefConfig.writeName("User")
+            val sharedPreference = SharedPreference()
+            sharedPreference.clear(requireActivity())
             val intent = Intent(requireContext(), MainActivity::class.java)
             startActivity(intent)
 

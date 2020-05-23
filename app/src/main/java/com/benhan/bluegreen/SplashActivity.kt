@@ -19,9 +19,18 @@ class SplashActivity : AppCompatActivity() {
         val hd = Handler()
         hd.postDelayed(object: Runnable{
             override fun run(){
+                val sharedPreference = SharedPreference()
+                val success = sharedPreference.getBoolean(this@SplashActivity, "success")
+                if(success!!){
 
-                startActivity(Intent(application, MainActivity::class.java))
-                finish()
+                    startActivity(Intent(application, HomeActivity::class.java))
+                    finish()
+
+                }else {
+
+                    startActivity(Intent(application, MainActivity::class.java))
+                    finish()
+                }
             }
         }, 3000)
 

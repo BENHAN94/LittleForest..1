@@ -32,8 +32,10 @@ interface ApiInterface {
     @Multipart
     @POST("post.php")
     fun uploadImage(@Part file: MultipartBody.Part,
-                    @Part("file")name: RequestBody
-                    ): Call<ServerResonse>
+                    @Part("file")name: RequestBody,
+                    @Part("email")email: RequestBody,
+                    @Part("added_date")currentTime: RequestBody,
+                    @Part("description")description: RequestBody): Call<ServerResonse>
 
     @FormUrlEncoded
     @POST("post.php")
