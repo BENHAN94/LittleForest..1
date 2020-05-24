@@ -33,6 +33,12 @@ class UserFragmentUpdateProfile: Fragment() {
 
         }
 
+        val changeProfilePhoto = rootView.findViewById<TextView>(R.id.changeProfilePhoto)
+
+        changeProfilePhoto.setOnClickListener {
+
+        }
+
 
         return rootView
 
