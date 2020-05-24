@@ -21,9 +21,6 @@ class FragmentTree: Fragment() {
        val list=  getImageUri.getImageUri()
 
 
-        val imageView = rootView.findViewById<ImageView>(R.id.treeImage)
-
-        Glide.with(requireContext()).load(list[0].imgPath).into(imageView)
 
 
         return rootView

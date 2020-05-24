@@ -121,7 +121,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
         android:background="@drawable/top_line"
         android:id="@+id/descRiptionContainer"
         android:layout_below="@+id/selectedImageUpload">
@@ -132,14 +132,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/button_shape"
-            android:fontFamily="@font/nixgonfonts_b"
+            android:fontFamily="@font/nixgonfonts_n"
             android:hint="어떤 사진인가요?"
             android:id="@+id/descriptionUpload"
             android:textColor="@color/background"
             android:textSize="20sp"
             android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="20dp"
-            android:inputType="text"
+            android:inputType="text|textNoSuggestions"
             android:textColorHint="@color/navi"
             android:textCursorDrawable="@drawable/cursor_color"
             />

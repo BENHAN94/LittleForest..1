@@ -101,6 +101,7 @@ class PhotoUploadFragment: Fragment() {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if(actionId== EditorInfo.IME_ACTION_DONE){
                     etDescription.clearFocus()
+                    hideKeyboard(requireActivity())
                 }
                 return false
             }

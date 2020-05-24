@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="20dp"
+    >
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/page"
+        android:orientation="horizontal"
+        android:weightSum="20"
+        android:layout_marginLeft="-20dp"
+        >
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:id="@+id/pageProfilePhoto"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="15"
+            android:id="@+id/pageName"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:paddingVertical="5dp"
+            android:paddingHorizontal="10dp"
+            android:text="pagename"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/pageOption"
+            android:src="@drawable/menu"
+            />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:id="@+id/postImage"
+        android:layout_below="@id/page"
+        android:layout_marginLeft="-20dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nixgonfonts_n"
+        android:layout_below="@+id/postImage"
+        android:id="@+id/userInfo"
+        android:text="username"
+        android:orientation="horizontal"
+        android:weightSum="20"
+        >
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="2"
+            android:id="@+id/userProfilePhoto"
+
+            />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="15">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="center_vertical"
+
+            android:id="@+id/userName"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:text="username"
+            />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/userName"
+                android:id="@+id/postDescription"
+                android:fontFamily="@font/nixgonfonts_n"
+                android:text="description"
+                />
+        </RelativeLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:id="@+id/userOption"
+            android:src="@drawable/menu"
+            />
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@id/userInfo"
+        android:id="@+id/postInteraction"
+        android:weightSum="20"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        >
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="23dp"
+            android:layout_weight="2.5"
+            android:id="@+id/likeBtn"
+            android:src="@drawable/tree"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="2.5"
+            android:id="@+id/commentBtn"
+            android:src="@drawable/comment_solid"
+
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="2.5"
+            android:src="@drawable/map_marker"
+
+            />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="12"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:id="@+id/toCollectionBtn"
+            />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nixgonfonts_b"
+        android:id="@+id/countLikes"
+        android:layout_below="@id/postInteraction"
+        android:text="좋아요 10개"
+        />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="댓글 20개 모두 보기"
+        android:layout_below="@+id/countLikes"
+        android:id="@+id/showAllComents"
+        android:fontFamily="@font/nixgonfonts_n"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/showAllComents"
+        android:id="@+id/comments"
+
+
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mainComentContainer"
+
+            >
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:text="coments"
+                android:fontFamily="@font/nixgonfonts_n"
+                android:id="@+id/mainComment"
+                />
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="20dp"
+                android:layout_toRightOf="@+id/mainComment"
+                android:src="@drawable/tree"
+                android:id="@+id/mainCommentLike"
+                />
+
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentReplyContainer"
+            android:layout_below="@id/mainComentContainer"
+
+
+            >
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:text="reply"
+                android:fontFamily="@font/nixgonfonts_n"
+                android:id="@+id/commentReply"
+                android:paddingLeft="15dp"
+                />
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="20dp"
+                android:layout_toRightOf="@+id/commentReply"
+                android:src="@drawable/tree"
+                android:id="@+id/replyLikes"
+                />
+
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/writeCommentContainer"
+        android:layout_below="@+id/comments"
+        android:orientation="horizontal"
+        android:weightSum="20"
+        >
+
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/myProfilePhoto"
+            android:layout_weight="2"
+            />
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="17"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:id="@+id/writeComment"
+            android:background="@null"
+            android:hint="댓글 달기..."
+
+            />
+
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/postedDate"
+        android:layout_below="@id/writeCommentContainer"
+        android:text="3일 전"
+        />
+
+
+
+</RelativeLayout>

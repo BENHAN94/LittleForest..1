@@ -1,51 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:weightSum="20"
+    android:id="@+id/userFragmentLayout">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:id="@+id/profile"
+        android:layout_height="10dp"
+        android:layout_weight="1.0"
+        android:id="@+id/profileUpperBar"
+        android:layout_gravity="center_vertical"
+        >
 
-        />
-    <FrameLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:text="username"
+            android:textColor="@color/background"
+            android:textSize="25sp"
+            />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/menu"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            />
+
+
+
+
+
+
+
+
+    </RelativeLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/profile"
-        android:id="@+id/userVideos"
-        android:layout_above="@+id/naviSpace"
-        />
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:id="@+id/profileOverView"
+        android:orientation="horizontal"
+        android:weightSum="20"
+        android:gravity="center_vertical"
+        >
+
+        <ImageView
+
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="7"
+            android:src="@drawable/user_circle"
+
+
+            />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+
+
+            >
+
+            <TextView
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:text="0"
+                android:textColor="@color/background"
+                android:id="@+id/postNumber"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:text="게시물"
+                android:textColor="@color/background"
+                android:id="@+id/postNumberIndex"
+                android:layout_below="@id/postNumber"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+
+
+            >
+
+            <TextView
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:text="0"
+                android:textColor="@color/background"
+                android:id="@+id/pageNumber"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:text="페이지"
+                android:textColor="@color/background"
+                android:id="@+id/pageNumberIndex"
+                android:layout_below="@id/pageNumber"
+                />
+
+        </RelativeLayout>
 
 
 
-    <ImageView
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+
+
+            >
+
+            <TextView
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:text="0"
+                android:textColor="@color/background"
+                android:id="@+id/follwingNumber"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:text="팔로잉"
+                android:textColor="@color/background"
+                android:id="@+id/follwingNumberIndex"
+                android:layout_below="@id/follwingNumber"
+                />
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_marginLeft="20dp"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/naviSpace"
-
-        />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text=""
-        android:gravity="center"
-        android:id="@+id/nameInfo"
-        />
-
-    <Button
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="500dp"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/logOut"
-        android:text="로그아웃"
-        />
+        android:id="@+id/userProfileIntroduce"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:textColor="@color/background"
+            android:text="actualname"
+            android:id="@+id/actualName"
+            android:textSize="15sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:textColor="@color/background"
+            android:id="@+id/userIntroduction"
+            android:layout_below="@+id/actualName"
+            android:text="introduction"
+            android:textSize="13sp"
+            />
+
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/profileUpdateButtonContainer"
+        android:orientation="horizontal"
+        android:weightSum="20"
+        >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="18"
+            android:background="@drawable/button_shape_green"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:id="@+id/btnProfileUpdate"
+            android:text="프로필 수정"
+
+            />
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
 
 
 
 
 
-</RelativeLayout>
+
+
+
+
+</LinearLayout>

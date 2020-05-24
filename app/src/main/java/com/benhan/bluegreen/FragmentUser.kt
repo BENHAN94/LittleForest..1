@@ -25,17 +25,19 @@ class FragmentUser: Fragment() {
     ): View? {
         val rootView =  inflater.inflate(R.layout.home_fragment_user, container, false)
 
-        val tv = rootView.findViewById<TextView>(R.id.nameInfo)
-//        tv.text = prefConfig.readName()
-        val btn = rootView.findViewById<Button>(R.id.logOut)
-        btn.setOnClickListener {
+        val btnUpdate = rootView.findViewById<Button>(R.id.btnProfileUpdate)
 
-//            prefConfig.writeLoginStatus(false)
-//            prefConfig.writeName("User")
-            val sharedPreference = SharedPreference()
-            sharedPreference.clear(requireActivity())
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            startActivity(intent)
+        btnUpdate.setOnClickListener {
+
+            val userFragmentUpdateProfile = UserFragmentUpdateProfile()
+
+            val fragmentManager = this.childFragmentManager
+
+            val transaction = fragmentManager.beginTransaction()
+
+            transaction.replace(R.id.userFragmentLayout, userFragmentUpdateProfile).commitAllowingStateLoss()
+
+
 
         }
 
