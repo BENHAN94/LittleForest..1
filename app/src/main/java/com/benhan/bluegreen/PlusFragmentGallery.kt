@@ -27,21 +27,6 @@ class PlusFragmentGallery: Fragment() {
 
 
 
-    fun pxToDp(px: Int): Int {
-        val displayMetrics = requireContext().resources.displayMetrics
-        val dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
-        return dp
-    }
-
-
-    fun close(){
-
-        requireActivity().supportFragmentManager.popBackStack()
-
-    }
-
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,6 +48,9 @@ class PlusFragmentGallery: Fragment() {
 
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.galleryRecyclerView)
         val selectedView = rootView.findViewById<ImageView>(R.id.selectedImage)
+
+
+        recyclerView.setHasFixedSize(true)
 
 
         val getImageUri = GetImageUri(requireContext())

@@ -46,7 +46,7 @@ class HomeActivity : AppCompatActivity() {
         val permissionListener = object : PermissionListener{
 
             override fun onPermissionGranted() {
-                Toast.makeText(this@HomeActivity, "권한 허가", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this@HomeActivity, PlusActivity::class.java))
 
             }
 

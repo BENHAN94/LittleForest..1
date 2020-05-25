@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.home_fragment_user.*
 
 class FragmentUser: Fragment() {
 
@@ -29,13 +32,8 @@ class FragmentUser: Fragment() {
 
         btnUpdate.setOnClickListener {
 
-            val userFragmentUpdateProfile = UserFragmentUpdateProfile()
 
-            val fragmentManager = this.childFragmentManager
-
-            val transaction = fragmentManager.beginTransaction()
-
-            transaction.replace(R.id.userFragmentLayout, userFragmentUpdateProfile).commitAllowingStateLoss()
+            startActivity(Intent(requireActivity(), ProfileUpdateActivity::class.java))
 
 
 

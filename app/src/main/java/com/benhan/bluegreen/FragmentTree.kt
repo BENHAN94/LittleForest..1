@@ -17,10 +17,6 @@ class FragmentTree: Fragment() {
     ): View? {
         val rootView =  inflater.inflate(R.layout.home_fragment_tree, container, false)
 
-        val getImageUri = GetImageUri(requireContext())
-       val list=  getImageUri.getImageUri()
-
-
 
 
         return rootView
