@@ -37,6 +37,34 @@ interface ApiInterface {
                     @Part("date")currentTime: RequestBody,
                     @Part("description")description: RequestBody): Call<ServerResonse>
 
+    @Multipart
+    @POST("profile_photo.php")
+    fun uploadProfilePhoto(@Part file: MultipartBody.Part,
+                           @Part("email")email : RequestBody): Call<ServerResonse>
+
+//    @FormUrlEncoded
+//    @POST("get_user_profile.php")
+//    fun getUserProfile(@Field("actual_name")actualname: String,
+//                       @Field("name")name: String,
+//                       @Field("job")job: String,
+//                       @Field("introduction")introduction: String,
+//                       @Field("profile_photo")profilephoto: String):Call<User>
+
+
+    @FormUrlEncoded
+    @POST("get_user_profile.php")
+    fun getUserProfile(@Field("email")email: String):Call<User>
+
+    @FormUrlEncoded
+    @POST("update_profile.php")
+    fun updateProfile(@Field("actual_name")actname: String,
+                      @Field("name")name: String,
+                      @Field("job")job: String,
+                      @Field("introduction")introduction: String,
+                      @Field("email")email: String):Call<User>
+
+
+
 
 
 

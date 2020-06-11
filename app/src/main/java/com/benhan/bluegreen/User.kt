@@ -20,4 +20,17 @@ class User {
     @SerializedName("birthday")
     var birthday: String? = null
 
+    @SerializedName("actual_name")
+    var actualname: String? = null
+
+    @SerializedName("job")
+    var job:String? = null
+
+    @SerializedName("introduction")
+    var introduction: String? = null
+
+    @SerializedName("profile_photo")
+    var profilephoto: String? = null
+
+
 }

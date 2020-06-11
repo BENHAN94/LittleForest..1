@@ -79,10 +79,9 @@ dependencies {
 
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
 
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
-
 
 
     implementation 'com.isseiaoki:simplecropview:1.1.8'
@@ -94,9 +93,12 @@ dependencies {
 
 }
 
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
 repositories {
     jcenter()
 }
-
-configurations.maybeCreate("default")
-artifacts.add("default", file('naveridlogin_android_sdk_4.2.6.aar'))

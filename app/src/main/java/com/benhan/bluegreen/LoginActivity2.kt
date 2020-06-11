@@ -80,6 +80,11 @@ class LoginActivity2 : AppCompatActivity() {
                         sharedPreference.setString(this@LoginActivity2, "name", response.body()?.name!!)
                         sharedPreference.setString(this@LoginActivity2, "birthday", response.body()?.birthday!!)
                         sharedPreference.setBoolean(this@LoginActivity2, "success", response.body()?.success!!)
+                        sharedPreference.setString(this@LoginActivity2, "actualName", response.body()?.actualname!!)
+                        sharedPreference.setString(this@LoginActivity2, "job", response.body()?.job!!)
+                        sharedPreference.setString(this@LoginActivity2, "introduction", response.body()?.introduction!!)
+                        sharedPreference.setString(this@LoginActivity2, "profilePhoto", response.body()?.profilephoto!!)
+
 
                         val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
                         startActivity(intent)

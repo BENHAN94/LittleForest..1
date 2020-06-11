@@ -120,11 +120,12 @@
             >
 
 
-            <com.theartofdev.edmodo.cropper.CropImageView
+            <ImageView
                 xmlns:custom="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/selectedImage"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:theme="@style/Theme.AppCompat"
                 sothree:layout_constraintTop_toTopOf="@id/sliderView"
                 sothree:layout_constraintBottom_toTopOf="@id/line"
                 />

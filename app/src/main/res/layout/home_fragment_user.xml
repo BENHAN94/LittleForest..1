@@ -27,6 +27,7 @@
             android:text="username"
             android:textColor="@color/background"
             android:textSize="25sp"
+            android:id="@+id/profile_username"
             />
 
         <ImageView
@@ -36,6 +37,7 @@
             android:src="@drawable/menu"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
+            android:id="@+id/profile_menu"
             />
 
 
@@ -59,12 +61,13 @@
         android:layout_below="@+id/profileUpperBar"
         >
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
 
             android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="7"
             android:src="@drawable/user_circle"
+            android:id="@+id/userFragmentProfilePhoto"
 
 
             />
