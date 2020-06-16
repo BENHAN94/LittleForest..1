@@ -64,8 +64,43 @@ interface ApiInterface {
                       @Field("email")email: String):Call<User>
 
 
+    @FormUrlEncoded
+    @POST("comment_like.php")
+    fun commentLikeAdd(@Field("comment_no")commentNo: Int,
+                        @Field("email")email: String):Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("comment_unlike.php")
+    fun commentUnlikeAdd(@Field("comment_no")commentNo: Int,
+                         @Field("email")email: String):Call<ServerResonse>
 
 
+    @FormUrlEncoded
+    @POST("comment_like.php")
+    fun replyLikeAdd(@Field("comment_no")commentNo: Int,
+                       @Field("email")email: String):Call<ServerResonse>
 
+    @FormUrlEncoded
+    @POST("comment_unlike.php")
+    fun replyUnlikeAdd(@Field("comment_no")commentNo: Int,
+                         @Field("email")email: String):Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("upload_comment.php")
+    fun uploadComment(@Field("email")email: String,
+                      @Field("name")name: String,
+                      @Field("written_date")date: String,
+                      @Field("contents")contents: String,
+                      @Field("post_id")postId: Int): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("search_place.php")
+    fun searchPlace(@Field("keyword")keyword: String,
+                    @Field("index")index: Int): Call<ArrayList<PlaceSearchData>>
+
+    @FormUrlEncoded
+    @POST("search_place_default.php")
+    fun loadPlace(@Field("keyword")keyword: String,
+                  @Field("index")index: Int): Call<ArrayList<PlaceSearchData>>
 
 }

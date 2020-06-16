@@ -9,7 +9,7 @@
 
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/page"
@@ -18,31 +18,43 @@
         android:layout_marginLeft="-20dp"
         >
 
-        <ImageView
-            android:layout_width="0dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+           android:layout_alignParentLeft="true"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
             android:id="@+id/pageProfilePhoto"
             />
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="15"
+            android:layout_toRightOf="@id/pageProfilePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
             android:id="@+id/pageName"
             android:fontFamily="@font/nixgonfonts_b"
-            android:paddingVertical="5dp"
-            android:paddingHorizontal="10dp"
+            android:gravity="center_vertical"
             android:text="pagename"
             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:gravity="center_vertical"
+            android:id="@+id/pageType"
+            android:layout_below="@id/pageName"
+            android:layout_toRightOf="@id/pageProfilePhoto"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:text="type"
+            />
+
         <ImageView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="20dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/pageOption"
             android:src="@drawable/menu"
+            android:layout_alignParentRight="true"
             />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="match_parent"
@@ -62,7 +74,7 @@
         android:weightSum="20"
         >
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="2"
@@ -159,7 +171,7 @@
     <TextView
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/nixgonfonts_b"
         android:id="@+id/countLikes"
@@ -169,7 +181,7 @@
 
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="댓글 20개 모두 보기"
         android:layout_below="@+id/countLikes"
@@ -193,18 +205,28 @@
 
             >
             <TextView
-                android:layout_width="350dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="coments"
+                android:text="name"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:id="@+id/mainCommentUserName"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/nixgonfonts_n"
-                android:id="@+id/mainComment"
+                android:id="@+id/mainCommentContents"
+                android:text="contents"
+                android:paddingLeft="10dp"
+                android:layout_toRightOf="@+id/mainCommentUserName"
                 />
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="20dp"
-                android:layout_toRightOf="@+id/mainComment"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/tree"
                 android:id="@+id/mainCommentLike"
+                android:layout_alignParentRight="true"
                 />
 
 
@@ -221,18 +243,30 @@
 
             >
             <TextView
-                android:layout_width="350dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="reply"
-                android:fontFamily="@font/nixgonfonts_n"
-                android:id="@+id/commentReply"
+                android:text="name"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:id="@+id/replyUserName"
                 android:paddingLeft="15dp"
                 />
+
+            <TextView
+                android:paddingLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="contents"
+                android:fontFamily="@font/nixgonfonts_n"
+                android:id="@+id/replyContents"
+                android:layout_toRightOf="@+id/replyUserName"
+                />
+
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="20dp"
-                android:layout_toRightOf="@+id/commentReply"
+                android:layout_alignParentRight="true"
                 android:src="@drawable/tree"
+                android:layout_marginRight="20dp"
                 android:id="@+id/replyLikes"
                 />
 
@@ -263,13 +297,25 @@
         <EditText
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="17"
+            android:layout_weight="15"
             android:fontFamily="@font/nixgonfonts_n"
             android:id="@+id/writeComment"
             android:background="@null"
             android:hint="댓글 달기..."
 
             />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:text="게시하기"
+            android:gravity="center"
+            android:id="@+id/uploadComment"
+            android:textColor="@color/background"
+            android:layout_marginRight="20dp"
+            />
+
 
 
 

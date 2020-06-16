@@ -187,7 +187,7 @@ class HomeActivity : AppCompatActivity() {
         
         Log.d(TAG, "HomeActivity - onClicked() called")
 
-        val intent = Intent(this, PlusActivity::class.java)
+        val intent = Intent(this, PlusGalleryActivity::class.java)
 
         startActivity(intent)
 

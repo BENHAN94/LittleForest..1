@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Comment"
+    android:orientation="vertical"
+    android:weightSum="20">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:id="@+id/upperBar"
+        >
+        <ImageView
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/back_button"
+            android:id="@+id/ivBack"
+            android:layout_alignParentLeft="true"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/ivBack"
+            android:id="@+id/upperBarComment"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:textColor="@color/background"
+            android:text="댓글"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_toLeftOf="@id/blank"
+            />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/blank"
+            android:layout_alignParentRight="true"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/description"
+        android:layout_below="@id/upperBar"
+        >
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/profilePhoto"
+            />
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/profilePhoto"
+            android:layout_alignParentTop="true"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:text="name"
+            android:textSize="20sp"
+            android:id="@+id/posterName"
+            />
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/posterName"
+            android:layout_alignParentTop="true"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:text="contents"
+            android:id="@+id/descriptionContents"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/postedDate"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:text="2020.06.11 13:23"
+            android:layout_toRightOf="@id/profilePhoto"
+            android:layout_below="@+id/posterName"
+            />
+
+
+    </RelativeLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/description"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/commentsRecycler"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/writeCommentContainer"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        >
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentStart="true"
+            android:id="@+id/userProfilePhoto"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/userProfilePhoto"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:hint="댓글 입력"
+            android:textSize="15sp"
+            android:id="@+id/etComment"
+            android:layout_toLeftOf="@id/uploadComment"
+            />
+
+        <TextView
+            android:id="@+id/uploadComment"
+            android:gravity="center"
+            android:layout_width="50dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:textColor="@color/background"
+            android:text="게시"
+            />
+
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

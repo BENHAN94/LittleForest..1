@@ -22,8 +22,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+        <activity android:name=".PlusGalleryActivity"/>
+        <activity android:name=".PhotoUploadActivity"/>
+        <activity android:name=".Comment"></activity>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".ProfilePhotoPicker" />
         <activity
             android:name=".ProfileUpdateActivity"

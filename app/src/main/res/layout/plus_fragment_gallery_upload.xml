@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/button_shape"
     android:id="@+id/uploadLayout"
-    android:isScrollContainer="true"
-   >
+    android:isScrollContainer="true">
 
 
     <LinearLayout
@@ -73,14 +73,47 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_below="@+id/upperBar"
-        android:layout_height="300dp"
+        android:layout_height="100dp"
 
         android:id="@+id/selectedImageUpload"
 
         />
 
+
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/top_line"
+        android:id="@+id/descRiptionContainer"
+        android:layout_below="@+id/upperBar"
+        android:layout_toRightOf="@id/selectedImageUpload">
+
+
+        <EditText
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_shape"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:hint="어떤 사진인가요?"
+            android:id="@+id/descriptionUpload"
+            android:textColor="@color/background"
+            android:textSize="18sp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="10dp"
+            android:inputType="text|textNoSuggestions"
+            android:textColorHint="@color/navi"
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:imeOptions="actionDone"
+
+            />
+
+    </RelativeLayout>
 
 
     <LinearLayout
@@ -104,47 +137,63 @@
             android:textSize="20sp"
             android:id="@+id/where"
             android:layout_marginVertical="10dp"
-            android:layout_marginHorizontal="20dp"
+
             android:textColor="@color/background"
             android:text="이곳이 어디인지 알려주세요"
 
             />
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="20dp"
-            android:layout_weight="1"
-            android:src="@drawable/next_button"
-
-            />
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@drawable/top_line"
-        android:id="@+id/descRiptionContainer"
-        android:layout_below="@+id/selectedImageUpload">
+        android:layout_height="50dp"
+        android:id="@+id/searchPlace"
+        android:gravity="center_vertical"
+        android:layout_below="@id/askLocation"
+        >
 
-
-        <EditText
-            android:gravity="start"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/button_shape"
-            android:fontFamily="@font/nixgonfonts_n"
-            android:hint="어떤 사진인가요?"
-            android:id="@+id/descriptionUpload"
-            android:textColor="@color/background"
-            android:textSize="20sp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginHorizontal="20dp"
-            android:inputType="text|textNoSuggestions"
-            android:textColorHint="@color/navi"
-            android:textCursorDrawable="@drawable/cursor_color"
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/search"
+            android:id="@+id/searchIcon"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
             />
 
+        <EditText
+            android:layout_marginLeft="10dp"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:id="@+id/searchBar"
+            android:layout_toRightOf="@id/searchIcon"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:hint="이름 또는 시,도 "
+            android:textColor="@color/background"
+            android:textColorHint="@color/navi"
+            android:inputType="textNoSuggestions"
+            android:imeOptions="actionDone"
+
+            />
+
+
+
+
+
+
     </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/searchPlace"
+        android:id="@+id/searchRecycler"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+
+        />
+
 
 
 

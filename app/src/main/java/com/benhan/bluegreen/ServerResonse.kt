@@ -16,4 +16,9 @@ class ServerResonse {
     @SerializedName("insertMessage")
     var insertMessage: String? = null
 
+    @SerializedName("isUpdated")
+    var isUpdated: Boolean? = null
+
+
+
 }
