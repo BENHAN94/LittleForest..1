@@ -87,7 +87,7 @@ class ProfilePhotoPicker: AppCompatActivity() {
         val mOnItemClickListener = object : OnItemClickListener{
 
 
-            override fun OnItemClick(viewHolder: GalleryAdapter.Holder, position: Int) {
+            override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
                 val photoVO:PhotoVO = galleryAdapter.list[position]
                 val photoVOSelectedBefore: PhotoVO? = galleryAdapter.list.find {
                     it.selected
@@ -231,7 +231,7 @@ class ProfilePhotoPicker: AppCompatActivity() {
 
 
 
-                sharePreference.setString(this, "profileImage", resultUri!!)
+                sharePreference.setString(this, "profilePhoto", resultUri!!)
 
 
                 val email = sharePreference.getString(this, "email")?.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -250,8 +250,7 @@ class ProfilePhotoPicker: AppCompatActivity() {
                         response: Response<ServerResonse>
                     ) {
                         Log.d("코드", response.message())
-                        startActivity(Intent(this@ProfilePhotoPicker, ProfileUpdateActivity::class.java))
-                        finish()
+
                     }
 
 
@@ -267,7 +266,8 @@ class ProfilePhotoPicker: AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
 
-
+        startActivity(Intent(this@ProfilePhotoPicker, ProfileUpdateActivity::class.java))
+        finish()
 
 
     }

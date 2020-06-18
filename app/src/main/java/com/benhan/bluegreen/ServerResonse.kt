@@ -19,6 +19,9 @@ class ServerResonse {
     @SerializedName("isUpdated")
     var isUpdated: Boolean? = null
 
+    @SerializedName("is_following")
+    var isFollowing: Boolean? = null
+
 
 
 }

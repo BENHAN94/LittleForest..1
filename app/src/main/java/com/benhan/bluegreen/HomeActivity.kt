@@ -16,6 +16,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 
 
 class HomeActivity : AppCompatActivity() {
@@ -29,12 +33,35 @@ class HomeActivity : AppCompatActivity() {
 
 
 
+    val apiClient = ApiClient()
+    val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
 
+        var isProfileUpdated = intent.getBooleanExtra("profile_updated", false)
+
+
+
+
+
+
+        val call: Call<ServerResonse> = apiInterface.updatePlaceBestPost()
+        call.enqueue(object: Callback<ServerResonse>{
+            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+
+                Log.d("업데이트", t.message)
+            }
+
+            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
+
+                Log.d("업데이트", "성공")
+            }
+
+
+        })
 
 
 
@@ -71,6 +98,8 @@ class HomeActivity : AppCompatActivity() {
         val bell = findViewById<ImageView>(R.id.bell)
         val user = findViewById<ImageView>(R.id.user)
         val plus = findViewById<ImageView>(R.id.plus)
+
+
 
 
         plus.setOnClickListener {
@@ -175,6 +204,10 @@ class HomeActivity : AppCompatActivity() {
         clickHandler(user)
 
 
+        if (isProfileUpdated) {
+            user.performClick()
+            isProfileUpdated=false
+        }
 
 
     }

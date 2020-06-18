@@ -32,6 +32,7 @@ interface ApiInterface {
     @Multipart
     @POST("post.php")
     fun uploadImage(@Part file: MultipartBody.Part,
+                    @Part("placeId")id: Int,
                     @Part("file")name: RequestBody,
                     @Part("email")email: RequestBody,
                     @Part("date")currentTime: RequestBody,
@@ -102,5 +103,41 @@ interface ApiInterface {
     @POST("search_place_default.php")
     fun loadPlace(@Field("keyword")keyword: String,
                   @Field("index")index: Int): Call<ArrayList<PlaceSearchData>>
+
+    @FormUrlEncoded
+    @POST("get_post_data.php")
+    fun getPostData(@Field("email")email: String,
+                    @Field("index")index: Int): Call<ArrayList<PostData>>
+
+
+    @POST("update_place_best_post.php")
+    fun updatePlaceBestPost(): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("get_random_post_image.php")
+    fun getRandomPostImage(@Field("index")index: Int): Call<ArrayList<PostImageData>>
+
+    @FormUrlEncoded
+    @POST("place_page.php")
+    fun getPageInfo(@Field("id")id: Int): Call<PlacePageData>
+
+    @FormUrlEncoded
+    @POST("place_page_posts.php")
+    fun getPagePosts(@Field("id")id: Int,
+                     @Field("index")index: Int): Call<ArrayList<PostImageData>>
+
+    @FormUrlEncoded
+    @POST("follow_place.php")
+    fun followPlace(@Field("id")id: Int,
+                    @Field("email")email: String,
+                    @Field("is_following")isFollowing: Boolean): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("follow_place.php")
+    fun checkFollowing(@Field("id")id: Int,
+                    @Field("email")email: String): Call<ServerResonse>
+
+
+
 
 }

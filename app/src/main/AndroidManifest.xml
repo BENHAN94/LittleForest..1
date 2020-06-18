@@ -22,9 +22,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".PlusGalleryActivity"/>
-        <activity android:name=".PhotoUploadActivity"/>
-        <activity android:name=".Comment"></activity>
+        <activity android:name=".PlacePage"></activity>
+        <activity android:name=".SearchFullPost" />
+        <activity android:name=".PlusGalleryActivity" />
+        <activity android:name=".PhotoUploadActivity" />
+        <activity android:name=".Comment" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
@@ -32,12 +34,13 @@
         <activity
             android:name=".ProfileUpdateActivity"
             android:fitsSystemWindows="true"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".PlusActivity"
             android:fitsSystemWindows="true"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".HomeActivity" />
+        <activity android:name=".HomeActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
         <activity android:name=".Register4" />
         <activity android:name=".Register3" />
         <activity android:name=".Register2" />

@@ -14,7 +14,11 @@ class PlaceSearchData(@SerializedName("kind")var kind: String){
     @SerializedName("type")
     var type:String? = null
     @SerializedName("photo")
-    var photo: Uri? = null
+    var photo: String? = null
+    @SerializedName("id")
+    var id: Int? = null
+
+    var isSelected : Boolean = false
 
 
 }

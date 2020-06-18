@@ -3,6 +3,7 @@ package com.benhan.bluegreen
 import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
+import android.icu.text.CompactDecimalFormat
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,6 +18,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -48,6 +50,8 @@ class PhotoUploadActivity: AppCompatActivity(){
     val places = ArrayList<PlaceSearchData>()
     val adapter = SearchRecyclerAdapter(this, places)
     var keyword: String = ""
+    var id: Int? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,17 +69,25 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-
-
         val recyclerView = findViewById<RecyclerView>(R.id.searchRecycler)
         val searchBar = findViewById<EditText>(R.id.searchBar)
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
+        recyclerView.setOnTouchListener(object : View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
 
+                hideKeyboard(this@PhotoUploadActivity)
+                return false
+            }
+
+
+        })
 
         val currentTime = Calendar.getInstance().time
-        var df: SimpleDateFormat = SimpleDateFormat("yyyy-MMM-dd")
+        var df: SimpleDateFormat = SimpleDateFormat("yyyy-MMM-dd HH:mm:ss")
         var formattedDate: String = df.format(currentTime)
+        val backgroundColor = ContextCompat.getColor(this, R.color.background)
+        val naviColor = ContextCompat.getColor(this, R.color.navi)
 
 
 
@@ -88,12 +100,40 @@ class PhotoUploadActivity: AppCompatActivity(){
         val etDescription = findViewById<EditText>(R.id.descriptionUpload)
 
 
+        tvPost.setTextColor(naviColor)
+        tvPost.isClickable = false
 
         val ivSelectedPhoto = findViewById<ImageView>(R.id.selectedImageUpload)
 
 
         var desc = ""
 
+
+        val mOnItemClickListener = object: OnItemClickListener{
+
+            override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
+                val place: PlaceSearchData = adapter.placeList[position]
+                val placeSelectedBefore: PlaceSearchData? = adapter.placeList.find{
+                    it.isSelected
+                }
+                tvPost.setTextColor(backgroundColor)
+                tvPost.isClickable = true
+                if (place.isSelected) {
+                    }
+                else {
+                    placeSelectedBefore?.isSelected = false
+                    place.isSelected = true
+                    id = place.id
+                }
+                adapter.placeList[position] = place
+                adapter.notifyDataChanged()
+
+
+            }
+
+        }
+
+        adapter.onItemClickListener = mOnItemClickListener
 
         etDescription.isFocusable = false
         searchBar.isFocusable = false
@@ -267,7 +307,10 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-        tvPost.setOnClickListener {
+       tvPost.setOnClickListener {
+
+
+
 
 
 
@@ -278,6 +321,7 @@ class PhotoUploadActivity: AppCompatActivity(){
             startActivity(Intent(this, HomeActivity::class.java))
 
         }
+
 
 
 
@@ -299,7 +343,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
             var index = 0
-                load("", index)
+                load(keyword, index)
 
             adapter.addLoadMoreListener(object: SearchRecyclerAdapter.OnLoadMoreListener{
                 override fun onLoadMore() {
@@ -309,7 +353,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
                             index = places.size - 1
 
-                            loadMore("", index)
+                            loadMore(keyword, index)
 
                         }
 
@@ -384,24 +428,21 @@ class PhotoUploadActivity: AppCompatActivity(){
             ) {
 
                 if(response.isSuccessful){
-
                     if(places.size > 0)
-                    places.removeAt(places.size - 1)
-
+                        places.removeAt(places.size - 1)
                     val result: ArrayList<PlaceSearchData>? = response.body()
 
-                    if(!result.isNullOrEmpty()) {
-                        if (result.size > 0) {
-                            places.addAll(result)
-                        } else {
+                    if(!result.isNullOrEmpty() && result.size > 0) {
 
-                            adapter.isMoreDataAvailable = false
+                        places.addAll(result)
+                    }else {
+                        adapter.isMoreDataAvailable = false
 
-
-                        }
-
-                        adapter.notifyDataChanged()
                     }
+
+                    adapter.notifyDataChanged()
+
+
 
                 }else {
 
@@ -448,7 +489,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-        val callUpload: Call<ServerResonse> = this.apiInterface.uploadImage(fileToUpload, filename,mEmail,
+        val callUpload: Call<ServerResonse> = this.apiInterface.uploadImage(fileToUpload, id!!, filename,mEmail,
             mDate, mdesc)
         callUpload.enqueue(object : Callback<ServerResonse>{
             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {

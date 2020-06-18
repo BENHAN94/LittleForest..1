@@ -67,7 +67,8 @@
             android:layout_height="80dp"
             android:layout_weight="7"
             android:src="@drawable/user_circle"
-            android:id="@+id/userFragmentProfilePhoto"
+            android:id="@+id/placePhoto"
+            android:background="@color/white"
 
 
             />
@@ -120,7 +121,7 @@
                 android:fontFamily="@font/nixgonfonts_b"
                 android:text="0"
                 android:textColor="@color/background"
-                android:id="@+id/pageNumber"
+                android:id="@+id/followerNumber"
                 android:textSize="20sp"
                 />
 
@@ -133,7 +134,7 @@
                 android:text="페이지"
                 android:textColor="@color/background"
                 android:id="@+id/pageNumberIndex"
-                android:layout_below="@id/pageNumber"
+                android:layout_below="@id/followerNumber"
                 />
 
         </RelativeLayout>
@@ -155,7 +156,7 @@
                 android:fontFamily="@font/nixgonfonts_b"
                 android:text="0"
                 android:textColor="@color/background"
-                android:id="@+id/follwingNumber"
+                android:id="@+id/likeNumber"
                 android:textSize="20sp"
                 />
 
@@ -168,7 +169,7 @@
                 android:text="팔로잉"
                 android:textColor="@color/background"
                 android:id="@+id/follwingNumberIndex"
-                android:layout_below="@id/follwingNumber"
+                android:layout_below="@id/likeNumber"
                 />
 
         </RelativeLayout>

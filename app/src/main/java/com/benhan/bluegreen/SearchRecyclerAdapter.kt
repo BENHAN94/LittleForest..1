@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -27,6 +28,7 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
         }
 
     }
+    var onItemClickListener: OnItemClickListener? = null
 
     class SearchHolder(view: View): RecyclerView.ViewHolder(view){
 
@@ -34,6 +36,8 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
         val tvPlaceName = view.findViewById<TextView>(R.id.name)
         val tvPlaceProvince = view.findViewById<TextView>(R.id.province)
         val tvPlaceType = view.findViewById<TextView>(R.id.type)
+        val layoutSelected = view.findViewById<RelativeLayout>(R.id.layoutSelect)
+        val layoutItem = view.findViewById<RelativeLayout>(R.id.searchItem)
 
     }
 
@@ -89,6 +93,7 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
             val item = placeList[position]
 
 
+
             Glide.with(context).load(item.photo).thumbnail(0.3f)
                 .into((holder as SearchHolder).ivPlacePhoto)
 
@@ -96,7 +101,36 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
             holder.tvPlaceProvince.setText(item.province)
             holder.tvPlaceType.setText(item.type)
 
+
+
+            if (item.isSelected){
+                holder.layoutSelected.visibility = View.VISIBLE
+            }else {
+                holder.layoutSelected.visibility = View.INVISIBLE
+            }
+
+            holder.layoutItem.setOnClickListener(object : View.OnClickListener{
+
+
+
+                override fun onClick(v: View?) {
+                    if(onItemClickListener != null){
+                        onItemClickListener?.OnItemClick(holder, position)
+                    }
+
+
+                }
+
+
+
+            })
+
+
         }
+
+
+
+
     }
 
     interface OnLoadMoreListener{

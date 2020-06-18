@@ -79,7 +79,7 @@ class PlusGalleryActivity: AppCompatActivity() {
         val mOnItemClickListener = object : OnItemClickListener{
 
 
-            override fun OnItemClick(viewHolder: GalleryAdapter.Holder, position: Int) {
+            override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
                 val photoVO:PhotoVO = galleryAdapter.list[position]
                 val photoVOSelectedBefore: PhotoVO? = galleryAdapter.list.find {
                     it.selected

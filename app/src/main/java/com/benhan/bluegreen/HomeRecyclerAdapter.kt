@@ -93,15 +93,15 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
 
         holder.tvUserName.setText(item.userName)
         holder.tvDescription.setText(item.postDescription)
-        if(item.postLikes > 0) {
+        if(item.postLikes!! > 0) {
             holder.tvCountLikes.setText("좋아요 ${item.postLikes}개")
         }
 
-        if(item.countComments == 0){
+        if(item.commentNumber == 0){
             holder.tvShowAllComents.visibility = View.GONE
         } else {
             holder.tvShowAllComents.visibility = View.VISIBLE
-            holder.tvShowAllComents.setText("댓글 ${item.countComments}개 모두 보기")
+            holder.tvShowAllComents.setText("댓글 ${item.commentNumber}개 모두 보기")
             holder.tvShowAllComents.setOnClickListener {
 
                 val intent = Intent(context, Comment::class.java)
@@ -112,7 +112,7 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
         }
 
 
-        if(item.mainComment.isEmpty()){
+        if(item.mainComment!!.isEmpty()){
             holder.containerMainComment.visibility = View.GONE
         } else {
             holder.containerMainComment.visibility = View.VISIBLE
@@ -120,7 +120,7 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
             holder.tvMainCommentContents.setText(item.mainComment)
         }
 
-        if(item.mainCommentReply.isEmpty()){
+        if(item.mainCommentReply!!.isEmpty()){
             holder.containerReply.visibility = View.GONE
         } else {
             holder.containerReply.visibility = View.VISIBLE
@@ -137,7 +137,7 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
 
             if(!commentLikeClicked) {
                 commentLikeClicked = true
-                val call: Call<ServerResonse> = this.apiInterface.commentLikeAdd(item.mainCommentId, sharedPreference.getString(context, "email")!!)
+                val call: Call<ServerResonse> = this.apiInterface.commentLikeAdd(item.mainCommentId!!, sharedPreference.getString(context, "email")!!)
                 call.enqueue(object : Callback<ServerResonse>{
                     override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
                         Log.d("좋아요 에러 ", t.message)
@@ -156,7 +156,7 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
                 })
             } else {
                 commentLikeClicked = false
-                val call: Call<ServerResonse> = this.apiInterface.commentUnlikeAdd(item.mainCommentId, sharedPreference.getString(context, "email")!!)
+                val call: Call<ServerResonse> = this.apiInterface.commentUnlikeAdd(item.mainCommentId!!, sharedPreference.getString(context, "email")!!)
                 call.enqueue(object : Callback<ServerResonse>{
                     override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
                         Log.d("좋아요 에러 ", t.message)
@@ -183,7 +183,7 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
 
             if(!replyLikeClicked) {
                 replyLikeClicked = true
-                val call: Call<ServerResonse> = this.apiInterface.replyLikeAdd(item.mainCommentId, sharedPreference.getString(context, "email")!!)
+                val call: Call<ServerResonse> = this.apiInterface.replyLikeAdd(item.mainCommentId!!, sharedPreference.getString(context, "email")!!)
                 call.enqueue(object : Callback<ServerResonse>{
                     override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
                         Log.d("좋아요 에러 ", t.message)
@@ -202,7 +202,7 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
                 })
             } else {
                 replyLikeClicked = false
-                val call: Call<ServerResonse> = this.apiInterface.replyUnlikeAdd(item.mainCommentId, sharedPreference.getString(context, "email")!!)
+                val call: Call<ServerResonse> = this.apiInterface.replyUnlikeAdd(item.mainCommentId!!, sharedPreference.getString(context, "email")!!)
                 call.enqueue(object : Callback<ServerResonse>{
                     override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
                         Log.d("좋아요 에러 ", t.message)
@@ -238,7 +238,7 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
                             sharedPreference.getString(context, "name")!!,
                                 currentTime,
                                 holder.etWriteComment.text.toString(),
-                                item.postId
+                                item.postId!!
                             )
 
                         call.enqueue(object: Callback<ServerResonse>{
