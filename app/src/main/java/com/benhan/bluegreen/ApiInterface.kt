@@ -123,8 +123,7 @@ interface ApiInterface {
 
     @FormUrlEncoded
     @POST("place_page_posts.php")
-    fun getPagePosts(@Field("id")id: Int,
-                     @Field("index")index: Int): Call<ArrayList<PostImageData>>
+    fun getPagePosts(@Field("id")id: Int): Call<ArrayList<PostImageData>>
 
     @FormUrlEncoded
     @POST("follow_place.php")
@@ -133,11 +132,43 @@ interface ApiInterface {
                     @Field("is_following")isFollowing: Boolean): Call<ServerResonse>
 
     @FormUrlEncoded
-    @POST("follow_place.php")
+    @POST("unfollow_place.php")
+    fun unfollowPlace(@Field("id")id: Int,
+                    @Field("email")email: String,
+                    @Field("is_following")isFollowing: Boolean): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("check_follow.php")
     fun checkFollowing(@Field("id")id: Int,
                     @Field("email")email: String): Call<ServerResonse>
 
+    @FormUrlEncoded
+    @POST("like_place.php")
+    fun likePlace(@Field("id")id: Int,
+                    @Field("email")email: String,
+                    @Field("is_liking")isLiking: Boolean): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("unlike_place.php")
+    fun unlikePlace(@Field("id")id: Int,
+                      @Field("email")email: String,
+                      @Field("is_liking")isLiking: Boolean): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("check_like.php")
+    fun checkLike(@Field("id")id: Int,
+                       @Field("email")email: String): Call<ServerResonse>
+
+    @DELETE("delete_post_with_null_place.php")
+    fun deletePostWithNullPlace(): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("user_post_image.php")
+    fun getUserPostImage(@Field("email")email: String): Call<ArrayList<PostImageData>>
 
 
+    @FormUrlEncoded
+    @POST("user_page.php")
+    fun getUserPageInfo(@Field("email")email: String): Call<UserPageData>
 
 }

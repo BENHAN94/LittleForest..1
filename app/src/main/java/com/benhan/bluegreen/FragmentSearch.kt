@@ -83,11 +83,23 @@ class FragmentSearch: Fragment(){
         searchBar.visibility = View.GONE
         searchBar.isFocusable = false
 
+        val mOnItemClickListener = object: OnItemClickListener{
+            override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
 
+
+                val intent = Intent(requireContext(), SearchFullPost::class.java)
+                startActivity(intent)
+
+            }
+
+
+
+        }
+        searchRecyclerView.adapter = postImageAdapter
 
         postImageDataList.removeAll(postImageDataList)
-        searchRecyclerView.removeAllViews()
         postImageAdapter.notifyDataChanged()
+
 
         fun getPostData(index: Int){
 
@@ -242,22 +254,11 @@ class FragmentSearch: Fragment(){
 
         }
 
-        searchRecyclerView.removeAllViews()
+
         searchRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         val dividerDecoration = GridDividerDecoration(resources, R.drawable.divider_recyler_gallery)
 
-        val mOnItemClickListener = object: OnItemClickListener{
-            override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
 
-
-                val intent = Intent(requireContext(), SearchFullPost::class.java)
-                startActivity(intent)
-
-            }
-
-
-
-        }
 
         swipeLayout.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
@@ -272,6 +273,7 @@ class FragmentSearch: Fragment(){
         })
 
         postImageAdapter.onItemClickListener = mOnItemClickListener
+        searchRecyclerView.removeItemDecoration(dividerDecoration)
         searchRecyclerView.addItemDecoration(dividerDecoration)
         searchRecyclerView.itemAnimator = DefaultItemAnimator()
         postImageAdapter.addLoadMoreListener(object: SearchRecyclerAdapter.OnLoadMoreListener{
@@ -289,19 +291,27 @@ class FragmentSearch: Fragment(){
         })
 
 
-        searchRecyclerView.adapter = postImageAdapter
 
-        postImageAdapter.notifyDataChanged()
 
+
+        if(adapter.itemCount == 0){
         getPostData(0)
+
+        }
+
 
 
         gridTab.setOnClickListener {
 
+
+            searchRecyclerView.removeItemDecoration(dividerDecoration)
+            gridTab.isClickable = false
+            locationTab.isClickable = true
             hideKeyboard(requireActivity())
             searchBar.visibility = View.GONE
 
             searchBar.isFocusable = false
+            searchBar.setText("")
 
             gridTab.setBackgroundResource(R.drawable.button_shape_green)
             ivGrid.setImageResource(R.drawable.grid_white)
@@ -319,6 +329,7 @@ class FragmentSearch: Fragment(){
 
                     val intent = Intent(requireContext(), SearchFullPost::class.java)
 
+                    searchBar.setText("")
 
                     startActivity(intent)
 
@@ -341,7 +352,10 @@ class FragmentSearch: Fragment(){
             })
 
             postImageAdapter.onItemClickListener = mOnItemClickListener
+
             searchRecyclerView.addItemDecoration(dividerDecoration)
+
+
             searchRecyclerView.itemAnimator = DefaultItemAnimator()
             postImageAdapter.addLoadMoreListener(object: SearchRecyclerAdapter.OnLoadMoreListener{
                 override fun onLoadMore() {
@@ -362,7 +376,9 @@ class FragmentSearch: Fragment(){
 
             postImageAdapter.notifyDataChanged()
 
-            getPostData(0)
+
+            if(adapter.itemCount == 0){
+            getPostData(0)}
 
 
 
@@ -373,6 +389,9 @@ class FragmentSearch: Fragment(){
 
         locationTab.setOnClickListener {
 
+
+            gridTab.isClickable = true
+            locationTab.isClickable = false
             var id: Int? = null
             var keyword: String = ""
 
@@ -385,9 +404,6 @@ class FragmentSearch: Fragment(){
             ivLocation.setImageResource(R.drawable.location_white)
 
 
-            postImageDataList.removeAll(postImageDataList)
-            searchRecyclerView.removeAllViews()
-            adapter.notifyDataChanged()
 
             searchRecyclerView.adapter = adapter
             searchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -420,49 +436,7 @@ class FragmentSearch: Fragment(){
 
             adapter.onItemClickListener = mOnItemClickListener
 
-            searchBar.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
 
-
-
-
-
-
-
-                }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                    keyword = searchBar.text.toString()
-                    if (keyword.isNullOrEmpty()){
-                        keyword = ""}
-                    places.removeAll(places)
-                    searchRecyclerView.removeAllViews()
-                    adapter.notifyDataChanged()
-                    load(keyword, 0)
-
-
-                }
-
-
-            })
-            searchBar.setOnEditorActionListener(object: TextView.OnEditorActionListener{
-                override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        searchBar.clearFocus()
-                        hideKeyboard(requireActivity())
-                        searchBar.isFocusable = false
-                    }
-                    return false
-                }
-
-
-            })
 
 
 
@@ -476,10 +450,8 @@ class FragmentSearch: Fragment(){
 
             })
 
-
-
-
-            load(keyword, index)
+            if(adapter.itemCount == 0)
+            load(keyword, 0)
 
 
             adapter.addLoadMoreListener(object: SearchRecyclerAdapter.OnLoadMoreListener{
@@ -506,7 +478,6 @@ class FragmentSearch: Fragment(){
                 override fun onRefresh() {
                     places.removeAll(places)
                     searchRecyclerView.removeAllViews()
-                    adapter.notifyDataChanged()
                     load(keyword, 0)
                     swipeLayout.isRefreshing = false
                 }
@@ -529,7 +500,6 @@ class FragmentSearch: Fragment(){
                             keyword = ""}
                         places.removeAll(places)
                         searchRecyclerView.removeAllViews()
-                        adapter.notifyDataChanged()
                         load(keyword, 0)
 
                         searchBar.isFocusable = false
@@ -568,9 +538,6 @@ class FragmentSearch: Fragment(){
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
 
 
 

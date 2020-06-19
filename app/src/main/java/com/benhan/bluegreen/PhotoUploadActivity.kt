@@ -138,38 +138,28 @@ class PhotoUploadActivity: AppCompatActivity(){
         etDescription.isFocusable = false
         searchBar.isFocusable = false
 
-        searchBar.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-
-                keyword = searchBar.text.toString()
-
-
-                    if (keyword.isNullOrEmpty()){
-                    keyword = ""}
-                places.removeAll(places)
-                recyclerView.removeAllViews()
-                adapter.notifyDataChanged()
-                load(keyword, 0)
-
-
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-
-
-
-
-            }
-
-
-        })
-
+//        searchBar.addTextChangedListener(object : TextWatcher{
+//            override fun afterTextChanged(s: Editable?) {
+//
+//
+//
+//            }
+//
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//
+//
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//
+//
+//
+//
+//
+//            }
+//
+//
+//        })
 
 
 
@@ -192,6 +182,15 @@ class PhotoUploadActivity: AppCompatActivity(){
                     hideKeyboard(this@PhotoUploadActivity)
                     etDescription.isFocusable = false
                     searchBar.isFocusable = false
+                    keyword = searchBar.text.toString()
+
+
+                    if (keyword.isNullOrEmpty()){
+                        keyword = ""}
+                    places.removeAll(places)
+                    recyclerView.removeAllViews()
+                    adapter.notifyDataChanged()
+                    load(keyword, 0)
                 }
                 return false
             }
@@ -315,6 +314,8 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
             uploadToServer(selectedPhotoPath!!, email!!, desc!!, formattedDate)
+
+
 
             Log.d("시간 ", formattedDate)
 
@@ -538,6 +539,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
     }
+
 
 
 }

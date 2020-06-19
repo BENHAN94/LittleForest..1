@@ -45,6 +45,16 @@ class HomeActivity : AppCompatActivity() {
 
 
 
+        val delete: Call<ServerResonse> = apiInterface.deletePostWithNullPlace()
+        delete.enqueue(object : Callback<ServerResonse>{
+            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+
+            }
+
+            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
+            }
+
+        })
 
 
 
@@ -223,6 +233,7 @@ class HomeActivity : AppCompatActivity() {
         val intent = Intent(this, PlusGalleryActivity::class.java)
 
         startActivity(intent)
+        finish()
 
     }
 
@@ -231,8 +242,23 @@ class HomeActivity : AppCompatActivity() {
     }
 
 
+    override fun onStart() {
+        super.onStart()
+        val call: Call<ServerResonse> = apiInterface.updatePlaceBestPost()
+        call.enqueue(object: Callback<ServerResonse>{
+            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+
+                Log.d("업데이트", t.message)
+            }
+
+            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
+
+                Log.d("업데이트", "성공")
+            }
 
 
+        })
+    }
 
 }
 
