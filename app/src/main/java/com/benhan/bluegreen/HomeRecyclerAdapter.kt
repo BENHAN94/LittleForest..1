@@ -34,13 +34,14 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
     val getCurrentTime = Calendar.getInstance().time
     var sdf: SimpleDateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
     val currentTime = sdf.format(getCurrentTime)
-
+    var isLoading = false
 
     class MyViewHolder(val layout: RelativeLayout): RecyclerView.ViewHolder(layout){
 
         val ivPageProfilePhoto = layout.findViewById<ImageView>(R.id.pageProfilePhoto)
         val tvPageName = layout.findViewById<TextView>(R.id.pageName)
-        val tvPageType = layout.findViewById<TextView>(R.id.pageType)
+        val tvPageType = layout.findViewById<TextView>(R.id.type)
+        val tvPageProvince = layout.findViewById<TextView>(R.id.province)
         val ivPostImage = layout.findViewById<ImageView>(R.id.postImage)
         val ivUserProfilePhoto = layout.findViewById<ImageView>(R.id.userProfilePhoto)
         val tvUserName = layout.findViewById<TextView>(R.id.userName)
@@ -80,8 +81,9 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
             thumbnail(0.3f)
             .into(holder.ivPageProfilePhoto)
 
-        holder.tvPageName.setText(item.pageName)
-        holder.tvPageType.setText(item.pageType)
+        holder.tvPageName.text = item.pageName
+        holder.tvPageType.text = item.pageType
+        holder.tvPageProvince.text = item.pageProvince
 
         Glide.with(context).load(item.postImage)
             .thumbnail(0.3f)
@@ -91,17 +93,17 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
             .thumbnail(0.3f)
             .into(holder.ivUserProfilePhoto)
 
-        holder.tvUserName.setText(item.userName)
-        holder.tvDescription.setText(item.postDescription)
+        holder.tvUserName.text = item.userName
+        holder.tvDescription.text = item.postDescription
         if(item.postLikes!! > 0) {
-            holder.tvCountLikes.setText("좋아요 ${item.postLikes}개")
+            holder.tvCountLikes.text = "좋아요 ${item.postLikes}개"
         }
 
         if(item.commentNumber == 0){
             holder.tvShowAllComents.visibility = View.GONE
         } else {
             holder.tvShowAllComents.visibility = View.VISIBLE
-            holder.tvShowAllComents.setText("댓글 ${item.commentNumber}개 모두 보기")
+            holder.tvShowAllComents.text = "댓글 ${item.commentNumber}개 모두 보기"
             holder.tvShowAllComents.setOnClickListener {
 
                 val intent = Intent(context, Comment::class.java)
@@ -116,20 +118,20 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
             holder.containerMainComment.visibility = View.GONE
         } else {
             holder.containerMainComment.visibility = View.VISIBLE
-            holder.tvMainComentUserName.setText(item.mainCommentUserName)
-            holder.tvMainCommentContents.setText(item.mainComment)
+            holder.tvMainComentUserName.text = item.mainCommentUserName
+            holder.tvMainCommentContents.text = item.mainComment
         }
 
         if(item.mainCommentReply!!.isEmpty()){
             holder.containerReply.visibility = View.GONE
         } else {
             holder.containerReply.visibility = View.VISIBLE
-            holder.tvReplyContents.setText(item.mainCommentReply)
-            holder.tvReplyUserName.setText(item.replyUserName)
+            holder.tvReplyContents.text = item.mainCommentReply
+            holder.tvReplyUserName.text = item.replyUserName
         }
 
 
-        holder.tvPostedDate.setText(item.postDate)
+        holder.tvPostedDate.text = item.postDate
 
 
 
@@ -281,6 +283,11 @@ class HomeRecyclerAdapter(val context: Context ): RecyclerView.Adapter<HomeRecyc
 
     }
 
+
+    fun notifyDataChanged(){
+        notifyDataSetChanged()
+        isLoading = false
+    }
 
 
 }

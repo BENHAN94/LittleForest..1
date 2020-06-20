@@ -105,7 +105,7 @@ interface ApiInterface {
                   @Field("index")index: Int): Call<ArrayList<PlaceSearchData>>
 
     @FormUrlEncoded
-    @POST("get_post_data.php")
+    @POST("get_post.php")
     fun getPostData(@Field("email")email: String,
                     @Field("index")index: Int): Call<ArrayList<PostData>>
 

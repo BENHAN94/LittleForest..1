@@ -7,15 +7,13 @@ class PostData(@SerializedName("kind")
                var kind: String? = null){
 
     //place table
-    @SerializedName("page_photo")
+    @SerializedName("place_photo")
     var pageProfilePhoto: Uri? =null
-    @SerializedName("page_best_post_id")
-    var pageBestPostId: Int? =null
-    @SerializedName("page_name")
+    @SerializedName("place_name")
     var pageName: String? =null
-    @SerializedName("page_type")
+    @SerializedName("place_type")
     var pageType: String? =null
-    @SerializedName("page_province")
+    @SerializedName("place_province")
     var pageProvince: String?=null
 
     //post table
@@ -31,12 +29,12 @@ class PostData(@SerializedName("kind")
     var postDate: String? =null
     @SerializedName("post_id")
     var postId: Int? =null
-    @SerializedName("page_id")
+    @SerializedName("post_place_id")
     var pageId: Int? =null
 
 
     //user table
-    @SerializedName("user_profile_photo")
+    @SerializedName("user_photo")
     var userProfilePhoto: Uri? =null
     @SerializedName("user_name")
     var userName: String? =null
@@ -44,11 +42,11 @@ class PostData(@SerializedName("kind")
 
 
     //comment table
-    @SerializedName("main_comment")
+    @SerializedName("comment_contents")
     var mainComment: String? =null
-    @SerializedName("main_comment_id")
+    @SerializedName("comment_id")
     var mainCommentId: Int? =null
-    @SerializedName("main_comment_user_name")
+    @SerializedName("comment_user_name")
     var mainCommentUserName: String? =null
 
 

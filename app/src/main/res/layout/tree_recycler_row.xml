@@ -34,14 +34,32 @@
             android:text="pagename"
             />
         <TextView
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:gravity="center_vertical"
-            android:id="@+id/pageType"
-            android:layout_below="@id/pageName"
+            android:layout_height="30dp"
+            android:id="@+id/province"
             android:layout_toRightOf="@id/pageProfilePhoto"
+            android:layout_below="@id/pageName"
+            android:text="지역"
             android:fontFamily="@font/nixgonfonts_n"
-            android:text="type"
+            android:textSize="15sp"
+            android:gravity="center_vertical"
+
+            />
+
+        <TextView
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_toRightOf="@+id/province"
+            android:layout_below="@+id/pageName"
+            android:id="@+id/type"
+            android:fontFamily="@font/nixgonfonts_n"
+            android:text="종류"
+            android:gravity="center_vertical"
+            android:textSize="15sp"
             />
 
         <ImageView
