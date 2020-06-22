@@ -100,8 +100,6 @@ class ProfileUpdateActivity : AppCompatActivity(){
                     sharedPreference.setString(this@ProfileUpdateActivity, "introduction", textIntroduce )
                     sharedPreference.setString(this@ProfileUpdateActivity, "job", textJob )
                     finish()
-                    val intent = Intent(this@ProfileUpdateActivity, HomeActivity::class.java).putExtra("profile_updated", true)
-                    startActivity(intent)
                 }
 
 

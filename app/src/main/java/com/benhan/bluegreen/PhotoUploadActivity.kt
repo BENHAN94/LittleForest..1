@@ -62,7 +62,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
         val selectedPhotoString: String? = intent.getStringExtra("photo")
-        val selectedPhoto: Uri = Uri.parse(selectedPhotoString)
+        val selectedPhoto: String = Uri.parse(selectedPhotoString).path!!
 
         window.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
@@ -290,17 +290,18 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         // POST Image file to Server
 
+//
+//        var selectedPhotoPath: String? = null
+//        val file = File(selectedPhoto)
 
-        var selectedPhotoPath: String? = null
-
-        val cursor: Cursor? = this.contentResolver.query(
-            selectedPhoto, null, null, null, null
-        )
-        if (cursor !== null) {
-            cursor.moveToFirst()
-            val idx: Int = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-            selectedPhotoPath = cursor.getString(idx)
-        }
+//        val cursor: Cursor? = this.contentResolver.query(
+//            selectedPhoto, null, null, null, null
+//        )
+//        if (cursor !== null) {
+//            cursor.moveToFirst()
+//            val idx: Int = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+//            selectedPhotoPath = cursor.getString(idx)
+//        }
 
 
 
@@ -313,7 +314,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-            uploadToServer(selectedPhotoPath!!, email!!, desc!!, formattedDate)
+            uploadToServer(selectedPhoto!!, email!!, desc!!, formattedDate)
 
 
 

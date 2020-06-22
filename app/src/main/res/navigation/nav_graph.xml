@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/treeFragment">
+
+    <fragment
+        android:id="@+id/treeFragment"
+        android:name="com.benhan.bluegreen.FragmentTree"
+        android:label="tree fragment"
+        tools:layout="@layout/home_fragment_tree">
+
+        <action android:id="@+id/from_tree_to_search"
+            app:destination="@+id/searchFragment"/>
+        <action android:id="@+id/from_tree_to_bell"
+            app:destination="@+id/bellFragment"/>
+        <action android:id="@+id/from_tree_to_user"
+            app:destination="@+id/userFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.benhan.bluegreen.FragmentSearch"
+        android:label="search fragment"
+        tools:layout="@layout/home_fragment_search"
+        >
+
+
+        <action android:id="@+id/from_search_to_tree"
+            app:destination="@+id/treeFragment"/>
+        <action android:id="@+id/from_search_to_bell"
+            app:destination="@+id/bellFragment"/>
+        <action android:id="@+id/from_search_to_user"
+            app:destination="@+id/userFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/bellFragment"
+        android:name="com.benhan.bluegreen.FragmentBell"
+        android:label="bell fragment"
+        tools:layout="@layout/home_fragment_bell"
+        >
+
+        <action android:id="@+id/from_bell_to_tree"
+            app:destination="@+id/treeFragment"/>
+        <action android:id="@+id/from_bell_to_search"
+            app:destination="@+id/searchFragment"/>
+        <action android:id="@+id/from_bell_to_user"
+            app:destination="@+id/userFragment"/>
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.benhan.bluegreen.FragmentUser"
+        android:label="user fragment"
+        tools:layout="@layout/home_fragment_user"
+        >
+
+
+        <action android:id="@+id/from_user_to_tree"
+            app:destination="@+id/treeFragment"/>
+        <action android:id="@+id/from_user_to_bell"
+            app:destination="@+id/bellFragment"/>
+        <action android:id="@+id/from_user_to_search"
+            app:destination="@+id/searchFragment"/>
+
+    </fragment>
+
+</navigation>

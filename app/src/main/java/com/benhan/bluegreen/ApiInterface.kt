@@ -108,6 +108,10 @@ interface ApiInterface {
     @POST("get_post.php")
     fun getPostData(@Field("email")email: String,
                     @Field("index")index: Int): Call<ArrayList<PostData>>
+    @FormUrlEncoded
+    @POST("get_other_user_post.php")
+    fun getOtherUserPost(@Field("email")email: String,
+                    @Field("index")index: Int): Call<ArrayList<PostData>>
 
 
     @POST("update_place_best_post.php")
@@ -170,5 +174,36 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("user_page.php")
     fun getUserPageInfo(@Field("email")email: String): Call<UserPageData>
+
+    @FormUrlEncoded
+    @POST("like_post.php")
+    fun likePost(@Field("email")email: String,
+                 @Field("post_id")post_id: Int): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("like_comment.php")
+    fun likeComment(@Field("email")email: String,
+                 @Field("comment_id")comment_id: Int): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("unlike_post.php")
+    fun unLikePost(@Field("email")email: String,
+                 @Field("post_id")post_id: Int): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("unlike_comment.php")
+    fun unLikeComment(@Field("email")email: String,
+                    @Field("comment_id")comment_id: Int): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("get_other_user_data.php")
+    fun getOtherUserData(@Field("name")name: String): Call<User>
+
+    @FormUrlEncoded
+    @POST("write_comment.php")
+    fun writeComment(@Field("email")email: String,
+                     @Field("post_id")postId: Int,
+                     @Field("user_name")userName: String,
+                     @Field("contents")contents: String): Call<ServerResonse>
 
 }

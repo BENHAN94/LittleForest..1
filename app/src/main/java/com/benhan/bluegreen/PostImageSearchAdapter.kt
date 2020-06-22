@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 class PostImageSearchAdapter(val context: Context, val postImageDataList: ArrayList<PostImageData>): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
@@ -80,7 +81,7 @@ class PostImageSearchAdapter(val context: Context, val postImageDataList: ArrayL
             val postImage = item.postImg
 
             Glide.with(context).load(postImage)
-                .thumbnail(0.1F)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .into((holder as PostViewHolder).ivPostImage)
 

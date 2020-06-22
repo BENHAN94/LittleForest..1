@@ -1,5 +1,6 @@
 package com.benhan.bluegreen
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import com.theartofdev.edmodo.cropper.CropImage
 
 
 class PlusGalleryActivity: AppCompatActivity() {
@@ -115,7 +117,6 @@ class PlusGalleryActivity: AppCompatActivity() {
                     if (slidingLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN ||
                         slidingLayout.panelState == SlidingUpPanelLayout.PanelState.ANCHORED ||
                         slidingLayout.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
-
                         slidingLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
 
                     }
@@ -136,13 +137,17 @@ class PlusGalleryActivity: AppCompatActivity() {
 
 
 
+                    CropImage.activity(photoVO.imgPath)
+                        .setInitialCropWindowPaddingRatio(0f)
+                        .setMinCropWindowSize(300, 300)
+                        .setMinCropResultSize(300, 300)
+                        .start(this@PlusGalleryActivity)
+
 
                     Log.d("널?", galleryAdapter.list[position].imgPath.toString())
 
 
-                    val intent = Intent(this@PlusGalleryActivity, PhotoUploadActivity::class.java)
-                    intent.putExtra("photo", galleryAdapter.list[position].imgPath.toString())
-                    startActivity(intent)
+//
 
 
 
@@ -357,6 +362,24 @@ class PlusGalleryActivity: AppCompatActivity() {
 //    }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+
+            val result = CropImage.getActivityResult(data)
+            if (resultCode == Activity.RESULT_OK){
+                val resultUri = result.uri
+
+                val intent = Intent(this@PlusGalleryActivity, PhotoUploadActivity::class.java)
+                    intent.putExtra("photo", resultUri.toString())
+                    startActivity(intent)
+
+            }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
+
+                val error = result.error
+            }
+        }
+    }
 
 
 }

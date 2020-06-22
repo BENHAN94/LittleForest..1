@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/userFragmentLayout">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/userFragmentLayout"
+    tools:context=".FragmentUser">
 
 
-    <RelativeLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_above="@id/navigation_bar"
+        />
 
 
     <RelativeLayout
@@ -31,11 +35,11 @@
             />
 
         <ImageView
-            android:layout_width="40dp"
+            android:layout_marginTop="7dp"
+            android:layout_width="35dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:src="@drawable/menu"
-            android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:id="@+id/profile_menu"
             />
@@ -50,10 +54,9 @@
     </RelativeLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:layout_weight="3"
+        android:layout_height="100dp"
         android:id="@+id/profileOverView"
         android:orientation="horizontal"
         android:weightSum="20"
@@ -63,33 +66,40 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
 
-            android:layout_width="0dp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_weight="7"
             android:src="@drawable/user_circle"
             android:id="@+id/placePhoto"
             android:background="@color/white"
+            android:layout_alignParentLeft="true"
 
 
             />
 
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
+            android:layout_width="90dp"
+            android:layout_marginLeft="20dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/placePhoto"
+            android:id="@+id/postInfo"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="15dp"
+
 
 
             >
 
             <TextView
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nixgonfonts_b"
-
+                android:text="0"
                 android:textColor="@color/background"
                 android:id="@+id/postNumber"
                 android:textSize="20sp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 />
 
             <TextView
@@ -107,22 +117,24 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
-
-
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/postInfo"
+            android:id="@+id/followingInfo"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="15dp"
             >
 
             <TextView
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nixgonfonts_b"
-
                 android:textColor="@color/background"
                 android:id="@+id/followerNumber"
+                android:text="0"
                 android:textSize="20sp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
                 />
 
             <TextView
@@ -142,21 +154,23 @@
 
 
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
-
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/followingInfo"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="15dp"
 
             >
 
             <TextView
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="0"
                 android:fontFamily="@font/nixgonfonts_b"
-
                 android:textColor="@color/background"
                 android:id="@+id/likeNumber"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
                 android:textSize="20sp"
                 />
 
@@ -176,15 +190,34 @@
 
 
 
-    </LinearLayout>
 
+
+        <Button
+            android:layout_width="230dp"
+            android:layout_height="30dp"
+            android:layout_weight="18"
+            android:background="@drawable/button_shape_green"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:id="@+id/btnProfileUpdate"
+            android:text="프로필 수정"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="20dp"
+
+            />
+
+
+    </RelativeLayout>
 
     <RelativeLayout
-        android:layout_marginLeft="6dp"
-        android:layout_width="match_parent"
+        android:layout_marginStart="25dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/userProfileIntroduce"
         android:layout_below="@id/profileOverView"
+        android:layout_marginTop="10dp"
         >
 
         <TextView
@@ -200,7 +233,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nixgonfonts_n"
+            android:fontFamily="@font/nixgonfonts_b"
             android:textColor="@color/background"
             android:id="@+id/userIntroduction"
             android:layout_below="@+id/actualName"
@@ -210,56 +243,72 @@
 
 
 
+
     </RelativeLayout>
 
+
     <LinearLayout
-        android:layout_marginTop="10dp"
+
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_weight="1"
-        android:id="@+id/profileUpdateButtonContainer"
+        android:layout_height="35dp"
+        android:layout_marginHorizontal="1dp"
+        android:layout_below="@id/userProfileIntroduce"
+        android:id="@+id/searchTab"
         android:orientation="horizontal"
-        android:weightSum="20"
-        android:layout_below="@+id/userProfileIntroduce"
+        android:isScrollContainer="false"
+        android:weightSum="2"
         >
 
-        <View
+
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight=".2"
-            />
+            android:layout_weight="1"
 
-
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="19.6"
+            android:id="@+id/layoutGrid"
             android:background="@drawable/button_shape_green"
-            android:fontFamily="@font/nixgonfonts_b"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:id="@+id/btnProfileUpdate"
-            android:text="프로필 수정"
+            >
 
-            />
+            <ImageView
+                android:layout_centerInParent="true"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/grid_white"
+                android:id="@+id/ivGrid"
+                />
+
+        </RelativeLayout>
 
 
-        <View
+
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight=".2"
-            />
+            android:layout_weight="1"
+            android:id="@+id/layoutLocation"
+            android:background="@drawable/button_shape"
+            >
+
+            <ImageView
+                android:layout_centerInParent="true"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/location_green"
+                android:id="@+id/ivLocation"
+                />
+
+        </RelativeLayout>
 
     </LinearLayout>
 
-
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="1dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/profileUpdateButtonContainer"
+            android:layout_below="@+id/searchTab"
             android:id="@+id/userPostRecycler"
+            android:layout_above="@id/navigation_bar"
             />
 
 
@@ -270,6 +319,79 @@
 
 
 
-</RelativeLayout>
 
-</androidx.core.widget.NestedScrollView>
+    <LinearLayout
+        android:id="@+id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:isScrollContainer="false"
+
+        android:weightSum="10"
+        android:gravity="center_vertical"
+        >
+
+
+        <ImageView
+            android:id="@+id/tree"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:src="@drawable/tree_selected"
+            android:layout_weight="2"
+
+
+
+            />
+
+        <ImageView
+            android:id="@+id/search"
+            android:layout_width="0dp"
+            android:layout_height="23dp"
+            android:src="@drawable/search"
+            android:layout_weight="2"
+
+            />
+
+        <ImageView
+            android:id="@+id/plus"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="2"
+            android:src="@drawable/plus_logo"
+
+            />
+
+
+        <ImageView
+            android:id="@+id/bell"
+            android:layout_width="0dp"
+            android:layout_height="23dp"
+            android:layout_weight="2"
+            android:src="@drawable/bell"
+
+
+            />
+
+
+
+
+        <ImageView
+            android:id="@+id/user"
+            android:layout_width="0dp"
+            android:layout_height="23dp"
+            android:layout_weight="2"
+
+            android:src="@drawable/user"
+
+
+            />
+
+
+
+
+
+
+
+    </LinearLayout>
+</RelativeLayout>

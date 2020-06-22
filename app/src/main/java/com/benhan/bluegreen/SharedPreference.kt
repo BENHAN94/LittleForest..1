@@ -10,6 +10,7 @@ class SharedPreference {
         const val PREFERENCE_NAME = "user"
         const val DEFAULT_VALUE_STRING = ""
         const val DEFAULT_VALUE_BOOLEAN = false
+        const val DEFAULT_VALUE_STRING_SET = ""
 
     }
 
@@ -38,6 +39,29 @@ class SharedPreference {
         editor.putBoolean(key, value)
         editor.apply()
 
+    }
+
+
+    fun setStringList(context: Context, key: String, arrayList: ArrayList<String>){
+
+        val prefs = getPreference(context)
+        val editor: SharedPreferences.Editor = prefs.edit()
+
+        val set = HashSet<String>()
+        set.addAll(arrayList)
+        editor.putStringSet(key, set)
+        editor.apply()
+
+    }
+
+    fun getStringList(context: Context, key: String): Set<String>{
+
+
+        val hasSet = HashSet<String>()
+        hasSet.add("")
+        val prefs = getPreference(context)
+        val value = prefs.getStringSet(key, hasSet)
+        return value!!
     }
 
     fun getString(context: Context, key: String): String?{

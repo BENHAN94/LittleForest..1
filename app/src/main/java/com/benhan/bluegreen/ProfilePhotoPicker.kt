@@ -266,7 +266,7 @@ class ProfilePhotoPicker: AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
 
-        startActivity(Intent(this@ProfilePhotoPicker, ProfileUpdateActivity::class.java))
+
         finish()
 
 

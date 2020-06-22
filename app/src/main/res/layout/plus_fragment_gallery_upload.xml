@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@drawable/button_shape"
-    android:id="@+id/uploadLayout"
-    android:isScrollContainer="true">
+    >
+
+
 
 
     <LinearLayout
@@ -116,6 +116,8 @@
     </RelativeLayout>
 
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -147,9 +149,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:id="@+id/searchPlace"
-        android:gravity="center_vertical"
+        android:gravity="bottom"
         android:layout_below="@id/askLocation"
         >
 
@@ -168,6 +170,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/searchBar"
+            android:background="@drawable/button_shape"
             android:layout_toRightOf="@id/searchIcon"
             android:fontFamily="@font/nixgonfonts_b"
             android:hint="이름 또는 시,도 "

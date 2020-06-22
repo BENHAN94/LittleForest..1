@@ -33,4 +33,14 @@ class User {
     var profilephoto: String? = null
 
 
+    @SerializedName("post_number")
+    val postNumber: Int? = null
+
+    @SerializedName("follow_number")
+    val followerNumber: Int? = null
+
+    @SerializedName("like_number")
+    val likeNumber: Int? = null
+
+
 }

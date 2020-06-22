@@ -85,7 +85,6 @@ class LoginActivity2 : AppCompatActivity() {
                         sharedPreference.setString(this@LoginActivity2, "introduction", response.body()?.introduction!!)
                         sharedPreference.setString(this@LoginActivity2, "profilePhoto", response.body()?.profilephoto!!)
 
-
                         val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
                         startActivity(intent)
 

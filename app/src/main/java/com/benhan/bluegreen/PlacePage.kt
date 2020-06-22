@@ -206,6 +206,7 @@ class PlacePage : AppCompatActivity() {
 
 
             if(!isFollowing!!) {
+                isFollowing = true
                 btnFollow.setBackgroundResource(R.drawable.button_shape_stroke)
                 btnFollow.setTextColor(backgroundColor)
                 btnFollow.text = "팔로잉"
@@ -223,7 +224,7 @@ class PlacePage : AppCompatActivity() {
                     ) {
                         var success: Boolean = response.body()?.success!!
                         if (success) {
-                            isFollowing = true
+
 
                         }
                     }
@@ -233,6 +234,7 @@ class PlacePage : AppCompatActivity() {
 
 
             }else {
+                isFollowing = false
                 btnFollow.setBackgroundResource(R.drawable.button_shape_green)
                 btnFollow.setTextColor(whiteColor)
                 btnFollow.text = "팔로우"
@@ -250,7 +252,7 @@ class PlacePage : AppCompatActivity() {
                     ) {
                         var success: Boolean = response.body()?.success!!
                         if (success) {
-                            isFollowing = false
+
 
                         }
                     }

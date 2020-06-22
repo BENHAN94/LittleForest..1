@@ -2,6 +2,7 @@ package com.benhan.bluegreen
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -11,12 +12,17 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.ethanhua.skeleton.Skeleton
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import retrofit2.Call
@@ -31,11 +37,95 @@ class FragmentSearch: Fragment(){
     val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
 
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
+        val rootView = inflater.inflate(R.layout.home_fragment_search, container, false)
+
+        val dividerDecoration = GridDividerDecoration(resources, R.drawable.divider_recyler_gallery)
+        val tree = rootView.findViewById<ImageView>(R.id.tree)
+        val search = rootView.findViewById<ImageView>(R.id.search)
+        val bell = rootView.findViewById<ImageView>(R.id.bell)
+        val user = rootView.findViewById<ImageView>(R.id.user)
+
+        tree.setImageResource(R.drawable.tree)
+        search.setImageResource(R.drawable.search_selected)
+        bell.setImageResource(R.drawable.bell)
+        user.setImageResource(R.drawable.user)
+
+
+        val permissionCheck = ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        val permissionListener = object : PermissionListener {
+
+            override fun onPermissionGranted() {
+                startActivity(Intent(requireContext(), PlusActivity::class.java))
+
+            }
+
+            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                Toast.makeText(requireContext(), "권한 거부\n" + deniedPermissions.toString(),
+                    Toast.LENGTH_SHORT).show()
+            }
+
+        }
+        val plus = rootView.findViewById<ImageView>(R.id.plus)
+        plus.setOnClickListener {
+
+
+
+            if(permissionCheck == PackageManager.PERMISSION_DENIED) {
+
+
+                TedPermission.with(requireContext())
+                    .setPermissionListener(permissionListener)
+                    .setRationaleMessage("사진첩을 열기 위해서는 갤러리 접근 권한이 필요해요")
+                    .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있어요")
+                    .setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    .check()
+            }
+
+
+            else if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                val intent = Intent(requireActivity(), PlusGalleryActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+
+        fun clickHandler(view: ImageView){
+
+
+
+            view.setOnClickListener {
+
+                when(view.id) {
+                    R.id.tree -> {
+                        Navigation.findNavController(rootView).navigate(R.id.from_search_to_tree)
+                    }
+                    R.id.search -> {
+
+                    }
+                    R.id.bell -> {
+                        Navigation.findNavController(rootView).navigate(R.id.from_search_to_bell)
+                    }
+                    R.id.user -> {
+                        Navigation.findNavController(rootView).navigate(R.id.from_search_to_user)
+                    }
+                }
+            }
+        }
+
+
+        clickHandler(tree)
+        clickHandler(bell)
+        clickHandler(user)
+
 
 
         val navi =  requireActivity().findViewById<LinearLayout>(R.id.navigation_bar)
@@ -66,7 +156,7 @@ class FragmentSearch: Fragment(){
 
         val places = ArrayList<PlaceSearchData>()
         val adapter = SearchRecyclerAdapter(requireContext(), places)
-        val rootView = inflater.inflate(R.layout.home_fragment_search, container, false)
+
         val postImageAdapter = PostImageSearchAdapter(requireContext(), postImageDataList)
         val gridTab = rootView.findViewById<RelativeLayout>(R.id.layoutGrid)
         val locationTab = rootView.findViewById<RelativeLayout>(R.id.layoutLocation)
@@ -77,7 +167,10 @@ class FragmentSearch: Fragment(){
         val sharedPreference = SharedPreference()
         val email = sharedPreference.getString(requireContext(), "email")!!
         var index = 0
-        val searchBar = rootView.findViewById<EditText>(R.id.search)
+        val searchBar = rootView.findViewById<EditText>(R.id.searchBar)
+
+
+
 
 
         searchBar.visibility = View.GONE
@@ -99,7 +192,6 @@ class FragmentSearch: Fragment(){
 
         postImageDataList.removeAll(postImageDataList)
         postImageAdapter.notifyDataChanged()
-
 
         fun getPostData(index: Int){
 
@@ -256,14 +348,13 @@ class FragmentSearch: Fragment(){
 
 
         searchRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-        val dividerDecoration = GridDividerDecoration(resources, R.drawable.divider_recyler_gallery)
+
 
 
 
         swipeLayout.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
                 postImageDataList.removeAll(postImageDataList)
-                searchRecyclerView.removeAllViews()
                 postImageAdapter.notifyDataChanged()
                 getPostData(0)
                 swipeLayout.isRefreshing = false
@@ -322,7 +413,7 @@ class FragmentSearch: Fragment(){
             searchRecyclerView.removeAllViews()
             searchRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
 
-            val dividerDecoration = GridDividerDecoration(resources, R.drawable.divider_recyler_gallery)
+
 
             val mOnItemClickListener = object: OnItemClickListener{
                 override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
@@ -389,6 +480,8 @@ class FragmentSearch: Fragment(){
 
         locationTab.setOnClickListener {
 
+
+            searchRecyclerView.removeItemDecoration(dividerDecoration)
 
             gridTab.isClickable = true
             locationTab.isClickable = false
@@ -510,7 +603,6 @@ class FragmentSearch: Fragment(){
 
             })
         }
-
 
 
 
