@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -43,7 +44,7 @@ class FragmentTree: Fragment(){
     var buttonPostComment: ImageView? = null
     var commentUserProfile: ImageView? =null
     var imm: InputMethodManager? = null
-    var onClickPostComment: OnClickPostCommentClicked? = null
+//    var onClickPostComment: OnClickPostCommentClicked? = null
 
 
     var tree: ImageView? =null
@@ -79,14 +80,7 @@ class FragmentTree: Fragment(){
 
         if(adapter == null)
             adapter = HomeRecyclerAdapter(requireContext(), requireActivity(), postDataList, profilePhoto!!)
-            adapter!!.addWriteCommentClickListener(object : HomeRecyclerAdapter.OnWriteCommentClicked{
-                override fun onWriteCommentClicked() {
-                    navi?.visibility = View.GONE
-                    commentContainer?.visibility = View.VISIBLE
-                    etWriteComment?.requestFocus()
-                    imm?.showSoftInput(etWriteComment, InputMethodManager.SHOW_IMPLICIT)
-                }
-            })
+
     }
 
     
@@ -107,7 +101,7 @@ class FragmentTree: Fragment(){
             load(R.layout.layout_default_item_skeleton).
             show()
 
-        recyclerview!!.postDelayed(Runnable { skeletonScreen.hide() }, 700)
+        recyclerview!!.postDelayed(Runnable { skeletonScreen.hide() }, 1000)
 
         val swipeLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
 
@@ -140,6 +134,35 @@ class FragmentTree: Fragment(){
 
 
 
+        adapter!!.addWriteCommentClickListener(object : HomeRecyclerAdapter.OnWriteCommentClicked{
+            override fun onWriteCommentClicked() {
+                navi?.visibility = View.GONE
+
+                Log.d("나비", "곤")
+//                    commentContainer?.visibility = View.VISIBLE
+//                    etWriteComment?.requestFocus()
+//                    imm?.showSoftInput(etWriteComment, InputMethodManager.SHOW_IMPLICIT)
+            }
+        })
+        adapter?.addOnPostClickListener(object  : HomeRecyclerAdapter.OnPostClicked{
+
+            override fun onPostClicked(position: Int) {
+
+                recyclerview?.smoothScrollToPosition(position)
+
+                Log.d("나비", "비져블")
+                val handler = Handler()
+                handler.postDelayed(object: Runnable{
+                    override fun run() {
+                        navi?.visibility = View.VISIBLE
+                    }
+                }, 350)
+
+            }
+
+
+
+        })
 
 
 
@@ -154,6 +177,7 @@ class FragmentTree: Fragment(){
         commentUserProfile = rootView!!.findViewById(R.id.commentUserProfilePhoto)
 
         etWriteComment!!.isFocusableInTouchMode = true
+
 
 
         tree!!.setImageResource(R.drawable.tree_selected)
@@ -235,22 +259,25 @@ class FragmentTree: Fragment(){
         clickHandler(user!!)
 
 
-        buttonPostComment?.setOnClickListener {
-
-            commentContainer?.visibility = View.GONE
-            navi?.visibility = View.VISIBLE
-            imm?.hideSoftInputFromWindow(etWriteComment?.windowToken, 0)
-            onClickPostComment?.sendCommentContents(etWriteComment?.text.toString())
-
-
-        }
+//        buttonPostComment?.setOnClickListener {
+//
+//            commentContainer?.visibility = View.GONE
+//            navi?.visibility = View.VISIBLE
+//            imm?.hideSoftInputFromWindow(etWriteComment?.windowToken, 0)
+//            onClickPostComment?.sendCommentContents(etWriteComment?.text.toString())
+//            etWriteComment?.text = null
+//
+//
+//        }
 
         etWriteComment!!.setOnEditorActionListener(object: TextView.OnEditorActionListener{
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if(actionId == EditorInfo.IME_ACTION_DONE){
                     commentContainer?.visibility = View.GONE
                     navi?.visibility = View.VISIBLE
-                    onClickPostComment?.sendCommentContents(etWriteComment?.text.toString())
+                    imm?.hideSoftInputFromWindow(etWriteComment?.windowToken, 0)
+//                    onClickPostComment?.sendCommentContents(etWriteComment?.text.toString())
+                    etWriteComment?.text = null
                     return true
                 }
                 return false
@@ -293,18 +320,18 @@ class FragmentTree: Fragment(){
 
     }
 
-
-    interface OnClickPostCommentClicked{
-
-
-        fun sendCommentContents(contents: String)
-
-
-    }
-
-    fun addOnPostCommentClickListener(listener: OnClickPostCommentClicked) {
-
-        onClickPostComment = listener
-    }
+//
+//    interface OnClickPostCommentClicked{
+//
+//
+//        fun sendCommentContents(contents: String)
+//
+//
+//    }
+//
+//    fun addOnPostCommentClickListener(listener: OnClickPostCommentClicked) {
+//
+//        onClickPostComment = listener
+//    }
 
 }

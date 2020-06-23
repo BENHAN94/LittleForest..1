@@ -20,8 +20,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import id.zelory.compressor.Compressor
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -51,6 +55,7 @@ class PhotoUploadActivity: AppCompatActivity(){
     val adapter = SearchRecyclerAdapter(this, places)
     var keyword: String = ""
     var id: Int? = null
+    var file: File? = null
 
 
 
@@ -314,6 +319,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
+
             uploadToServer(selectedPhoto!!, email!!, desc!!, formattedDate)
 
 
@@ -476,44 +482,52 @@ class PhotoUploadActivity: AppCompatActivity(){
     }
 
 
+
+
     private fun uploadToServer(imgPath: String, email: String, desc: String, date: String) {
 
 
-        val file = File(imgPath)
+
+        val actualImageFile = File(imgPath)
+
+        runBlocking { launch {
+            file = Compressor.compress(this@PhotoUploadActivity, actualImageFile)
 
 
-        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-        val fileToUpload = MultipartBody.Part.createFormData("file", file.name, requestBody)
-        val filename = file.name.toRequestBody("text/plain".toMediaTypeOrNull())
-        val mEmail = email.toRequestBody("text/plain".toMediaTypeOrNull())
-        val mDate = date.toRequestBody("text/plain".toMediaTypeOrNull())
-        val mdesc = desc.toRequestBody("text/plain".toMediaTypeOrNull())
+            val requestBody = file!!.asRequestBody("image/*".toMediaTypeOrNull())
+            val fileToUpload = MultipartBody.Part.createFormData("file", file!!.name, requestBody)
+            val filename = file!!.name.toRequestBody("text/plain".toMediaTypeOrNull())
+            val mEmail = email.toRequestBody("text/plain".toMediaTypeOrNull())
+            val mDate = date.toRequestBody("text/plain".toMediaTypeOrNull())
+            val mdesc = desc.toRequestBody("text/plain".toMediaTypeOrNull())
 
 
+            val callUpload: Call<ServerResonse> = this@PhotoUploadActivity.apiInterface.uploadImage(
+                fileToUpload, id!!, filename, mEmail,
+                mDate, mdesc
+            )
+            callUpload.enqueue(object : Callback<ServerResonse> {
+                override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
 
-        val callUpload: Call<ServerResonse> = this.apiInterface.uploadImage(fileToUpload, id!!, filename,mEmail,
-            mDate, mdesc)
-        callUpload.enqueue(object : Callback<ServerResonse>{
-            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+                    Log.d("에러 ", t.message)
 
-                Log.d("에러 ", t.message)
+                }
 
-            }
-
-            override fun onResponse(
-                call: Call<ServerResonse>,
-                response: Response<ServerResonse>
-            ) {
-
-
-                Log.d("코드", response.message())
+                override fun onResponse(
+                    call: Call<ServerResonse>,
+                    response: Response<ServerResonse>
+                ) {
 
 
+                    Log.d("코드", response.message())
 
-            }
+
+                }
 
 
-        })
+            })
+
+        } }
 
 //
 //

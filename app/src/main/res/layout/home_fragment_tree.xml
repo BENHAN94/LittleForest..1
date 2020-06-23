@@ -28,7 +28,6 @@
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:isScrollContainer="false"
-
         android:weightSum="10"
         android:gravity="center_vertical"
         >
@@ -102,7 +101,7 @@
             android:layout_alignParentBottom="true"
             android:background="@color/white"
             android:isScrollContainer="false"
-            android:visibility="visible"
+            android:visibility="gone"
             android:weightSum="10"
             android:gravity="center_vertical"
             android:orientation="horizontal">

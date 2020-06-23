@@ -3,10 +3,8 @@ package com.benhan.bluegreen
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.opengl.Visibility
+import android.graphics.Rect
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
@@ -16,11 +14,9 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-
 import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil.hideKeyboard
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
@@ -28,9 +24,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
-class HomeRecyclerAdapter(val context: Context, val activity: Activity, val postList: ArrayList<PostData>, val profilePhoto: String ): RecyclerView.Adapter<HomeRecyclerAdapter.MyViewHolder>() {
+class HomeRecyclerAdapter(val context: Context, val activity: Activity, val postList: ArrayList<PostData>, val profilePhoto: String ): RecyclerView.Adapter<HomeRecyclerAdapter.MyViewHolder>(){
 
 
     val apiClient = ApiClient()
@@ -44,9 +39,8 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
     var isLoading = false
     var isLikingComment = false
     var onWriteCommentClicked: OnWriteCommentClicked? = null
-    var onClickPostCommentClicked: FragmentTree.OnClickPostCommentClicked? = null
-    val fragmentTree = FragmentTree()
-
+    val treeFragment = FragmentTree()
+    var onPostClicked: OnPostClicked? = null
 
     class MyViewHolder(val layout: RelativeLayout) : RecyclerView.ViewHolder(layout) {
 
@@ -69,7 +63,7 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
 //        val tvReplyUserName = layout.findViewById<TextView>(R.id.replyUserName)
 //        val tvReplyContents = layout.findViewById<TextView>(R.id.replyContents)
 //        val ivCommentReplyLike = layout.findViewById<ImageView>(R.id.replyLikes)
-        val etWriteComment = layout.findViewById<TextView>(R.id.writeComment)
+        val etWriteComment = layout.findViewById<EditText>(R.id.writeComment)
         val tvPostedDate = layout.findViewById<TextView>(R.id.postedDate)
         val uploadComment = layout.findViewById<TextView>(R.id.uploadComment)
         val page = layout.findViewById<RelativeLayout>(R.id.page)
@@ -97,10 +91,19 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
 
 
 
+
+
         val prettyTime = PrettyTime(Locale.getDefault())
         val item = postList[position]
         var commentLikeClicked = false
         val email = sharedPreference.getString(context, "email")
+
+        val call: Call<ServerResonse> = this@HomeRecyclerAdapter.apiInterface
+            .writeComment(sharedPreference.getString(context, "email")!!,
+                item.postId!!,
+                sharedPreference.getString(context, "name")!!,
+                holder.etWriteComment.text.toString()
+            )
 
         fun likePost(email: String, postId: Int){
 
@@ -272,6 +275,7 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
             .into(holder.ivMyProfile)
         Glide.with(context).load(item.pageProfilePhoto)
             .fitCenter()
+            .override(600, 200 )
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(holder.ivPageProfilePhoto)
 
@@ -325,12 +329,21 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
 
 
 
+//
+//        holder.etWriteComment.setOnFocusChangeListener { v, hasFocus ->
+//            if (hasFocus)
+//
+//        }
+
 
         holder.etWriteComment.setOnClickListener {
-
+            holder.etWriteComment.setText("")
             onWriteCommentClicked?.onWriteCommentClicked()
-
         }
+
+
+
+
 
 
 
@@ -368,6 +381,13 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
 
         holder.tvPostedDate.text = ago
 
+
+
+        if(commentLikeClicked){
+            holder.ivMainComentLike.setImageResource(R.drawable.tree_selected)
+        } else {
+            holder.ivMainComentLike.setImageResource(R.drawable.tree)
+        }
 
 
         holder.ivMainComentLike.setOnClickListener {
@@ -424,58 +444,34 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
 
 
 
-//        holder.etWriteComment.clearFocus()
-//        holder.etWriteComment.isFocusable = false
-//        holder.etWriteComment.setOnTouchListener(object : View.OnTouchListener {
-//            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-//                holder.etWriteComment.isFocusableInTouchMode = true
-//                return false
-//            }
-//
-//
-//        })
+        holder.etWriteComment.clearFocus()
+        holder.etWriteComment.isFocusable = false
+        holder.etWriteComment.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                holder.etWriteComment.isFocusableInTouchMode = true
+                return false
+            }
 
 
-//        holder.etWriteComment.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-//            override fun onEditorAction(
-//                v: TextView?,
-//                actionId: Int,
-//                event: KeyEvent?
-//            ): Boolean {
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//
-//
-////                    holder.etWriteComment.isFocusable = false
-//                    hideKeyboard(activity)
-//                }
-//                return false
-//            }
-//
-//        })
-        holder.etWriteComment.addTextChangedListener(object: TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                if(holder.etWriteComment.text.isEmpty()){
-                    holder.uploadComment.setTextColor(naviColor)
-                }else {
-                    holder.uploadComment.setTextColor(backgroundColor)
-                    holder.uploadComment.setOnClickListener {
+        })
 
-                        holder.commentContainer.visibility = View.VISIBLE
-                        holder.tvMainComentUserName.text = sharedPreference.getString(context, "name")
-                        holder.tvMainCommentContents.text = holder.etWriteComment.text.toString()
+
+        holder.etWriteComment.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+            override fun onEditorAction(
+                v: TextView?,
+                actionId: Int,
+                event: KeyEvent?
+            ): Boolean {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
 
 
 
+                    onPostClicked?.onPostClicked(position)
+                    holder.commentContainer.visibility = View.VISIBLE
+                    holder.tvMainComentUserName.text = sharedPreference.getString(context, "name")
 
-
-                        val call: Call<ServerResonse> = this@HomeRecyclerAdapter.apiInterface
-                            .writeComment(sharedPreference.getString(context, "email")!!,
-                                item.postId!!,
-                                sharedPreference.getString(context, "name")!!,
-                                holder.etWriteComment.text.toString()
-                            )
-
-                        call.enqueue(object: Callback<ServerResonse>{
+                    if(holder.etWriteComment.text.isNotEmpty() && holder.etWriteComment.text.isNotBlank()) {
+                        call.clone().enqueue(object : Callback<ServerResonse> {
                             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
 
                             }
@@ -490,11 +486,11 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
 
                         })
 
-                        if (item.commentNumber!! > 0 ) {
+
+                        if (item.commentNumber!! > 0) {
                             holder.tvShowAllComents.visibility = View.VISIBLE
                             holder.tvShowAllComents.text = "댓글 ${item.commentNumber!! + 1}개 모두 보기"
                             holder.tvShowAllComents.setOnClickListener {
-
 
 
                                 val intent = Intent(context, Comment::class.java)
@@ -503,7 +499,76 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
 
                             }
                         }
+                        holder.tvMainCommentContents.text = holder.etWriteComment.text.toString()
+                    }
+                    holder.etWriteComment.text = null
+                    holder.etWriteComment.clearFocus()
+                    hideKeyboard(activity)
 
+
+                }
+                return false
+            }
+
+        })
+        holder.etWriteComment.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if(holder.etWriteComment.text.isEmpty()){
+                    holder.uploadComment.setTextColor(naviColor)
+                }else {
+                    holder.uploadComment.setTextColor(backgroundColor)
+                    holder.uploadComment.setOnClickListener {
+
+
+                        onPostClicked?.onPostClicked(position)
+                        holder.commentContainer.visibility = View.VISIBLE
+                        holder.tvMainComentUserName.text = sharedPreference.getString(context, "name")
+
+
+
+
+
+
+//                        val call: Call<ServerResonse> = this@HomeRecyclerAdapter.apiInterface
+//                            .writeComment(sharedPreference.getString(context, "email")!!,
+//                                item.postId!!,
+//                                sharedPreference.getString(context, "name")!!,
+//                                holder.etWriteComment.text.toString()
+//                            )
+
+                        if(holder.etWriteComment.text.isNotEmpty() && holder.etWriteComment.text.isNotBlank()) {
+                            call.clone().enqueue(object : Callback<ServerResonse> {
+                                override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+
+                                }
+
+                                override fun onResponse(
+                                    call: Call<ServerResonse>,
+                                    response: Response<ServerResonse>
+                                ) {
+
+                                }
+
+
+                            })
+
+                            if (item.commentNumber!! > 0) {
+                                holder.tvShowAllComents.visibility = View.VISIBLE
+                                holder.tvShowAllComents.text =
+                                    "댓글 ${item.commentNumber!! + 1}개 모두 보기"
+                                holder.tvShowAllComents.setOnClickListener {
+
+
+                                    val intent = Intent(context, Comment::class.java)
+                                    context.startActivity(intent)
+
+
+                                }
+                            }
+                            holder.tvMainCommentContents.text = holder.etWriteComment.text.toString()
+                        }
+
+                        holder.etWriteComment.text = null
                         holder.etWriteComment.clearFocus()
                         hideKeyboard(activity)
 
@@ -521,10 +586,63 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
         })
 
 
+
+
+
+
+//        treeFragment.addOnPostCommentClickListener(object :FragmentTree.OnClickPostCommentClicked{
+//            override fun sendCommentContents(contents: String) {
+//
+//
+//                Log.d("확인", "확인")
+//                holder.commentContainer.visibility = View.VISIBLE
+//                holder.tvMainComentUserName.text = sharedPreference.getString(context, "name")
+//                holder.tvMainCommentContents.text = contents
+//
+//                val call: Call<ServerResonse> = this@HomeRecyclerAdapter.apiInterface
+//                    .writeComment(sharedPreference.getString(context, "email")!!,
+//                        item.postId!!,
+//                        sharedPreference.getString(context, "name")!!,
+//                        contents
+//                    )
+//
+//                call.enqueue(object: Callback<ServerResonse>{
+//                    override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+//                        Log.d("확인", t.message)
+//                    }
+//
+//                    override fun onResponse(
+//                        call: Call<ServerResonse>,
+//                        response: Response<ServerResonse>
+//                    ) {
+//                        Log.d("확인", "성공")
+//                    }
+//
+//
+//                })
+//
+//                if (item.commentNumber!! > 0 ) {
+//                    holder.tvShowAllComents.visibility = View.VISIBLE
+//                    holder.tvShowAllComents.text = "댓글 ${item.commentNumber!! + 1}개 모두 보기"
+//                    holder.tvShowAllComents.setOnClickListener {
+//
+//
+//
+//                        val intent = Intent(context, Comment::class.java)
+//                        context.startActivity(intent)
+//
+//
+//                    }
+//                }
+//            }
+//
+//
+//        })
+
         holder.ivPostImage.setOnClickListener {
 
             holder.etWriteComment.clearFocus()
-//            holder.etWriteComment.isFocusable = false
+            holder.etWriteComment.isFocusable = false
             hideKeyboard(activity)
         }
 
@@ -546,6 +664,9 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
     }
 
 
+
+
+
     interface OnWriteCommentClicked{
 
         fun onWriteCommentClicked()
@@ -556,5 +677,20 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, val post
         onWriteCommentClicked = listener
 
     }
+
+    interface OnPostClicked{
+
+        fun onPostClicked(position: Int)
+
+    }
+
+    fun addOnPostClickListener(listener: OnPostClicked){
+
+        onPostClicked = listener
+
+
+    }
+
+
 
 }
