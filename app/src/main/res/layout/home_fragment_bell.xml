@@ -6,7 +6,40 @@
     tools:context=".FragmentBell">
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1.0"
+        android:id="@+id/profileUpperBar"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/bottom_line"
+        >
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:text="알림"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/background"
+            android:textSize="25sp"
+            android:id="@+id/profile_username"
+            />
+
+
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/profileUpperBar"
+        android:layout_above="@id/navigation_bar"
+        android:id="@+id/recyclerview"
+
+        />
 
 
     <LinearLayout
@@ -14,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
+        android:background="@drawable/top_line"
         android:isScrollContainer="false"
 
         android:weightSum="10"

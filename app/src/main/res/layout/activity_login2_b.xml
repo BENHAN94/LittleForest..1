@@ -45,7 +45,7 @@
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
         android:fontFamily="@font/dearsunshine"
-        android:layout_above="@+id/tvCenterBox"
+
         android:textSize="70sp"
         android:textColor="#FFFFFF"
 
@@ -78,7 +78,7 @@
 
     <EditText
         android:id="@+id/etEmailLogin"
-        android:layout_below="@+id/tvCenterBox_in"
+
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:background="@drawable/button_shape"

@@ -20,39 +20,15 @@ class PostImageSearchAdapter(val context: Context, val postImageDataList: ArrayL
 
     var isLoading = false
     var isMoreDataAvailable = true
-    var loadMoreListener = object : SearchRecyclerAdapter.OnLoadMoreListener{
-        override fun onLoadMore() {
-
-        }
+    var loadMoreListener: HomeRecyclerAdapter.OnLoadMoreListener? = null
+    var onItemClickListener: OnItemClickListener? = null
 
 
 
 
-        }
-    var onItemClickListener = object : OnItemClickListener{
-        override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
-
-        }
-
-
-    }
-
-    class PostViewHolder(view: View): RecyclerView.ViewHolder(view){
-
-
-        val ivPostImage = view.findViewById<ImageView>(R.id.postImage)
-
-    }
-
-    class LoadHolder(view: View): RecyclerView.ViewHolder(view){
-
-
-    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
-
         val itemLayout = LayoutInflater.from(context).inflate(R.layout.post_search_item, parent, false)
         val loadLayout = LayoutInflater.from(context).inflate(R.layout.search_recycler_load, parent, false)
         if(viewType == TYPE_POST)
@@ -61,16 +37,26 @@ class PostImageSearchAdapter(val context: Context, val postImageDataList: ArrayL
             return LoadHolder(loadLayout)
         }
 
+    }
 
+    override fun getItemViewType(position: Int): Int {
+        if(postImageDataList[position].kind == "post"){
+            return TYPE_POST
+        }
+        else{
+            return TYPE_LOAD
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return postImageDataList.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
-
         if(position>= itemCount-1 && isMoreDataAvailable && !isLoading && loadMoreListener!=null)
         {
             isLoading = true
-            loadMoreListener.onLoadMore()
+            loadMoreListener!!.onLoadMore()
         }
 
 
@@ -87,31 +73,27 @@ class PostImageSearchAdapter(val context: Context, val postImageDataList: ArrayL
 
             holder.ivPostImage.setOnClickListener {
 
-                onItemClickListener.OnItemClick(holder, position)
+
+                onItemClickListener?.OnItemClick(holder, position)
 
             }
 
 
         }
+    }
+    class PostViewHolder(view: View): RecyclerView.ViewHolder(view){
+
+
+        val ivPostImage = view.findViewById<ImageView>(R.id.postImage)
+
+    }
+
+    class LoadHolder(view: View): RecyclerView.ViewHolder(view){
 
 
     }
 
-    override fun getItemViewType(position: Int): Int {
 
-        if(postImageDataList[position].kind == "post"){
-            return TYPE_POST
-        }
-        else{
-            return TYPE_LOAD
-        }
-
-    }
-
-
-    override fun getItemCount(): Int {
-       return postImageDataList.size
-    }
 
 
     fun notifyDataChanged(){
@@ -119,7 +101,5 @@ class PostImageSearchAdapter(val context: Context, val postImageDataList: ArrayL
         isLoading = false
     }
 
-    fun addLoadMoreListener(listener: SearchRecyclerAdapter.OnLoadMoreListener?) {
-        loadMoreListener = listener!!
-    }
 }
+

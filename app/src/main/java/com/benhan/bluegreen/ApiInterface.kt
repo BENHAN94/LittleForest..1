@@ -35,7 +35,6 @@ interface ApiInterface {
                     @Part("placeId")id: Int,
                     @Part("file")name: RequestBody,
                     @Part("email")email: RequestBody,
-                    @Part("date")currentTime: RequestBody,
                     @Part("description")description: RequestBody): Call<ServerResonse>
 
     @Multipart
@@ -43,13 +42,7 @@ interface ApiInterface {
     fun uploadProfilePhoto(@Part file: MultipartBody.Part,
                            @Part("email")email : RequestBody): Call<ServerResonse>
 
-//    @FormUrlEncoded
-//    @POST("get_user_profile.php")
-//    fun getUserProfile(@Field("actual_name")actualname: String,
-//                       @Field("name")name: String,
-//                       @Field("job")job: String,
-//                       @Field("introduction")introduction: String,
-//                       @Field("profile_photo")profilephoto: String):Call<User>
+
 
 
     @FormUrlEncoded
@@ -64,35 +57,6 @@ interface ApiInterface {
                       @Field("introduction")introduction: String,
                       @Field("email")email: String):Call<User>
 
-
-    @FormUrlEncoded
-    @POST("comment_like.php")
-    fun commentLikeAdd(@Field("comment_no")commentNo: Int,
-                        @Field("email")email: String):Call<ServerResonse>
-
-    @FormUrlEncoded
-    @POST("comment_unlike.php")
-    fun commentUnlikeAdd(@Field("comment_no")commentNo: Int,
-                         @Field("email")email: String):Call<ServerResonse>
-
-
-    @FormUrlEncoded
-    @POST("comment_like.php")
-    fun replyLikeAdd(@Field("comment_no")commentNo: Int,
-                       @Field("email")email: String):Call<ServerResonse>
-
-    @FormUrlEncoded
-    @POST("comment_unlike.php")
-    fun replyUnlikeAdd(@Field("comment_no")commentNo: Int,
-                         @Field("email")email: String):Call<ServerResonse>
-
-    @FormUrlEncoded
-    @POST("upload_comment.php")
-    fun uploadComment(@Field("email")email: String,
-                      @Field("name")name: String,
-                      @Field("written_date")date: String,
-                      @Field("contents")contents: String,
-                      @Field("post_id")postId: Int): Call<ServerResonse>
 
     @FormUrlEncoded
     @POST("search_place.php")
@@ -168,22 +132,26 @@ interface ApiInterface {
 
     @FormUrlEncoded
     @POST("user_post_image.php")
-    fun getUserPostImage(@Field("email")email: String): Call<ArrayList<PostImageData>>
+    fun getUserPostImage(@Field("email")email: String, @Field("index")index: Int): Call<ArrayList<PostImageData>>
 
-
-    @FormUrlEncoded
-    @POST("user_page.php")
-    fun getUserPageInfo(@Field("email")email: String): Call<UserPageData>
 
     @FormUrlEncoded
     @POST("like_post.php")
     fun likePost(@Field("email")email: String,
-                 @Field("post_id")post_id: Int): Call<ServerResonse>
+                 @Field("post_id")post_id: Int,
+                 @Field("user_name")user_name: String): Call<ServerResonse>
 
     @FormUrlEncoded
     @POST("like_comment.php")
     fun likeComment(@Field("email")email: String,
-                 @Field("comment_id")comment_id: Int): Call<ServerResonse>
+                 @Field("comment_id")comment_id: Int,
+                    @Field("user_name")user_name: String): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("like_reply.php")
+    fun likeReply(@Field("email")email: String,
+                    @Field("reply_id")reply_id: Int,
+                  @Field("user_name")user_name: String): Call<ServerResonse>
 
     @FormUrlEncoded
     @POST("unlike_post.php")
@@ -194,6 +162,10 @@ interface ApiInterface {
     @POST("unlike_comment.php")
     fun unLikeComment(@Field("email")email: String,
                     @Field("comment_id")comment_id: Int): Call<ServerResonse>
+    @FormUrlEncoded
+    @POST("unlike_reply.php")
+    fun unLikeReply(@Field("email")email: String,
+                      @Field("reply_id")reply_id: Int): Call<ServerResonse>
 
     @FormUrlEncoded
     @POST("get_other_user_data.php")
@@ -204,6 +176,47 @@ interface ApiInterface {
     fun writeComment(@Field("email")email: String,
                      @Field("post_id")postId: Int,
                      @Field("user_name")userName: String,
-                     @Field("contents")contents: String): Call<ServerResonse>
+                     @Field("contents")contents: String): Call<ArrayList<CommentData>>
+
+    @FormUrlEncoded
+    @POST("write_reply.php")
+    fun writeReply(@Field("email")email: String,
+                   @Field("post_id")postId: Int,
+                   @Field("user_name")userName: String,
+                   @Field("contents")contents: String,
+                   @Field("comment_no")comment_no: Int):Call<ArrayList<CommentData>>
+
+    @FormUrlEncoded
+    @POST("get_post_comments.php")
+    fun getPostComments(@Field("post_id")post_id: Int,
+                        @Field("email")email: String): Call<ArrayList<CommentData>>
+
+
+    @FormUrlEncoded
+    @POST("other_user_place.php")
+    fun getOtherUserPlace(@Field("email")email: String,
+                          @Field("index")index: Int) : Call<ArrayList<PlaceSearchData>>
+
+    @FormUrlEncoded
+    @POST("get_single_post.php")
+    fun getSinglePost(@Field("email")email: String,
+                      @Field("post_id")post_id: Int): Call<PostData>
+
+    @FormUrlEncoded
+    @POST("bell.php")
+    fun getNotification(@Field("email")email: String, @Field("index")index: Int): Call<ArrayList<BellData>>
+
+    @FormUrlEncoded
+    @POST("update_my_profile.php")
+    fun update(@Field("email")email: String ): Call<User>
+
+    @FormUrlEncoded
+    @POST("delete_post.php")
+    fun delete(@Field("post_id")post_id: Int): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("delete_comment.php")
+    fun delteComment(@Field("comment_no")comment_no: Int?,
+                     @Field("id")id: Int?): Call<ServerResonse>
 
 }

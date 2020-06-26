@@ -1,5 +1,6 @@
 package com.benhan.bluegreen
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,10 +8,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
 import androidx.core.content.ContextCompat
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
@@ -32,6 +31,8 @@ class Register4 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register4)
 
+
+
         val etNickname = findViewById<EditText>(R.id.etNickNameRegister)
         val nicknameChar = etNickname.text
 
@@ -44,6 +45,12 @@ class Register4 : AppCompatActivity() {
         val checkSign = findViewById<ImageView>(R.id.check)
 
         val warningSign = findViewById<ImageView>(R.id.warning)
+        val showAgreement = findViewById<TextView>(R.id.showAgreement)
+
+        showAgreement.setOnClickListener {
+            startActivity(Intent(this, RegisterAgreement::class.java))
+        }
+
 
 
 
@@ -71,6 +78,18 @@ class Register4 : AppCompatActivity() {
                 }
 
                 override fun onResponse(call: Call<User>, response: retrofit2.Response<User>) {
+                    fun hideKeyboard(activity: Activity) {
+                        val imm: InputMethodManager =
+                            activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                        //Find the currently focused view, so we can grab the correct window token from it.
+                        var view = activity.currentFocus
+                        //If no view currently has focus, create a new one, just so we can grab a window token from it
+                        if (view == null) {
+                            view = View(activity)
+                        }
+                        imm.hideSoftInputFromWindow(view.windowToken, 0)
+                    }
+                    hideKeyboard(this@Register4)
 
                     if (response.body()?.success == true) {
                       Toast.makeText(this@Register4, "가입완료!", Toast.LENGTH_SHORT).show()
@@ -157,6 +176,8 @@ class Register4 : AppCompatActivity() {
                             override fun onClick(v: View?) {
                                 
                                 Log.d(TAG, "Register4 - onClick() called")
+
+
 
 
 

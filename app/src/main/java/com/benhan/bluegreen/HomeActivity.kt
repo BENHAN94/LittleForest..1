@@ -1,10 +1,12 @@
 package com.benhan.bluegreen
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -41,50 +43,24 @@ class HomeActivity : AppCompatActivity() {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        fun hideKeyboard(activity: Activity) {
+            val imm: InputMethodManager =
+                activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            //Find the currently focused view, so we can grab the correct window token from it.
+            var view = activity.currentFocus
+            //If no view currently has focus, create a new one, just so we can grab a window token from it
+            if (view == null) {
+                view = View(activity)
+            }
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+        hideKeyboard(this)
 
-
-
-//        delete.enqueue(object : Callback<ServerResonse>{
-//            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-//
-//            }
-//
-//            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
-//            }
-//
-//        })
-//
-//        call.enqueue(object: Callback<ServerResonse>{
-//            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-//
-//                Log.d("업데이트", t.message)
-//            }
-//
-//            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
-//
-//                Log.d("업데이트", "성공")
-//            }
-//
-//
-//        })
-//
-//        update.enqueue(object: Callback<ServerResonse>{
-//            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-//
-//                Log.d("업데이트", t.message)
-//            }
-//
-//            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
-//
-//                Log.d("업데이트", "성공")
-//            }
-//
-//
-//        })
     }
 
 

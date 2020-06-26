@@ -13,6 +13,51 @@
         android:layout_height="match_parent">
 
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:textColor="@color/background"
+            android:gravity="center"
+            android:text="환영합니다!"
+            android:id="@+id/welcome"
+            android:textSize="30sp"
+            android:visibility="gone"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:textColor="@color/background"
+            android:gravity="center"
+            android:layout_below="@id/welcome"
+            android:text="여러분의 숲을"
+            android:id="@+id/welcome2"
+            android:visibility="gone"
+            android:textSize="30sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:textColor="@color/background"
+            android:gravity="center"
+            android:layout_below="@id/welcome2"
+            android:text="모두와 나눠보세요!"
+            android:id="@+id/welcome3"
+            android:textSize="30sp"
+            android:visibility="gone"
+            />
+
+
 <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
+        android:background="@drawable/top_line"
         android:isScrollContainer="false"
         android:weightSum="10"
         android:gravity="center_vertical"
@@ -94,66 +139,7 @@
 
 
     </LinearLayout>
-        <LinearLayout
-            android:id="@+id/writeCommentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/white"
-            android:isScrollContainer="false"
-            android:visibility="gone"
-            android:weightSum="10"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
 
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginLeft="10dp"
-                android:id="@+id/commentUserProfilePhoto"
-                android:src="@drawable/user_circle"
-                />
-
-
-            <EditText
-                android:layout_width="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_height="35dp"
-                android:background="@drawable/button_shape_stroke"
-                android:layout_weight="9"
-                android:fontFamily="@font/nixgonfonts_b"
-                android:hint="댓글 달기..."
-                android:textColor="@color/background"
-                android:inputType="textNoSuggestions"
-                android:focusableInTouchMode="true"
-                android:textColorHint="@color/navi"
-                android:paddingLeft="10dp"
-                android:id="@+id/etWriteComment"
-                android:imeOptions="actionDone"/>
-
-
-            <ImageView
-                android:layout_width="10dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_arrow_circle_up_solid"
-                android:layout_weight="1"
-                android:layout_marginRight="2dp"
-                android:layout_marginLeft="5dp"
-                android:id="@+id/postComment"
-                />
-
-
-
-
-
-
-
-
-
-
-
-        </LinearLayout>
     </RelativeLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

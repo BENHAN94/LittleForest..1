@@ -89,6 +89,7 @@ class OtherUserPostAdapter(val context: Context, val postImageDataList: ArrayLis
 
                 onItemClickListener.OnItemClick(holder, position)
 
+
             }
 
 

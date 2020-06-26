@@ -34,14 +34,19 @@
             android:id="@+id/profile_username"
             />
 
-        <ImageView
-            android:layout_marginTop="7dp"
-            android:layout_width="35dp"
+        <TextView
+
+
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/menu"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:gravity="center_vertical"
+            android:text="로그아웃"
+            android:textColor="@color/background"
+            android:textSize="15sp"
             android:layout_marginRight="10dp"
-            android:id="@+id/profile_menu"
+            android:id="@+id/logout"
             />
 
 
@@ -234,7 +239,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/nixgonfonts_b"
-            android:textColor="@color/background"
+            android:textColor="@color/default_text"
             android:id="@+id/userIntroduction"
             android:layout_below="@+id/actualName"
             android:text="introduction"
@@ -267,14 +272,14 @@
             android:layout_weight="1"
 
             android:id="@+id/layoutGrid"
-            android:background="@drawable/button_shape_green"
+            android:background="@drawable/button_shape_stroke"
             >
 
             <ImageView
                 android:layout_centerInParent="true"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/grid_white"
+                android:src="@drawable/grid_green"
                 android:id="@+id/ivGrid"
                 />
 
@@ -287,14 +292,14 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/layoutLocation"
-            android:background="@drawable/button_shape"
+            android:background="@drawable/button_shape_green"
             >
 
             <ImageView
                 android:layout_centerInParent="true"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/location_green"
+                android:src="@drawable/location_white"
                 android:id="@+id/ivLocation"
                 />
 
@@ -302,16 +307,19 @@
 
     </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+
+
+
+
+
+        <FrameLayout
             android:layout_marginTop="1dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/searchTab"
-            android:id="@+id/userPostRecycler"
+            android:id="@+id/frame"
             android:layout_above="@id/navigation_bar"
             />
-
-
 
 
 
@@ -324,8 +332,9 @@
         android:id="@+id/navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="45dp"
+
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
+        android:background="@drawable/top_line"
         android:isScrollContainer="false"
 
         android:weightSum="10"

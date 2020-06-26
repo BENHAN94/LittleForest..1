@@ -7,6 +7,7 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -49,6 +50,15 @@ class LoginActivity2 : AppCompatActivity() {
         val et_password = findViewById<EditText>(R.id.etPasswordLogin)
 
 
+        et_password.setOnTouchListener(object : View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                if(event?.action == MotionEvent.ACTION_DOWN){
+                    et_password.text = null
+                }
+                return false
+            }
+
+        })
 
 
 
@@ -83,8 +93,13 @@ class LoginActivity2 : AppCompatActivity() {
                         sharedPreference.setString(this@LoginActivity2, "actualName", response.body()?.actualname!!)
                         sharedPreference.setString(this@LoginActivity2, "job", response.body()?.job!!)
                         sharedPreference.setString(this@LoginActivity2, "introduction", response.body()?.introduction!!)
-                        sharedPreference.setString(this@LoginActivity2, "profilePhoto", response.body()?.profilephoto!!)
-
+                        if(!response.body()?.profilephoto.isNullOrEmpty()) {
+                            sharedPreference.setString(
+                                this@LoginActivity2,
+                                "profilePhoto",
+                                response.body()?.profilephoto!!
+                            )
+                        }
                         val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
                         startActivity(intent)
 

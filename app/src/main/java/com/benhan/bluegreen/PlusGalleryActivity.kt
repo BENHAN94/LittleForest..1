@@ -18,6 +18,8 @@ import com.theartofdev.edmodo.cropper.CropImage
 
 class PlusGalleryActivity: AppCompatActivity() {
 
+    var placeId: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.plus_fragment_gallery)
@@ -25,13 +27,10 @@ class PlusGalleryActivity: AppCompatActivity() {
 
 
 
-
-
-
-
         val recyclerView = findViewById<RecyclerView>(R.id.galleryRecyclerView)
         val selectedView = findViewById<ImageView>(R.id.selectedImage)
 
+        placeId = intent.getIntExtra("place_id", 0)
 
         recyclerView.setHasFixedSize(true)
 
@@ -184,7 +183,14 @@ class PlusGalleryActivity: AppCompatActivity() {
 
                 val intent = Intent(this@PlusGalleryActivity, PhotoUploadActivity::class.java)
                     intent.putExtra("photo", resultUri.toString())
+                if(placeId != 0) {
+                    val toPageUpload = Intent(this, PhotoUploadToPageActivity::class.java)
+                    toPageUpload.putExtra("place_id", placeId)
+                    toPageUpload.putExtra("photo", resultUri.toString())
+                    startActivity(toPageUpload)
+                }else {
                     startActivity(intent)
+                }
 
             }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
 

@@ -88,6 +88,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/tvCenter_in"
         android:layout_marginTop="-40dp"
+        android:visibility="gone"
 
         >
 
@@ -124,6 +125,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:id="@+id/loginKakao"
+        android:visibility="gone"
 
         >
 
@@ -166,6 +168,7 @@
         android:layout_below="@+id/loginKakao"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
+        android:visibility="gone"
 
         >
 
@@ -209,8 +212,9 @@
         android:layout_height="35dp"
         android:textSize="15sp"
         android:fontFamily="@font/nixgonfonts_b"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/background"
 
+        android:background="@drawable/button_shape"
         android:gravity="center"
         android:layout_below="@+id/loginFacebook"
         android:layout_centerHorizontal="true"

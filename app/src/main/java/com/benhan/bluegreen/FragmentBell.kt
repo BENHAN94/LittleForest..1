@@ -11,12 +11,24 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import kotlinx.android.synthetic.main.home_fragment_bell.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class FragmentBell: Fragment() {
 
-
+    val apiClient = ApiClient()
+    val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
+    val bellDataList = ArrayList<BellData>()
+    val sharedPreference = SharedPreference()
+    var adapter: BellAdapter? = null
+    var myEmail: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,12 +37,7 @@ class FragmentBell: Fragment() {
     ): View? {
         val rootView =  inflater.inflate(R.layout.home_fragment_bell, container, false)
 
-
-
-        val fragmentBell = FragmentBell()
-        val fragmentSearch = FragmentSearch()
-        val fragmentTree = FragmentTree()
-        val fragmentUser = FragmentUser()
+        myEmail = sharedPreference.getString(requireContext(), "email")
 
 
         val tree = rootView.findViewById<ImageView>(R.id.tree)
@@ -107,7 +114,98 @@ class FragmentBell: Fragment() {
         clickHandler(search)
         clickHandler(user)
 
+        /*=========================================================================================================*/
+
+        val recyclerview: RecyclerView = rootView.findViewById(R.id.recyclerview)
+        adapter = BellAdapter(requireContext(), bellDataList)
+        recyclerview.layoutManager = LinearLayoutManager(requireContext())
+        recyclerview.itemAnimator = DefaultItemAnimator()
+        recyclerview.adapter = adapter
+
+
+        val onLoadMoreListener = object: HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+
+                recyclerview!!.post(object : Runnable{
+                    override fun run() {
+                        val index = bellDataList.size-1
+                        getMoreNotificationData(index)
+                    }
+
+                })
+            }
+
+        }
+
+        adapter?.onLoadMoreListener = onLoadMoreListener
+
+
+
+
+
+        if(adapter?.itemCount == 0)
+        getNotificationData(0)
+
+
+
         return rootView
+
+    }
+
+
+    fun getNotificationData(index: Int) {
+
+        val call: Call<ArrayList<BellData>> = apiInterface.getNotification(myEmail!!, index)
+        call.enqueue(object : Callback<ArrayList<BellData>>{
+            override fun onFailure(call: Call<ArrayList<BellData>>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<BellData>>,
+                response: Response<ArrayList<BellData>>
+            ) {
+                response.body()?.let { bellDataList.addAll(it) }
+                adapter?.notifyDataSetChanged()
+            }
+
+
+        })
+
+
+    }
+
+    fun getMoreNotificationData(index: Int) {
+
+        bellDataList.add(BellData("load"))
+        adapter?.notifyItemInserted(bellDataList.size - 1)
+
+        val newIndex = index + 1
+        val call: Call<ArrayList<BellData>> = apiInterface.getNotification(myEmail!!, newIndex)
+        call.enqueue(object : Callback<ArrayList<BellData>>{
+            override fun onFailure(call: Call<ArrayList<BellData>>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<BellData>>,
+                response: Response<ArrayList<BellData>>
+            ) {
+                if(response.isSuccessful){
+                    bellDataList.removeAt(bellDataList.size - 1)
+                    val result: ArrayList<BellData>? = response.body()
+                    if(result!!.size > 0 ){
+                        bellDataList.addAll(result)
+                    }else{
+                        adapter!!.isMoreDataAvailable = false
+                    }
+                }
+                adapter?.notifyDataChanged()
+            }
+
+
+        })
+
 
     }
 

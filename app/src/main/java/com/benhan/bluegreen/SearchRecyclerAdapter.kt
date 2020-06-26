@@ -22,12 +22,7 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
 
     var isLoading = false
     var isMoreDataAvailable = true
-    var loadMoreListener = object : OnLoadMoreListener{
-        override fun onLoadMore() {
-
-        }
-
-    }
+    var onLoadMoreListener: HomeRecyclerAdapter.OnLoadMoreListener? = null
     var onItemClickListener: OnItemClickListener? = null
 
     class SearchHolder(view: View): RecyclerView.ViewHolder(view){
@@ -82,11 +77,13 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-        if(position>= itemCount-1 && isMoreDataAvailable && !isLoading && loadMoreListener!=null)
+
+
+        if(position >= itemCount-1 && isMoreDataAvailable && !isLoading && onLoadMoreListener!=null)
 
         {
             isLoading = true
-            loadMoreListener.onLoadMore()
+            onLoadMoreListener!!.onLoadMore()
         }
 
         if(getItemViewType(position)== TYPE_PLACE) {
@@ -133,16 +130,11 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
 
     }
 
-    interface OnLoadMoreListener{
-        fun onLoadMore()
-    }
 
     fun notifyDataChanged(){
         notifyDataSetChanged()
         isLoading = false
     }
 
-    fun addLoadMoreListener(listener: OnLoadMoreListener?) {
-        loadMoreListener = listener!!
-    }
+
 }

@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
+        android:background="@drawable/bottom_line"
         android:weightSum="10"
         android:gravity="center_vertical"
 
@@ -45,7 +46,7 @@
             android:textSize="20sp"
             android:fontFamily="@font/nixgonfonts_b"
             android:textColor="@color/background"
-            android:background="@drawable/button_shape"
+            android:background="@drawable/bottom_line"
 
             />
 
@@ -88,7 +89,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/top_line"
+
         android:id="@+id/descRiptionContainer"
         android:layout_below="@+id/upperBar"
         android:layout_toRightOf="@id/selectedImageUpload">
@@ -99,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/button_shape"
-            android:fontFamily="@font/nixgonfonts_n"
+            android:fontFamily="@font/nixgonfonts_b"
             android:hint="어떤 사진인가요?"
             android:id="@+id/descriptionUpload"
             android:textColor="@color/background"
@@ -120,7 +121,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:layout_below="@id/descRiptionContainer"
         android:id="@+id/askLocation"
         android:background="@drawable/top_line"
@@ -138,7 +139,7 @@
             android:fontFamily="@font/nixgonfonts_b"
             android:textSize="20sp"
             android:id="@+id/where"
-            android:layout_marginVertical="10dp"
+            android:layout_marginVertical="3dp"
 
             android:textColor="@color/background"
             android:text="이곳이 어디인지 알려주세요"
@@ -152,6 +153,7 @@
         android:layout_height="40dp"
         android:id="@+id/searchPlace"
         android:gravity="bottom"
+        android:background="@drawable/bottom_line"
         android:layout_below="@id/askLocation"
         >
 
@@ -161,6 +163,7 @@
             android:layout_marginLeft="10dp"
             android:src="@drawable/search"
             android:id="@+id/searchIcon"
+
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
             />
@@ -170,7 +173,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/searchBar"
-            android:background="@drawable/button_shape"
+            android:background="@drawable/bottom_line"
             android:layout_toRightOf="@id/searchIcon"
             android:fontFamily="@font/nixgonfonts_b"
             android:hint="이름 또는 시,도 "

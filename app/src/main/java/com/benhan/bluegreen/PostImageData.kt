@@ -9,4 +9,6 @@ class PostImageData(@SerializedName("kind")var kind: String? = null) {
     var postImg: String? = null
     @SerializedName("id")
     var postId: Int? = null
+    @SerializedName("name")
+    var name: String? = null
 }

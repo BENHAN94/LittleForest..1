@@ -13,4 +13,16 @@ class PlacePageData {
     @SerializedName("like_number")
     val likeNumber: Int? = null
 
+    @SerializedName("name")
+    var name: String? = null
+
+    @SerializedName("photo")
+    var photo: String? = null
+
+    @SerializedName("type")
+    var type: String? = null
+
+    @SerializedName("province")
+    var province: String? = null
+
 }

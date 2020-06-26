@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.post_search_item.*
 import retrofit2.Call
@@ -25,7 +27,8 @@ class PlacePage : AppCompatActivity() {
     val postDataList = ArrayList<PostImageData>()
     val adapter = PostImageSearchAdapter(this, postDataList)
     var placeId  = 1
-
+    var pageRecyclerView : RecyclerView? = null
+    var welcome: TextView? = null
 
     var isFollowing: Boolean? = null
     var isLiking = false
@@ -54,9 +57,11 @@ class PlacePage : AppCompatActivity() {
         val tvType = findViewById<TextView>(R.id.placeType)
         val btnPost = findViewById<ImageView>(R.id.btnPost)
         val btnFollow = findViewById<Button>(R.id.btnFollow)
-        val pageRecyclerView = findViewById<RecyclerView>(R.id.pageRecycler)
+        pageRecyclerView = findViewById<RecyclerView>(R.id.pageRecycler)
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         val ivLike = findViewById<ImageView>(R.id.ivLike)
+        welcome = findViewById(R.id.welcome)
+
 
 
 
@@ -68,6 +73,12 @@ class PlacePage : AppCompatActivity() {
         val placeProvince = intent.getStringExtra("placeProvince")
 
         Log.d("아이디", placeId.toString())
+
+        btnPost.setOnClickListener {
+            val intent = Intent(this, PlusGalleryActivity::class.java)
+            intent.putExtra("place_id", placeId)
+            startActivity(intent)
+        }
 
         val checkFollowing: Call<ServerResonse> = apiInterface.checkFollowing(placeId, email)
         checkFollowing.enqueue(object : Callback<ServerResonse>{
@@ -129,6 +140,7 @@ class PlacePage : AppCompatActivity() {
 
 
 
+
         ivBack.setOnClickListener {
 
             finish()
@@ -141,8 +153,11 @@ class PlacePage : AppCompatActivity() {
         tvPlaceName.text = placeName
         tvProvince.text = placeProvince
         tvType.text = placeType
-        Glide.with(this).load(placePhoto).thumbnail(0.3f)
-            .into(ivPlacePhoto)
+
+        if(!placePhoto.isNullOrEmpty()) {
+            Glide.with(this).load(placePhoto).thumbnail(0.3f)
+                .into(ivPlacePhoto)
+        }
         val callGetPageInfo: Call<PlacePageData> = apiInterface.getPageInfo(placeId)
         callGetPageInfo.enqueue(object : Callback<PlacePageData>{
             override fun onFailure(call: Call<PlacePageData>, t: Throwable) {
@@ -282,11 +297,22 @@ class PlacePage : AppCompatActivity() {
         val mOnItemClickListener = object: OnItemClickListener{
             override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
 
+
+                val name = sharedPreference.getString(this@PlacePage, "name")
+                val post_id = postDataList[position].postId
+
+                val intent = Intent(this@PlacePage, SearchFullPost::class.java)
+                intent.putExtra("place_or_user_name", name)
+                intent.putExtra("post_id", post_id)
+                startActivity(intent)
             }
 
 
 
         }
+
+
+
 
 
 
@@ -300,24 +326,36 @@ class PlacePage : AppCompatActivity() {
 
 
 
-        pageRecyclerView.addItemDecoration(dividerDecoration)
-            pageRecyclerView.itemAnimator = DefaultItemAnimator()
-            pageRecyclerView.adapter = adapter
-            pageRecyclerView.layoutManager = GridLayoutManager(this@PlacePage, 3)
+        pageRecyclerView?.addItemDecoration(dividerDecoration)
+            pageRecyclerView?.itemAnimator = DefaultItemAnimator()
+            pageRecyclerView?.adapter = adapter
+            pageRecyclerView?.layoutManager = GridLayoutManager(this@PlacePage, 3)
 
 
+        getPostData(placeId)
 
-        getPostData()
+        val swipeLayout = findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+
+        swipeLayout?.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+
+                postDataList.removeAll(postDataList)
+                adapter!!.notifyDataChanged()
+                getPostData(placeId)
+                swipeLayout.isRefreshing = false
+            }
 
 
-
+        })
 
 
     }
 
 
-    fun getPostData(){
-        val callGetPagePosts: Call<ArrayList<PostImageData>> = apiInterface.getPagePosts(placeId)
+
+
+    fun getPostData(place_id: Int){
+        val callGetPagePosts: Call<ArrayList<PostImageData>> = apiInterface.getPagePosts(place_id)
         callGetPagePosts.enqueue(object : Callback<ArrayList<PostImageData>>{
             override fun onFailure(call: Call<ArrayList<PostImageData>>, t: Throwable) {
 
@@ -330,6 +368,7 @@ class PlacePage : AppCompatActivity() {
 
                 response.body()?.let { postDataList.addAll(it) }
                 adapter.notifyDataChanged()
+
 
             }
 

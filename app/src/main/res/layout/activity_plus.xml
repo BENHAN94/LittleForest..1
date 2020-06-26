@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/plusNavigaiion"
         android:id="@+id/plusFrame"
-        android:layout_below="@+id/upperBar"
+
        />
 
 

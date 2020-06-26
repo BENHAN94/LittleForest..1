@@ -2,28 +2,21 @@ package com.benhan.bluegreen
 
 import android.app.Activity
 import android.content.Intent
-import android.database.Cursor
-import android.icu.text.CompactDecimalFormat
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import id.zelory.compressor.Compressor
+import kotlinx.android.synthetic.main.plus_fragment_gallery_upload.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -51,6 +44,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
+
     val places = ArrayList<PlaceSearchData>()
     val adapter = SearchRecyclerAdapter(this, places)
     var keyword: String = ""
@@ -62,6 +56,9 @@ class PhotoUploadActivity: AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.plus_fragment_gallery_upload)
+
+
+
 
 
 
@@ -313,21 +310,8 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
        tvPost.setOnClickListener {
-
-
-
-
-
-
-
             uploadToServer(selectedPhoto!!, email!!, desc!!, formattedDate)
-
-
-
-            Log.d("시간 ", formattedDate)
-
             startActivity(Intent(this, HomeActivity::class.java))
-
         }
 
 
@@ -338,28 +322,22 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         ivBack.setOnClickListener {
-
-
-
            finish()
-
             hideKeyboard(this)
-
         }
 
 
 
 
-            var index = 0
-                load(keyword, index)
+            load(keyword, 0)
 
-            adapter.addLoadMoreListener(object: SearchRecyclerAdapter.OnLoadMoreListener{
+            val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener {
                 override fun onLoadMore() {
 
-                    recyclerView.post(object : Runnable{
+                    recyclerView.post(object : Runnable {
                         override fun run() {
 
-                            index = places.size - 1
+                            val index = places.size - 1
 
                             loadMore(keyword, index)
 
@@ -370,9 +348,9 @@ class PhotoUploadActivity: AppCompatActivity(){
                 }
 
 
-            })
+            }
 
-
+            adapter.onLoadMoreListener = onLoadMoreListener
 
 
 
@@ -498,13 +476,12 @@ class PhotoUploadActivity: AppCompatActivity(){
             val fileToUpload = MultipartBody.Part.createFormData("file", file!!.name, requestBody)
             val filename = file!!.name.toRequestBody("text/plain".toMediaTypeOrNull())
             val mEmail = email.toRequestBody("text/plain".toMediaTypeOrNull())
-            val mDate = date.toRequestBody("text/plain".toMediaTypeOrNull())
             val mdesc = desc.toRequestBody("text/plain".toMediaTypeOrNull())
 
 
             val callUpload: Call<ServerResonse> = this@PhotoUploadActivity.apiInterface.uploadImage(
                 fileToUpload, id!!, filename, mEmail,
-                mDate, mdesc
+                mdesc
             )
             callUpload.enqueue(object : Callback<ServerResonse> {
                 override fun onFailure(call: Call<ServerResonse>, t: Throwable) {

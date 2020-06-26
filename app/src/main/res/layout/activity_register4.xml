@@ -127,6 +127,30 @@
 
         />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/caution"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:textColor="@color/white"
+                android:layout_below="@+id/btnRegisterRegister"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="가입하기를 누르시면 가입 약관에 동의를 한다는 뜻입니다"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:textColor="@color/white"
+                android:layout_below="@+id/caution"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:id="@+id/showAgreement"
+                android:text="개인정보처리방침 보기"
+                />
+
         </RelativeLayout>
 
     </LinearLayout>

@@ -22,4 +22,7 @@
     <string name="pref_login_status">com.benhan.bluegreen_login_status</string>
     <string name="pref_name">com.benhan.bluegreen_name</string>
     <string name="_0">0</string>
+
+
+
 </resources>
