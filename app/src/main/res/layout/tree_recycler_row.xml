@@ -4,9 +4,9 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="20dp"
     android:layout_marginLeft="0dp"
-    android:focusable="true"
+
     android:background="@drawable/top_line"
-    android:focusableInTouchMode="false"
+    android:focusableInTouchMode="true"
     >
 
 
@@ -337,7 +337,7 @@
             android:inputType="textNoSuggestions"
             android:textColor="@color/default_text"
             android:hint="댓글 달기..."
-            android:focusable="false"
+
             android:imeOptions="actionDone"
 
             />

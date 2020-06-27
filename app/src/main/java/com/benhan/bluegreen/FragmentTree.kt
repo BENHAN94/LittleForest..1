@@ -208,7 +208,7 @@ class FragmentTree: Fragment(){
         val permissionListener = object : PermissionListener {
 
             override fun onPermissionGranted() {
-                startActivity(Intent(requireContext(), PlusActivity::class.java))
+                startActivity(Intent(requireContext(), PlusGalleryActivity::class.java))
             }
             override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
                 Toast.makeText(requireContext(), "권한 거부\n" + deniedPermissions.toString(),

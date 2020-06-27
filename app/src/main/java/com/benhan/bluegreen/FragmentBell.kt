@@ -77,7 +77,7 @@ class FragmentBell: Fragment() {
         val permissionListener = object : PermissionListener {
 
             override fun onPermissionGranted() {
-                startActivity(Intent(requireContext(), PlusActivity::class.java))
+                startActivity(Intent(requireContext(), PlusGalleryActivity::class.java))
 
             }
 

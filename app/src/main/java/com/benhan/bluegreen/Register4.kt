@@ -53,6 +53,53 @@ class Register4 : AppCompatActivity() {
 
 
 
+        fun performLogin(){
+
+
+            val call: Call<User> = apiInterface.performUserLogin(email, password)
+            call.enqueue(object : Callback<User>{
+                override fun onFailure(call: Call<User>, t: Throwable) {
+
+                    Log.d("에러", t.message)
+
+                }
+
+                override fun onResponse(call: Call<User>, response: retrofit2.Response<User>) {
+
+                    if (response.body()?.success == true){
+
+                        val sharedPreference = SharedPreference()
+                        sharedPreference.setString(this@Register4, "email", response.body()?.email!!)
+                        sharedPreference.setString(this@Register4, "password", response.body()?.password!!)
+                        sharedPreference.setString(this@Register4, "name", response.body()?.name!!)
+                        sharedPreference.setString(this@Register4, "birthday", response.body()?.birthday!!)
+                        sharedPreference.setBoolean(this@Register4, "success", response.body()?.success!!)
+                        sharedPreference.setString(this@Register4, "actualName", response.body()?.actualname!!)
+                        sharedPreference.setString(this@Register4, "job", response.body()?.job!!)
+                        sharedPreference.setString(this@Register4, "introduction", response.body()?.introduction!!)
+                        if(!response.body()?.profilephoto.isNullOrEmpty()) {
+                            sharedPreference.setString(
+                                this@Register4,
+                                "profilePhoto",
+                                response.body()?.profilephoto!!
+                            )
+                        }
+                        val intent = Intent(this@Register4, HomeActivity::class.java)
+                        startActivity(intent)
+
+                    } else{
+
+                        Toast.makeText(this@Register4, "이메일 또는 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
+
+                    }
+
+                }
+
+
+            })
+
+
+        }
 
         checkSign.visibility = View.INVISIBLE
         warningSign.visibility = View.INVISIBLE
@@ -86,15 +133,20 @@ class Register4 : AppCompatActivity() {
                         //If no view currently has focus, create a new one, just so we can grab a window token from it
                         if (view == null) {
                             view = View(activity)
+
+
                         }
                         imm.hideSoftInputFromWindow(view.windowToken, 0)
                     }
                     hideKeyboard(this@Register4)
 
                     if (response.body()?.success == true) {
-                      Toast.makeText(this@Register4, "가입완료!", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@Register4, HomeActivity::class.java)
-                        startActivity(intent)
+
+                        Toast.makeText(this@Register4, "가입완료!", Toast.LENGTH_SHORT).show()
+                        performLogin()
+
+
+
                     }
                 }
 

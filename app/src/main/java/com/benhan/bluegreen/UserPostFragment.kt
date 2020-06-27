@@ -46,7 +46,7 @@ class UserPostFragment: Fragment() {
 
         val mOnItemClickListener = object: OnItemClickListener{
             override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
-                val name = postImageDataList[position].name
+                val name = sharedPreference.getString(requireContext(), "name")
                 val post_id = postImageDataList[position].postId
                 val intent = Intent(requireContext(), SearchFullPost::class.java)
                 intent.putExtra("place_or_user_name", name)
