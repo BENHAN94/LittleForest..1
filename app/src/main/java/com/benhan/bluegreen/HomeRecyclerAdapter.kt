@@ -551,13 +551,6 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
 
 
-            holder.ivPostImage.setOnClickListener {
-
-                holder.etWriteComment.clearFocus()
-                holder.etWriteComment.isFocusable = false
-                hideKeyboard(activity)
-            }
-
         }
 
 

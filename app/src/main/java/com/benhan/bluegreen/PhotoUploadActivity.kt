@@ -2,6 +2,7 @@ package com.benhan.bluegreen
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -18,7 +19,12 @@ import com.bumptech.glide.Glide
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.format
+import id.zelory.compressor.constraint.quality
+import id.zelory.compressor.constraint.size
 import kotlinx.android.synthetic.main.plus_fragment_gallery_upload.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -503,11 +509,18 @@ class PhotoUploadActivity: AppCompatActivity(){
     private fun uploadToServer(imgPath: String, email: String, desc: String, date: String) {
 
 
+        val scope = CoroutineScope(Dispatchers.Main)
 
+        scope.launch {
         val actualImageFile = File(imgPath)
 
-        runBlocking { launch {
-            file = Compressor.compress(this@PhotoUploadActivity, actualImageFile)
+
+            file = Compressor.compress(this@PhotoUploadActivity, actualImageFile){
+                quality(50)
+                format(Bitmap.CompressFormat.WEBP)
+                size(150_000)
+
+            }
 
 
             val requestBody = file!!.asRequestBody("image/*".toMediaTypeOrNull())
@@ -545,10 +558,10 @@ class PhotoUploadActivity: AppCompatActivity(){
 
             })
 
-        } }
 
 
 
+        }
 
 
     }

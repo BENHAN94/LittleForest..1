@@ -128,9 +128,16 @@ class SearchPlaceFragment: Fragment() {
 
 
 
+
+
         return rootview
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        searchBar?.text = null
+    }
 
 
 
@@ -146,6 +153,7 @@ class SearchPlaceFragment: Fragment() {
                 places.removeAll(places)
                 adapter?.notifyDataChanged()
                 loadClose("",0, x, y)
+                searchBar?.text = null
                 adapter?.isMoreDataAvailable = true
                 swipeRefreshLayout?.isRefreshing = false
                 searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {

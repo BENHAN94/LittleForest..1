@@ -20,6 +20,7 @@ import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ethanhua.skeleton.Skeleton
@@ -94,7 +95,10 @@ class FragmentTree: Fragment(){
         adapter = HomeRecyclerAdapter(requireContext(), requireActivity(), postDataList, profilePhoto!!)
 
 
-        recyclerview!!.layoutManager = SpeedyLinearLayoutManager(requireContext())
+        val linearLayoutManager = LinearLayoutManager(requireContext())
+        linearLayoutManager.isItemPrefetchEnabled = true
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        recyclerview!!.layoutManager = linearLayoutManager
         recyclerview!!.adapter = adapter
 
 
