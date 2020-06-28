@@ -6,7 +6,7 @@
     tools:context=".FragmentTree"
     android:id="@+id/swipeLayout"
     android:focusableInTouchMode="true"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    >
 
 
     <RelativeLayout
@@ -76,6 +76,7 @@
         android:isScrollContainer="false"
         android:weightSum="10"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         >
 
 
@@ -133,6 +134,45 @@
 
             />
 
+    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/writeCommentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/top_line"
+            android:isScrollContainer="false"
+            android:weightSum="10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="7dp"
+                android:src="@drawable/user_circle"
+                />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_marginStart="5dp"
+                android:layout_height="38dp"
+                android:layout_weight="9.5"
+                android:background="@drawable/button_shape_stroke"
+                android:id="@+id/writeComment"
+                android:fontFamily="@font/nixgonfonts_b"
+                android:textColor="@color/background"
+                android:paddingStart="15dp"
+                android:inputType="textNoSuggestions"
+                android:textColorHint="@color/navi"
+                android:imeOptions="actionDone"
+                android:hint="댓글 입력 ..."
+                />
 
 
 

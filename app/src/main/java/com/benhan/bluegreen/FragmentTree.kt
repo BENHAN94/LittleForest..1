@@ -1,31 +1,31 @@
 package com.benhan.bluegreen
 
-import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ethanhua.skeleton.Skeleton
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,6 +46,9 @@ class FragmentTree: Fragment(){
 
     var imm: InputMethodManager? = null
 
+    var writeCommentContainer: LinearLayout? = null
+    var writeComment: EditText? = null
+
 
 
     var tree: ImageView? =null
@@ -57,6 +60,9 @@ class FragmentTree: Fragment(){
     var welcome: TextView? = null
     var welcome2: TextView? = null
     var welcome3: TextView? = null
+
+    var email: String? = null
+    var name: String?= null
 
 
 
@@ -74,7 +80,7 @@ class FragmentTree: Fragment(){
          rootView =  inflater.inflate(R.layout.home_fragment_tree, container, false)
 
 
-
+        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
 
 /////////////////////////////
@@ -82,8 +88,8 @@ class FragmentTree: Fragment(){
 
 
 
-
-
+        email = sharedPreference.getString(requireContext(), "email")!!
+        name = sharedPreference.getString(requireContext(), "name")
 
         val profilePhoto = sharedPreference.getString(requireContext(), "profilePhoto")
 
@@ -99,7 +105,7 @@ class FragmentTree: Fragment(){
         linearLayoutManager.isItemPrefetchEnabled = true
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerview!!.layoutManager = linearLayoutManager
-        recyclerview!!.adapter = adapter
+
 
 
 
@@ -127,27 +133,6 @@ class FragmentTree: Fragment(){
 
 
 
-
-        adapter!!.addWriteCommentClickListener(object :
-                HomeRecyclerAdapter.OnWriteCommentClicked {
-                override fun onWriteCommentClicked() {
-                    navi?.visibility = View.GONE
-
-                    Log.d("나비", "곤")
-                }
-            })
-            adapter?.addOnPostClickListener(object : HomeRecyclerAdapter.OnPostClicked {
-                override fun onPostClicked(position: Int) {
-                    recyclerview?.smoothScrollToPosition(position)
-                    Log.d("나비", "비져블")
-                    val handler = Handler()
-                    handler.postDelayed(object : Runnable {
-                        override fun run() {
-                            navi?.visibility = View.VISIBLE
-                        }
-                    }, 350)
-                }
-            })
 
 
 
@@ -179,7 +164,7 @@ class FragmentTree: Fragment(){
 
 
 
-        recyclerview!!.postDelayed(Runnable { skeletonScreen.hide() }, 1000)
+        recyclerview!!.postDelayed( { skeletonScreen.hide() }, 1000)
 
 
 
@@ -195,7 +180,12 @@ class FragmentTree: Fragment(){
          bell = rootView!!.findViewById(R.id.bell)
          user = rootView!!.findViewById(R.id.user)
         navi = rootView!!.findViewById(R.id.navigation_bar)
-        commentContainer = rootView!!.findViewById(R.id.writeCommentContainer)
+
+        writeCommentContainer = rootView!!.findViewById(R.id.writeCommentContainer)
+        writeComment = rootView!!.findViewById(R.id.writeComment)
+
+        recyclerview?.itemAnimator = DefaultItemAnimator()
+
         tree!!.setImageResource(R.drawable.tree_selected)
         search!!.setImageResource(R.drawable.search)
         bell!!.setImageResource(R.drawable.bell)
@@ -235,8 +225,6 @@ class FragmentTree: Fragment(){
 
         fun clickHandler(view: ImageView){
 
-
-
             view.setOnClickListener {
 
                 when(view.id) {
@@ -273,6 +261,7 @@ class FragmentTree: Fragment(){
         clickHandler(user!!)
 
 
+
         val responseListener = object: ResponseListener{
             override fun onResponse() {
                 load(0)
@@ -283,6 +272,142 @@ class FragmentTree: Fragment(){
         photoUploadActivity.responseListener = responseListener
 
 
+        if(adapter?.itemCount == 0)
+            load(0)
+
+
+
+        val onPageClickListener = object: HomeRecyclerAdapter.OnPageClickListener {
+            override fun onPageClick(position: Int) {
+                val intent = Intent(context, PlacePage::class.java)
+                intent.putExtra("placeName", postDataList[position].pageName)
+                intent.putExtra("placeId", postDataList[position].pageId)
+                intent.putExtra("placePhoto", postDataList[position].pageProfilePhoto)
+                intent.putExtra("placeType", postDataList[position].pageType)
+                intent.putExtra("placeProvince", postDataList[position].pageProvince)
+                requireContext().startActivity(intent)
+
+            }
+
+        }
+        adapter?.onPageClickListener = onPageClickListener
+
+        val onUserClickListener = object: HomeRecyclerAdapter.OnUserClickListener{
+            override fun onUserClick(position: Int) {
+                val intent = Intent(context, OtherUser::class.java)
+                intent.putExtra("otherUserName", postDataList[position].userName)
+                requireActivity().startActivity(intent)
+            }
+
+
+        }
+
+        adapter?.onUserClickListener = onUserClickListener
+
+        val onClickShowAllListener = object : HomeRecyclerAdapter.OnClickShowAllListener{
+            override fun onClickShowAll(position: Int) {
+                val intent = Intent(context, Comment::class.java)
+                intent.putExtra("post_user_name", postDataList[position].userName)
+                intent.putExtra("post_description", postDataList[position].postDescription)
+                intent.putExtra("post_user_profile", postDataList[position].userProfilePhoto)
+                intent.putExtra("post_date", postDataList[position].postDate)
+                intent.putExtra("post_id", postDataList[position].postId!!)
+                requireActivity().startActivity(intent)
+            }
+        }
+
+        adapter?.onClickShowAllListener = onClickShowAllListener
+
+        val onLikeClickListener = object : HomeRecyclerAdapter.OnLikeClickListener{
+
+            override fun onLikeClick(position: Int) {
+                if (!postDataList[position].isLikingPost!!) {
+                    likePost(email!!, postDataList[position].postId!!, name!!)
+                    postDataList[position].postLikes = postDataList[position].postLikes?.plus(1)
+                    postDataList[position].isLikingPost = true
+
+                } else {
+                    unlikePost(email!!, postDataList[position].postId!!)
+                    postDataList[position].postLikes = postDataList[position].postLikes?.minus(1)
+                    postDataList[position].isLikingPost = false
+                }
+                adapter?.notifyItemChanged(position)
+            }
+        }
+
+        adapter?.onLikeClickListener = onLikeClickListener
+
+
+
+
+
+        adapter!!.addWriteCommentClickListener(object :
+            HomeRecyclerAdapter.OnWriteCommentClicked {
+            override fun onWriteCommentClicked(position: Int) {
+                navi?.visibility = View.GONE
+                writeCommentContainer?.visibility = View.VISIBLE
+                writeComment?.requestFocus()
+                imm.showSoftInput(writeComment, 0)
+                Log.d("나비", "곤")
+
+
+
+                writeComment?.setOnEditorActionListener(object : TextView.OnEditorActionListener{
+                    override fun onEditorAction(
+                        v: TextView?,
+                        actionId: Int,
+                        event: KeyEvent?
+                    ): Boolean {
+                        if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)){
+                            val comment = writeComment?.text.toString()
+                            postDataList[position].commentNumber = postDataList[position].commentNumber?.plus(1)
+                            postDataList[position].mainCommentUserName = name!!
+                            postDataList[position].mainComment = comment
+                            adapter?.notifyItemChanged(position)
+                            val call: Call<java.util.ArrayList<CommentData>> =
+                                apiInterface.writeComment(
+                                    email!!,
+                                    postDataList[position].postId!!,
+                                    name!!,
+                                    comment)
+                            val handler = Handler()
+                            handler.postDelayed(object : Runnable {
+                                override fun run() {
+                                    navi?.visibility = View.VISIBLE
+                                    writeCommentContainer?.visibility = View.GONE
+                                }
+                            }, 350)
+
+
+                            call.clone().enqueue(object : Callback<java.util.ArrayList<CommentData>> {
+                                override fun onFailure(call: Call<java.util.ArrayList<CommentData>>, t: Throwable) {
+
+                                }
+
+                                override fun onResponse(
+                                    call: Call<java.util.ArrayList<CommentData>>,
+                                    response: Response<java.util.ArrayList<CommentData>>
+                                ) {
+
+                                }
+
+
+                            })
+                            writeComment?.setText(null)
+                            writeComment?.clearFocus()
+                            UIUtil.hideKeyboard(activity)
+                        }
+                        return false
+                    }
+
+
+                })
+
+
+            }
+
+
+        })
 
 
 
@@ -293,17 +418,43 @@ class FragmentTree: Fragment(){
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        if(adapter?.itemCount == 0)
-            load(0)
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     fun load(index: Int) {
 
-        val email = sharedPreference.getString(requireContext(), "email")!!
-        val call:Call<ArrayList<PostData>> = apiInterface.getPostData(email, index)
+
+        val call:Call<ArrayList<PostData>> = apiInterface.getPostData(email!!, index)
         call.enqueue(object : Callback<ArrayList<PostData>>{
             override fun onFailure(call: Call<ArrayList<PostData>>, t: Throwable) {
 
@@ -317,14 +468,12 @@ class FragmentTree: Fragment(){
 
                 if(response.isSuccessful) {
 
-
-
-
                         response.body()?.let { postDataList.addAll(it) }
+                    recyclerview!!.adapter = adapter
                         adapter?.notifyDataChanged()
 
 
-                        if(postDataList.size == 9) {
+                        if(postDataList.size == 10) {
                             adapter!!.addLoadMoreListener(object :
                                 HomeRecyclerAdapter.OnLoadMoreListener {
                                 override fun onLoadMore() {
@@ -408,26 +557,42 @@ class FragmentTree: Fragment(){
         })
     }
 
+    fun likePost(email: String, postId: Int, user_name: String) {
 
-//    fun update(email: String){
-//
-//        val call: Call<User> = apiInterface.update(email)
-//        call.enqueue(object: Callback<User>{
-//            override fun onFailure(call: Call<User>, t: Throwable) {
-//
-//            }
-//
-//            override fun onResponse(call: Call<User>, response: Response<User>) {
-//
-//                likeNumber = response.body()?.likeNumber!!
-//                followNumber = response.body()?.followerNumber!!
-//                postNumber = response.body()?.postNumber!!
-//
-//
-//            }
-//
-//        })
-//
-//    }
+        val call: Call<ServerResonse> = apiInterface.likePost(email, postId, user_name)
+        call.enqueue(object : Callback<ServerResonse> {
+            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ServerResonse>,
+                response: Response<ServerResonse>
+            ) {
+
+
+            }
+        })
+
+
+    }
+
+    private fun unlikePost(email: String, postId: Int) {
+
+        val call: Call<ServerResonse> = apiInterface.unLikePost(email, postId)
+        call.enqueue(object : Callback<ServerResonse> {
+            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ServerResonse>,
+                response: Response<ServerResonse>
+            ) {
+
+            }
+        })
+
+    }
 }
 

@@ -284,15 +284,7 @@
                 android:paddingLeft="10dp"
                 android:layout_toRightOf="@+id/commentUserName"
                 />
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginRight="20dp"
-                android:src="@drawable/tree"
-                android:id="@+id/mainCommentLike"
-                android:layout_alignParentRight="true"
-                android:visibility="gone"
-                />
+
 
 
 
@@ -324,7 +316,7 @@
             android:id="@+id/myProfilePhoto"
             android:layout_weight="1.5"
             />
-        <EditText
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -334,26 +326,13 @@
             android:id="@+id/writeComment"
             android:textCursorDrawable="@drawable/cursor_default_color"
             android:background="@drawable/button_shape"
-            android:textSize="20sp"
-            android:inputType="textNoSuggestions"
+            android:textSize="15sp"
             android:textColor="@color/default_text"
-            android:hint="댓글 달기..."
+            android:text="댓글 달기..."
 
-            android:imeOptions="actionDone"
 
             />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:fontFamily="@font/nixgonfonts_b"
-            android:text="게시하기"
-            android:gravity="center"
-            android:textSize="17sp"
-            android:id="@+id/uploadComment"
-            android:textColor="@color/navi"
-            android:layout_marginRight="20dp"
-            />
+
 
 
 
