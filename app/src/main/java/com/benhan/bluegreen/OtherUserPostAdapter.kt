@@ -79,8 +79,9 @@ class OtherUserPostAdapter(val context: Context, val postImageDataList: ArrayLis
 
         if(getItemViewType(position) == TYPE_POST) {
             val postImage = item.postImage
+            val postImageUri = MyApplication.severUrl + postImage
 
-            Glide.with(context).load(postImage)
+            Glide.with(context).load(postImageUri)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .into((holder as PostViewHolder).ivPostImage)

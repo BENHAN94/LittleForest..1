@@ -11,14 +11,10 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,12 +30,7 @@ class FragmentUser: Fragment() {
     val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
     val postDataList = ArrayList<PostImageData>()
     var ivProfilePhoto : ImageView? = null
-    var viewModel : LFVIewModel? = null
-    var dividerDecoration :GridDividerDecoration? = null
-    var swipeLayout: SwipeRefreshLayout?  =null
-    val places = ArrayList<PlaceSearchData>()
-    var locationAdapter: SearchRecyclerAdapter? = null
-    var mOnItemClickListener: OnItemClickListener? = null
+
     var likeNumber: Int?  =null
     var postNumber: Int? = null
     var followNumber: Int? = null
@@ -48,6 +39,9 @@ class FragmentUser: Fragment() {
     var tvLikeNumber:TextView? = null
     var email: String? = null
     var adapter: PostImageSearchAdapter? = null
+    var tvUsername: TextView? = null
+    var tvActualname: TextView? = null
+    var tvIntroduction: TextView? = null
 
 
 
@@ -112,6 +106,10 @@ class FragmentUser: Fragment() {
                 startActivity(intent)
             }
         }
+
+        val postFragment = UserPostFragment()
+        val placeFragment = UserPlaceFragment()
+
         fun clickHandler(view: ImageView) {
 
 
@@ -119,16 +117,22 @@ class FragmentUser: Fragment() {
 
                 when (view.id) {
                     R.id.tree -> {
+                        tree.isClickable = false
                         Navigation.findNavController(rootView).navigate(R.id.from_user_to_tree)
+
                     }
                     R.id.search -> {
+                        search.isClickable = false
                         Navigation.findNavController(rootView).navigate(R.id.from_user_to_search)
+
                     }
                     R.id.bell -> {
+                        bell.isClickable = false
                         Navigation.findNavController(rootView).navigate(R.id.from_user_to_bell)
+
                     }
                     R.id.user -> {
-
+                        postFragment.recyclerView?.scrollToPosition(0)
                     }
                 }
             }
@@ -164,12 +168,11 @@ class FragmentUser: Fragment() {
         }
 
 
-        val tvUsername = rootView.findViewById<TextView>(R.id.profile_username)
-        val tvActualname = rootView.findViewById<TextView>(R.id.actualName)
-        val tvIntroduction = rootView.findViewById<TextView>(R.id.userIntroduction)
+        tvUsername = rootView.findViewById<TextView>(R.id.profile_username)
+        tvActualname = rootView.findViewById<TextView>(R.id.actualName)
+        tvIntroduction = rootView.findViewById<TextView>(R.id.userIntroduction)
         val tvLogout = rootView.findViewById<TextView>(R.id.logout)
         ivProfilePhoto = rootView.findViewById<ImageView>(R.id.placePhoto)
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.userPostRecycler)
         email = sharedPreference.getString(requireContext(), "email")!!
         tvPostNumber = rootView.findViewById<TextView>(R.id.postNumber)
         tvFollowerNumber = rootView.findViewById<TextView>(R.id.followerNumber)
@@ -177,12 +180,8 @@ class FragmentUser: Fragment() {
 
 
 
-        tvUsername.setText(sharedPreference.getString(requireContext(), "name"))
-        tvActualname.setText(sharedPreference.getString(requireContext(), "actualName"))
-        tvIntroduction.setText(sharedPreference.getString(requireContext(), "introduction"))
-        val profilePhotoUri = sharedPreference.getString(requireContext(), "profilePhoto")
-        Glide.with(requireActivity()).load(profilePhotoUri).thumbnail(0.3F)
-            .into(ivProfilePhoto!!)
+
+
 
 
 
@@ -197,10 +196,9 @@ class FragmentUser: Fragment() {
 
         }
 
-        val postFragment = UserPostFragment()
-        val placeFragment = UserPlaceFragment()
 
-        replaceFragment(postFragment)
+
+
 
         /////////////////////////////////////////////////////////
 
@@ -215,6 +213,10 @@ class FragmentUser: Fragment() {
 
             locationTab.setBackgroundResource(R.drawable.button_shape_green)
             ivLocation.setImageResource(R.drawable.location_white)
+
+            user.setOnClickListener {
+                postFragment.recyclerView?.scrollToPosition(0)
+            }
 
             replaceFragment(postFragment)
 
@@ -239,6 +241,10 @@ class FragmentUser: Fragment() {
             gridTab.isClickable = true
             locationTab.isClickable = false
 
+            user.setOnClickListener {
+                placeFragment.recyclerView?.scrollToPosition(0)
+            }
+
             replaceFragment(placeFragment)
 
 
@@ -253,12 +259,21 @@ class FragmentUser: Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val sharedPreference = SharedPreference()
-        val profilePhotoUri = sharedPreference.getString(requireContext(), "profilePhoto")
-        Glide.with(requireActivity()).load(profilePhotoUri).thumbnail(0.3F)
-            .into(ivProfilePhoto!!)
+        val postFragment = UserPostFragment()
+        tvUsername?.setText(sharedPreference.getString(requireContext(), "name"))
+        tvActualname?.setText(sharedPreference.getString(requireContext(), "actualName"))
+        tvIntroduction?.setText(sharedPreference.getString(requireContext(), "introduction"))
 
         update(email!!)
+        replaceFragment(postFragment)
+        val sharedPreference = SharedPreference()
+        val profilePhotoUri = sharedPreference.getString(requireContext(), "profilePhoto")
+        val profilePhoto = MyApplication.severUrl + profilePhotoUri
+        Glide.with(requireActivity()).load(profilePhoto).thumbnail(0.3F)
+            .into(ivProfilePhoto!!)
+
+
+
 
 
     }
@@ -283,6 +298,8 @@ class FragmentUser: Fragment() {
                 tvFollowerNumber?.text = followNumber?.toString()
                 tvLikeNumber?.text = likeNumber?.toString()
                 tvPostNumber?.text = postNumber?.toString()
+                sharedPreference.setInt(requireContext(), "postNumber", postNumber!!)
+                sharedPreference.setInt(requireContext(), "followNumber", followNumber!!)
 
             }
 

@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.plus_fragment_gallery_upload.*
 import kotlinx.coroutines.launch
@@ -38,7 +40,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
     val apiClient = ApiClient()
     val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
-
+    var etDescription: EditText? = null
 
 
 
@@ -50,6 +52,9 @@ class PhotoUploadActivity: AppCompatActivity(){
     var keyword: String = ""
     var id: Int? = null
     var file: File? = null
+    var responseListener : ResponseListener? =null
+
+    var recyclerView: RecyclerView? = null
 
 
 
@@ -58,6 +63,13 @@ class PhotoUploadActivity: AppCompatActivity(){
         setContentView(R.layout.plus_fragment_gallery_upload)
 
 
+
+        TedPermission.with(this)
+            .setPermissionListener(permissionListener)
+            .setRationaleMessage("회원님과 가까운 곳을 보기 위해서는 위치 정보 접근 권한이 필요해요")
+            .setDeniedMessage("언제든 [설정] > [권한] 에서 권한을 허용 하시면 가까운 곳을 보실 수 있어요")
+            .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            .check()
 
 
 
@@ -71,11 +83,11 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-        val recyclerView = findViewById<RecyclerView>(R.id.searchRecycler)
+        recyclerView = findViewById<RecyclerView>(R.id.searchRecycler)
         val searchBar = findViewById<EditText>(R.id.searchBar)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = adapter
-        recyclerView.setOnTouchListener(object : View.OnTouchListener{
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.adapter = adapter
+        recyclerView?.setOnTouchListener(object : View.OnTouchListener{
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
 
                 hideKeyboard(this@PhotoUploadActivity)
@@ -99,7 +111,7 @@ class PhotoUploadActivity: AppCompatActivity(){
         val tvPost = findViewById<TextView>(R.id.post)
 //        val passSelectedPhoto = ViewModelProvider(this)[PassSelectedPhoto::class.java]
 //        val selectedPhoto: PhotoVO? = passSelectedPhoto.selectedPhotoData.value
-        val etDescription = findViewById<EditText>(R.id.descriptionUpload)
+        etDescription = findViewById<EditText>(R.id.descriptionUpload)
 
 
         tvPost.setTextColor(naviColor)
@@ -137,31 +149,6 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         adapter.onItemClickListener = mOnItemClickListener
 
-        etDescription.isFocusable = false
-        searchBar.isFocusable = false
-
-//        searchBar.addTextChangedListener(object : TextWatcher{
-//            override fun afterTextChanged(s: Editable?) {
-//
-//
-//
-//            }
-//
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//
-//
-//            }
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//
-//
-//
-//
-//
-//            }
-//
-//
-//        })
 
 
 
@@ -177,50 +164,15 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-        searchBar.setOnEditorActionListener(object: TextView.OnEditorActionListener{
-            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    searchBar.clearFocus()
-                    hideKeyboard(this@PhotoUploadActivity)
-                    etDescription.isFocusable = false
-                    searchBar.isFocusable = false
-                    keyword = searchBar.text.toString()
-
-
-                    if (keyword.isNullOrEmpty()){
-                        keyword = ""}
-                    places.removeAll(places)
-                    recyclerView.removeAllViews()
-                    adapter.notifyDataChanged()
-                    load(keyword, 0)
-                }
-                return false
-            }
-
-
-        })
-
-        recyclerView.setOnTouchListener(object : View.OnTouchListener{
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                hideKeyboard(this@PhotoUploadActivity)
-                etDescription.clearFocus()
-                searchBar.clearFocus()
-                etDescription.isFocusable = false
-                searchBar.isFocusable = false
-
-                return false
-            }
-
-
-        })
 
 
 
 
 
-        etDescription.addTextChangedListener(object : TextWatcher{
+
+        etDescription?.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(s: Editable?) {
-                desc = etDescription.text.toString()
+                desc = etDescription?.text.toString()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -238,72 +190,15 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-        etDescription.setOnEditorActionListener(object : TextView.OnEditorActionListener{
-            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if(actionId== EditorInfo.IME_ACTION_DONE){
-                    etDescription.clearFocus()
-                    hideKeyboard(this@PhotoUploadActivity)
-                    etDescription.isFocusable = false
-                    searchBar.isFocusable = false
-                }
-                return false
-            }
 
 
-        })
 
-        etDescription.setOnTouchListener(object: View.OnTouchListener{
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-
-                etDescription.isFocusableInTouchMode = true
-                return false
-            }
-
-
-        })
-        searchBar.setOnTouchListener(object: View.OnTouchListener{
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-
-                searchBar.isFocusableInTouchMode = true
-                return false
-            }
-
-
-        })
-
-
-        ivSelectedPhoto.setOnTouchListener(object : View.OnTouchListener{
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                hideKeyboard(this@PhotoUploadActivity)
-                etDescription.clearFocus()
-                etDescription.isFocusable = false
-                searchBar.isFocusable = false
-                return false
-            }
-
-
-        })
 
         Glide.with(this).load(selectedPhoto).centerCrop()
             .into(ivSelectedPhoto)
 
 
 
-
-        // POST Image file to Server
-
-//
-//        var selectedPhotoPath: String? = null
-//        val file = File(selectedPhoto)
-
-//        val cursor: Cursor? = this.contentResolver.query(
-//            selectedPhoto, null, null, null, null
-//        )
-//        if (cursor !== null) {
-//            cursor.moveToFirst()
-//            val idx: Int = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-//            selectedPhotoPath = cursor.getString(idx)
-//        }
 
 
 
@@ -329,29 +224,6 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-            load(keyword, 0)
-
-            val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener {
-                override fun onLoadMore() {
-
-                    recyclerView.post(object : Runnable {
-                        override fun run() {
-
-                            val index = places.size - 1
-
-                            loadMore(keyword, index)
-
-                        }
-
-                    })
-
-                }
-
-
-            }
-
-            adapter.onLoadMoreListener = onLoadMoreListener
-
 
 
     }
@@ -361,49 +233,145 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
-    fun load(keyword: String ,index: Int){
+
+
+    private val permissionListener = object : PermissionListener {
+        override fun onPermissionGranted() {
+
+            val gpsTracker = GpsTracker(this@PhotoUploadActivity)
+            val x = gpsTracker.fetchLatitude()
+            val y = gpsTracker.fetchLongtitude()
+
+
+            if(adapter?.itemCount == 0)
+                loadClose("",0, x, y)
+            searchBar.setOnEditorActionListener(object: TextView.OnEditorActionListener{
+                override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        searchBar.clearFocus()
+                        hideKeyboard(this@PhotoUploadActivity)
+
+
+                        keyword = searchBar.text.toString()
+
+
+                        if (keyword.isNullOrEmpty()){
+                            keyword = ""}
+                        places.removeAll(places)
+                        recyclerView?.removeAllViews()
+                        adapter.notifyDataChanged()
+                        loadClose(keyword, 0, x, y)
+                    }
+                    return false
+                }
+
+
+            })
+
+
+        }
+
+        override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+            Toast.makeText(this@PhotoUploadActivity, "권한 거부", Toast.LENGTH_SHORT).show()
+
+
+            if(adapter?.itemCount == 0)
+                load("", 0)
+            searchBar.setOnEditorActionListener(object: TextView.OnEditorActionListener{
+                override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        searchBar.clearFocus()
+                        hideKeyboard(this@PhotoUploadActivity)
+
+                        keyword = searchBar.text.toString()
+
+
+                        if (keyword.isNullOrEmpty()){
+                            keyword = ""}
+                        places.removeAll(places)
+                        recyclerView?.removeAllViews()
+                        adapter.notifyDataChanged()
+                        load(keyword, 0)
+                    }
+                    return false
+                }
+
+
+            })
+
+        }
 
 
 
+    }
 
 
-        val call:Call<ArrayList<PlaceSearchData>> = apiInterface.loadPlace(keyword, index)
+    fun load(keyword: String ,index: Int) {
 
-        call.enqueue(object : Callback<ArrayList<PlaceSearchData>>{
+
+        val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchPlace(keyword, index)
+        call.enqueue(object: Callback<ArrayList<PlaceSearchData>> {
             override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
 
-                Log.d("실패", t.message)
+                Log.d("사이즈", t.message)
+
             }
 
             override fun onResponse(
                 call: Call<ArrayList<PlaceSearchData>>,
                 response: Response<ArrayList<PlaceSearchData>>
             ) {
-
-                if (response.isSuccessful) {
+                if(response.isSuccessful){
                     response.body()?.let { places.addAll(it) }
-                    adapter.notifyDataChanged()
-                    Log.d("플레이스", places.isEmpty().toString())
-                } else{ Log.d("메세지", response.isSuccessful.toString())}
+                    adapter?.notifyDataChanged()
+                    Log.d("사이즈", response.body()?.size.toString())
+                    if (response.body()?.size == 30)
+                        setOnLoadMoreListener()
+                }
             }
 
 
         })
 
+    }
+
+    fun loadClose(keyword: String ,index: Int, x: Double, y: Double) {
 
 
+        val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchClosePlace(keyword, index, x, y)
+        call.enqueue(object: Callback<ArrayList<PlaceSearchData>> {
+            override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<PlaceSearchData>>,
+                response: Response<ArrayList<PlaceSearchData>>
+            ) {
+                if(response.isSuccessful){
+                    response.body()?.let { places.addAll(it) }
+                    adapter?.notifyDataChanged()
+                    if(response.body()?.size == 30 )
+                        setOnLoadCloseMoreListener()
+                }
+            }
+
+
+        })
 
     }
 
-    fun loadMore(keyword: String, startRow: Int){
+
+
+    fun loadMore(keyword: String, index: Int){
 
 
         places.add(PlaceSearchData("load"))
-        adapter.notifyItemInserted(places.size-1)
+        adapter?.notifyItemInserted(places.size-1)
 
-
-        val call:Call<ArrayList<PlaceSearchData>> = apiInterface.searchPlace(keyword, startRow)
-        call.enqueue(object : Callback<ArrayList<PlaceSearchData>>{
+        val newIndex = index + 1
+        val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchPlace(keyword, newIndex)
+        call.enqueue(object : Callback<ArrayList<PlaceSearchData>> {
             override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
 
             }
@@ -412,28 +380,16 @@ class PhotoUploadActivity: AppCompatActivity(){
                 call: Call<ArrayList<PlaceSearchData>>,
                 response: Response<ArrayList<PlaceSearchData>>
             ) {
-
                 if(response.isSuccessful){
-                    if(places.size > 0)
-                        places.removeAt(places.size - 1)
+                    places.removeAt(places.size - 1)
                     val result: ArrayList<PlaceSearchData>? = response.body()
-
-                    if(!result.isNullOrEmpty() && result.size > 0) {
+                    if(result!!.size > 0) {
 
                         places.addAll(result)
                     }else {
-                        adapter.isMoreDataAvailable = false
-
+                        adapter!!.isMoreDataAvailable = false
                     }
-
-                    adapter.notifyDataChanged()
-
-
-
-                }else {
-
-                    Log.e("콜", response.message())
-
+                    adapter!!.notifyDataChanged()
                 }
 
             }
@@ -445,6 +401,87 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
     }
+
+    fun loadCloseMore(keyword: String, index: Int, x: Double, y: Double){
+
+
+        places.add(PlaceSearchData("load"))
+        adapter?.notifyItemInserted(places.size-1)
+
+        val newIndex = index + 1
+        val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchClosePlace(keyword, newIndex, x, y)
+        call.enqueue(object : Callback<ArrayList<PlaceSearchData>> {
+            override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<PlaceSearchData>>,
+                response: Response<ArrayList<PlaceSearchData>>
+            ) {
+                if(response.isSuccessful){
+                    places.removeAt(places.size - 1)
+                    val result: ArrayList<PlaceSearchData>? = response.body()
+                    if(result!!.size > 0) {
+                        places.addAll(result)
+                    }else {
+                        adapter!!.isMoreDataAvailable = false
+                    }
+                    adapter!!.notifyDataChanged()
+                }
+
+            }
+
+
+        })
+
+
+
+
+    }
+
+    fun setOnLoadMoreListener(){
+
+        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+                recyclerView?.post(object : Runnable{
+                    override fun run() {
+                        val index = places.size - 1
+                        loadMore(keyword , index)
+                    }
+
+                })
+            }
+        }
+
+        adapter?.onLoadMoreListener = onLoadMoreListener
+    }
+
+    fun setOnLoadCloseMoreListener(){
+
+        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+                recyclerView?.post(object : Runnable{
+                    override fun run() {
+                        val index = places.size - 1
+                        val gpsTracker = GpsTracker(this@PhotoUploadActivity)
+                        val x = gpsTracker.fetchLatitude()
+                        val y = gpsTracker.fetchLongtitude()
+                        loadCloseMore(keyword , index, x, y)
+                    }
+
+                })
+            }
+        }
+
+        adapter?.onLoadMoreListener = onLoadMoreListener
+    }
+
+
+
+
+
+
 
 
     fun hideKeyboard(activity: Activity) {
@@ -458,6 +495,7 @@ class PhotoUploadActivity: AppCompatActivity(){
         }
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
 
 
 
@@ -496,6 +534,9 @@ class PhotoUploadActivity: AppCompatActivity(){
                 ) {
 
 
+
+                    responseListener?.onResponse()
+
                     Log.d("코드", response.message())
 
 
@@ -505,26 +546,6 @@ class PhotoUploadActivity: AppCompatActivity(){
             })
 
         } }
-
-//
-//
-//        val callPostData: Call<ServerResonse> = this.apiInterface.uploadPostData(email,
-//        date, desc)
-//
-//        callPostData.enqueue(object : Callback<ServerResonse>{
-//            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-//                Log.d("에러 ", t.message)
-//            }
-//
-//            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
-//
-//                Log.d("유저데이터", response.message())
-//
-//
-//            }
-//
-//
-//        })
 
 
 

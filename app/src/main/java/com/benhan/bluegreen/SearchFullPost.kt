@@ -110,23 +110,7 @@ class SearchFullPost : AppCompatActivity() {
         } else {
             tvDelete.visibility = View.GONE
         }
-        tvDelete.setOnClickListener {
-            val call : Call<ServerResonse> = apiInterface.delete(post_id)
-            call.enqueue(object : Callback<ServerResonse>{
-                override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-                    finish()
-                }
 
-                override fun onResponse(
-                    call: Call<ServerResonse>,
-                    response: Response<ServerResonse>
-                ) {
-                    finish()
-                }
-
-
-            })
-        }
 
         etWriteComment.clearFocus()
 
@@ -164,6 +148,23 @@ class SearchFullPost : AppCompatActivity() {
                     postedDate = res?.postDate
 
 
+                    tvDelete.setOnClickListener {
+                        val delete : Call<ServerResonse> = apiInterface.delete(post_id, postImage!!)
+                        delete.enqueue(object : Callback<ServerResonse>{
+                            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+                                finish()
+                            }
+
+                            override fun onResponse(
+                                call: Call<ServerResonse>,
+                                response: Response<ServerResonse>
+                            ) {
+                                finish()
+                            }
+
+
+                        })
+                    }
 
                     if(!postedDate.isNullOrEmpty()){
                     val prettyTime = PrettyTime(Locale.KOREA)
@@ -173,15 +174,20 @@ class SearchFullPost : AppCompatActivity() {
                     tvPostedDate.text = ago
                     }
 
-                    Glide.with(this@SearchFullPost).load(pageProfilePhoto)
+
+                    val pageProfileUri = MyApplication.severUrl + pageProfilePhoto
+                    val postImageUri = MyApplication.severUrl + postImage
+                    val userProfileUri = MyApplication.severUrl + userProfilePhoto
+                    val myProfilePhotoUri = MyApplication.severUrl + myProfilePhoto
+                    Glide.with(this@SearchFullPost).load(pageProfileUri)
                         .into(ivPageProfilePhoto)
-                    Glide.with(this@SearchFullPost).load(postImage)
+                    Glide.with(this@SearchFullPost).load(postImageUri)
                         .fitCenter()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(ivPostImage)
-                    Glide.with(this@SearchFullPost).load(userProfilePhoto)
+                    Glide.with(this@SearchFullPost).load(userProfileUri)
                         .into(ivUserProfilePhoto)
-                    Glide.with(this@SearchFullPost).load(myProfilePhoto)
+                    Glide.with(this@SearchFullPost).load(myProfilePhotoUri)
                         .into(ivMyProfile)
 
 
@@ -319,6 +325,7 @@ class SearchFullPost : AppCompatActivity() {
 
 
         getSinglePost(myEmail!!, post_id)
+
 
 
 

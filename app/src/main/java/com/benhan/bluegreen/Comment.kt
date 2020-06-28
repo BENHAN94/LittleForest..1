@@ -213,7 +213,8 @@ class Comment : AppCompatActivity() {
         tvName?.text = userName
         tvContents?.text = postContents
 
-            Glide.with(this).load(profilePhoto)
+        val profilePhotoUri = MyApplication.severUrl+profilePhoto
+            Glide.with(this).load(profilePhotoUri)
                 .into(ivUserProfile!!)
 
         Glide.with(this).load(myProfile)

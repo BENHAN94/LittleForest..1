@@ -68,8 +68,9 @@ class ProfileUpdateActivity : AppCompatActivity(){
         etJob.setText(job)
         etIntroduce.setText(introduction)
 
+        val profilePhotoUri = MyApplication.severUrl+profile_photo
         Glide.with(this@ProfileUpdateActivity)
-            .load(profile_photo)
+            .load(profilePhotoUri)
             .into(userUpdateProfilePhoto)
 
 

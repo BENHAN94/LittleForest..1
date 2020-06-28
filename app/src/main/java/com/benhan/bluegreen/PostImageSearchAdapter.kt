@@ -65,8 +65,9 @@ class PostImageSearchAdapter(val context: Context, val postImageDataList: ArrayL
 
         if(getItemViewType(position) == TYPE_POST) {
             val postImage = item.postImg
+            val postImageUri = MyApplication.severUrl+postImage
 
-            Glide.with(context).load(postImage)
+            Glide.with(context).load(postImageUri)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .into((holder as PostViewHolder).ivPostImage)

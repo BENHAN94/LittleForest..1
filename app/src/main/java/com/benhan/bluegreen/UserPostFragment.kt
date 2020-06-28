@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +26,7 @@ class UserPostFragment: Fragment() {
     val sharedPreference = SharedPreference()
     var welcome: TextView? = null
     var recyclerView : RecyclerView? = null
+    var swipeRefreshLayout: SwipeRefreshLayout? = null
 
 
 
@@ -55,24 +58,42 @@ class UserPostFragment: Fragment() {
             }
         }
 
+        val postNumber = sharedPreference.getInt(requireContext(), "postNumber")
 
-        val onLoadMoreListener = object: HomeRecyclerAdapter.OnLoadMoreListener{
-            override fun onLoadMore() {
+        if(postNumber!! > 30) {
+            val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener {
+                override fun onLoadMore() {
 
-                recyclerView!!.post(object : Runnable{
-                    override fun run() {
-                        val index = postImageDataList.size-1
-                        loadMore(index)
-                    }
+                    recyclerView!!.post(object : Runnable {
+                        override fun run() {
+                            val index = postImageDataList.size - 1
+                            loadMore(index)
+                        }
 
-                })
+                    })
+                }
+
             }
-
+            adapter!!.loadMoreListener = onLoadMoreListener
         }
+
+        swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
+        swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
+        swipeRefreshLayout?.setOnRefreshListener {
+
+            postImageDataList.removeAll(postImageDataList)
+            adapter?.notifyDataChanged()
+            if(postImageDataList.size == 0)
+            load(0)
+            adapter?.isMoreDataAvailable = true
+            swipeRefreshLayout?.isRefreshing = false
+        }
+
         recyclerView!!.layoutManager = GridLayoutManager(requireContext(), 3)
 
         adapter!!.onItemClickListener = mOnItemClickListener
-        adapter!!.loadMoreListener = onLoadMoreListener
+
 
 
         if(adapter?.itemCount == 0)

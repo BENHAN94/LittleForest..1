@@ -1,14 +1,20 @@
 package com.benhan.bluegreen
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,7 +26,21 @@ class SearchPostFragment: Fragment() {
     val apiClient = ApiClient()
     val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
     var adapter: PostImageSearchAdapter? = null
+    var recyclerView: RecyclerView? = null
+    var swipeRefreshLayout: SwipeRefreshLayout? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        TedPermission.with(requireContext())
+            .setPermissionListener(permissionListener)
+            .setRationaleMessage("회원님과 가까운 곳을 보기 위해서는 위치 정보 접근 권한이 필요해요")
+            .setDeniedMessage("언제든 [설정] > [권한] 에서 권한을 허용 하시면 가까운 곳을 보실 수 있어요")
+            .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            .check()
+
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,14 +49,20 @@ class SearchPostFragment: Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.search_post_fragment, container, false)
 
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.recyclerview)
+
+
+
+
+
+
+        recyclerView = rootView.findViewById<RecyclerView>(R.id.recyclerview)
         val dividerDecoration = GridDividerDecoration(resources, R.drawable.divider_recyler_gallery)
-        recyclerView.hasFixedSize()
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.addItemDecoration(dividerDecoration)
+        recyclerView?.hasFixedSize()
+        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView?.addItemDecoration(dividerDecoration)
 
         adapter = PostImageSearchAdapter(requireContext(), postImageDataList)
-        recyclerView.adapter = adapter
+        recyclerView?.adapter = adapter
 
         val mOnItemClickListener = object: OnItemClickListener{
             override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
@@ -50,27 +76,40 @@ class SearchPostFragment: Fragment() {
         }
 
 
-        val onLoadMoreListener = object: HomeRecyclerAdapter.OnLoadMoreListener{
-            override fun onLoadMore() {
 
-                recyclerView!!.post(object : Runnable{
-                    override fun run() {
-                         val index = postImageDataList.size-1
-                        loadMore(index!!)
-                    }
 
-                })
-            }
 
-        }
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+
+
+
+
+
+
+        ////////////swipe /////////////
+
+
+        swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
+        swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
+
+
+
+
+        recyclerView?.layoutManager = GridLayoutManager(requireContext(), 3)
 
         adapter!!.onItemClickListener = mOnItemClickListener
-        adapter!!.loadMoreListener = onLoadMoreListener
 
 
-        if(adapter?.itemCount == 0)
-        load(0)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -92,7 +131,45 @@ class SearchPostFragment: Fragment() {
 
 
 
+    private val permissionListener = object : PermissionListener {
+        override fun onPermissionGranted() {
 
+            val gpsTracker = GpsTracker(requireContext())
+            val x = gpsTracker.fetchLatitude()
+            val y = gpsTracker.fetchLongtitude()
+
+            swipeRefreshLayout?.setOnRefreshListener {
+                postImageDataList.removeAll(postImageDataList)
+                adapter?.notifyDataChanged()
+                loadClose(0, x, y)
+                adapter?.isMoreDataAvailable = true
+                swipeRefreshLayout?.isRefreshing = false
+            }
+            if(adapter?.itemCount == 0)
+                loadClose(0, x, y)
+
+
+        }
+
+        override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+            Toast.makeText(requireContext(), "권한 거부", Toast.LENGTH_SHORT).show()
+
+
+            swipeRefreshLayout?.setOnRefreshListener {
+                postImageDataList.removeAll(postImageDataList)
+                adapter?.notifyDataChanged()
+                load(0)
+                adapter?.isMoreDataAvailable = true
+                swipeRefreshLayout?.isRefreshing = false
+            }
+            if(adapter?.itemCount == 0)
+                load(0)
+
+        }
+
+
+
+    }
 
 
 
@@ -104,6 +181,31 @@ class SearchPostFragment: Fragment() {
     fun load(index: Int){
 
         val call: Call<ArrayList<PostImageData>> = apiInterface.getRandomPostImage(index)
+        call.enqueue(object: Callback<ArrayList<PostImageData>> {
+            override fun onFailure(call: Call<ArrayList<PostImageData>>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<PostImageData>>,
+                response: Response<ArrayList<PostImageData>>
+            ) {
+
+                if(response.isSuccessful) {
+                    response.body()?.let { postImageDataList.addAll(it) }
+                    adapter?.notifyDataChanged()
+                }
+            }
+
+
+        })
+
+
+    }
+
+    fun loadClose(index: Int, x: Double, y:Double){
+
+        val call: Call<ArrayList<PostImageData>> = apiInterface.getCloseRandomPostImage(index, x, y)
         call.enqueue(object: Callback<ArrayList<PostImageData>> {
             override fun onFailure(call: Call<ArrayList<PostImageData>>, t: Throwable) {
 
@@ -148,6 +250,8 @@ class SearchPostFragment: Fragment() {
                     val result: ArrayList<PostImageData>? = response.body()
                     if(result!!.size > 0) {
                         postImageDataList.addAll(result)
+                        if(result.size == 10)
+                            setOnLoadMoreListener()
                     }else {
                         adapter!!.isMoreDataAvailable = false
                     }
@@ -162,4 +266,84 @@ class SearchPostFragment: Fragment() {
 
 
     }
+
+    fun loadCloseMore(index: Int, x: Double, y:Double){
+
+
+        postImageDataList.add(PostImageData("load"))
+        adapter?.notifyItemInserted(postImageDataList.size - 1)
+
+        val newIndex = index + 1
+        val call: Call<ArrayList<PostImageData>> = apiInterface.getCloseRandomPostImage(newIndex, x, y)
+        call.enqueue(object : Callback<ArrayList<PostImageData>> {
+            override fun onFailure(call: Call<ArrayList<PostImageData>>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<PostImageData>>,
+                response: Response<ArrayList<PostImageData>>
+            ) {
+                if(response.isSuccessful){
+                    postImageDataList.removeAt(postImageDataList.size - 1)
+                    val result: ArrayList<PostImageData>? = response.body()
+                    if(result!!.size > 0) {
+                        postImageDataList.addAll(result)
+                        if(result.size ==10)
+                            setOnLoadCloseMoreListener(x, y)
+                    }else {
+                        adapter!!.isMoreDataAvailable = false
+                    }
+                    adapter!!.notifyDataChanged()
+                }
+
+            }
+
+        })
+
+
+
+
+    }
+
+    fun setOnLoadMoreListener(){
+
+        val onLoadMoreListener = object: HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+
+                recyclerView!!.post(object : Runnable{
+                    override fun run() {
+                        val index = postImageDataList.size-1
+                        loadMore(index)
+                    }
+
+                })
+            }
+
+        }
+
+        adapter!!.loadMoreListener = onLoadMoreListener
+
+    }
+
+    fun setOnLoadCloseMoreListener(x: Double, y: Double){
+
+        val onLoadMoreListener = object: HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+
+                recyclerView!!.post(object : Runnable{
+                    override fun run() {
+                        val index = postImageDataList.size-1
+                        loadCloseMore(index, x, y)
+                    }
+
+                })
+            }
+
+        }
+
+        adapter!!.loadMoreListener = onLoadMoreListener
+
+    }
+
 }

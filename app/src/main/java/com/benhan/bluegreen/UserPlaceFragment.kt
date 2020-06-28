@@ -13,9 +13,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import retrofit2.Call
@@ -34,6 +36,7 @@ class UserPlaceFragment: Fragment() {
     val sharedPreference = SharedPreference()
     var welcome: TextView? = null
     var recyclerView : RecyclerView? = null
+    var index = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,19 +73,12 @@ class UserPlaceFragment: Fragment() {
         }
         adapter?.onItemClickListener = placeOnItemClickListener
 
-        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
-            override fun onLoadMore() {
-                recyclerView?.post(object : Runnable{
-                    override fun run() {
-                        val index = places.size - 1
-                        loadMore(index)
-                    }
 
-                })
-            }
-        }
 
-        adapter?.onLoadMoreListener = onLoadMoreListener
+        val followNumber = sharedPreference.getInt(requireContext(), "followNumber")
+
+        if(followNumber!! > 20)
+        setOnLoadMoreListener()
 
         recyclerView?.adapter = adapter
 
@@ -99,6 +95,20 @@ class UserPlaceFragment: Fragment() {
         searchBar.visibility = View.GONE
 
 
+        val swipeRefreshLayout: SwipeRefreshLayout = rootview.findViewById(R.id.swipeLayout)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
+        swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
+        swipeRefreshLayout.setOnRefreshListener {
+
+            places.removeAll(places)
+            adapter?.notifyDataChanged()
+            if(places.size == 0)
+            load(0)
+            adapter?.isMoreDataAvailable = true
+
+            swipeRefreshLayout.isRefreshing = false
+
+        }
 
 
 
@@ -198,6 +208,23 @@ class UserPlaceFragment: Fragment() {
             view = View(activity)
         }
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    fun setOnLoadMoreListener(){
+        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+                recyclerView?.post(object : Runnable{
+                    override fun run() {
+                        index = places.size - 1
+                        loadMore(index)
+                    }
+
+                })
+            }
+        }
+
+        adapter?.onLoadMoreListener = onLoadMoreListener
+
     }
 
 }

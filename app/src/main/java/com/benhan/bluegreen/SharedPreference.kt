@@ -41,6 +41,21 @@ class SharedPreference {
 
     }
 
+    fun setInt(context: Context, key:String, value: Int){
+        val prefs = getPreference(context)
+        val editor: SharedPreferences.Editor = prefs.edit()
+        editor.putInt(key, value)
+        editor.apply()
+
+    }
+
+    fun getInt(context: Context, key:String): Int?{
+        val prefs = getPreference(context)
+        val value = prefs.getInt(key, 0)
+        return value
+
+    }
+
 
     fun setStringList(context: Context, key: String, arrayList: ArrayList<String>){
 

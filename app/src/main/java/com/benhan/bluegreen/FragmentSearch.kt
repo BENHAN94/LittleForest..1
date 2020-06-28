@@ -1,9 +1,16 @@
 package com.benhan.bluegreen
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +18,23 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import okhttp3.OkHttpClient
+import java.io.IOException
+import java.util.*
+import java.util.jar.Manifest
+
 
 class FragmentSearch: Fragment(){
+
+
+
+
 
 
     override fun onCreateView(
@@ -78,6 +95,10 @@ class FragmentSearch: Fragment(){
         }
 
 
+
+
+        val postFragment = SearchPostFragment()
+        val placeFragment = SearchPlaceFragment()
         fun clickHandler(view: ImageView){
 
 
@@ -86,15 +107,18 @@ class FragmentSearch: Fragment(){
 
                 when(view.id) {
                     R.id.tree -> {
+                        tree.isClickable = false
                         Navigation.findNavController(rootView).navigate(R.id.from_search_to_tree)
                     }
                     R.id.search -> {
-
+                        postFragment.recyclerView?.scrollToPosition(0)
                     }
                     R.id.bell -> {
+                        bell.isClickable = false
                         Navigation.findNavController(rootView).navigate(R.id.from_search_to_bell)
                     }
                     R.id.user -> {
+                        user.isClickable = false
                         Navigation.findNavController(rootView).navigate(R.id.from_search_to_user)
                     }
                 }
@@ -107,9 +131,6 @@ class FragmentSearch: Fragment(){
         clickHandler(user)
 
 
-
-        val postFragment = SearchPostFragment()
-        val placeFragment = SearchPlaceFragment()
 
 
 
@@ -140,6 +161,10 @@ class FragmentSearch: Fragment(){
             locationTab.setBackgroundResource(R.drawable.button_shape_green)
             ivLocation.setImageResource(R.drawable.location_white)
 
+            search.setOnClickListener {
+                postFragment.recyclerView?.scrollToPosition(0)
+            }
+
             replaceFragment(postFragment)
 
         }
@@ -156,6 +181,10 @@ class FragmentSearch: Fragment(){
 
             locationTab.setBackgroundResource(R.drawable.button_shape_stroke)
             ivLocation.setImageResource(R.drawable.location_green)
+
+            search.setOnClickListener {
+                placeFragment.recyclerView?.scrollToPosition(0)
+            }
 
 
             replaceFragment(placeFragment)
@@ -184,6 +213,7 @@ class FragmentSearch: Fragment(){
     }
 
 
+
     private fun replaceFragment(fragment: Fragment) {
         val backStateName = fragment.javaClass.name
         val childFragmentManager = childFragmentManager
@@ -195,6 +225,21 @@ class FragmentSearch: Fragment(){
             ft.commit()
         }
     }
+
+    fun getCurrentAddress(
+        latitude: Double,
+        longitude: Double
+    ): String? { /*지오코더... GPS를 주소로 변환*/
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        val addresses: List<Address>?
+        addresses =  geocoder.getFromLocation(latitude, longitude, 100)
+        val address: Address = addresses[0]
+        return address.getAddressLine(0).toString().toString() + "\n"
+    }
+
+
+
+
 
 
 }

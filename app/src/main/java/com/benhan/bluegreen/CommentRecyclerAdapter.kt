@@ -202,7 +202,8 @@ class CommentRecyclerAdapter(val context: Context, val commentList: ArrayList<Co
             }
 
 
-            Glide.with(context).load(item.profile_photo)
+            val profilePhotoUri = MyApplication.severUrl+item.profile_photo
+            Glide.with(context).load(profilePhotoUri)
                 .into(holder.ivUserProfile)
 
             if (isLiked!!){
@@ -357,7 +358,8 @@ class CommentRecyclerAdapter(val context: Context, val commentList: ArrayList<Co
             }
 
 
-            Glide.with(context).load(item?.profile_photo)
+            val profilePhotoUri = MyApplication.severUrl+item.profile_photo
+            Glide.with(context).load(profilePhotoUri)
                 .into(holder.ivUserProfile)
 
             if (isLiked!!){

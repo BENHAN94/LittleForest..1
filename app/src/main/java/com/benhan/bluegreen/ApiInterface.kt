@@ -64,6 +64,13 @@ interface ApiInterface {
                     @Field("index")index: Int): Call<ArrayList<PlaceSearchData>>
 
     @FormUrlEncoded
+    @POST("search_close_place.php")
+    fun searchClosePlace(@Field("keyword")keyword: String,
+                    @Field("index")index: Int,
+                         @Field("x")x: Double,
+                         @Field("y")y: Double): Call<ArrayList<PlaceSearchData>>
+
+    @FormUrlEncoded
     @POST("search_place_default.php")
     fun loadPlace(@Field("keyword")keyword: String,
                   @Field("index")index: Int): Call<ArrayList<PlaceSearchData>>
@@ -86,12 +93,18 @@ interface ApiInterface {
     fun getRandomPostImage(@Field("index")index: Int): Call<ArrayList<PostImageData>>
 
     @FormUrlEncoded
+    @POST("get_close_random_post_image.php")
+    fun getCloseRandomPostImage(@Field("index")index: Int,
+                                @Field("x")x:Double,
+                                @Field("y")y:Double): Call<ArrayList<PostImageData>>
+
+    @FormUrlEncoded
     @POST("place_page.php")
     fun getPageInfo(@Field("id")id: Int): Call<PlacePageData>
 
     @FormUrlEncoded
     @POST("place_page_posts.php")
-    fun getPagePosts(@Field("id")id: Int): Call<ArrayList<PostImageData>>
+    fun getPagePosts(@Field("id")id: Int, @Field("index")index: Int): Call<ArrayList<PostImageData>>
 
     @FormUrlEncoded
     @POST("follow_place.php")
@@ -114,14 +127,13 @@ interface ApiInterface {
     @POST("like_place.php")
     fun likePlace(@Field("id")id: Int,
                     @Field("email")email: String,
-                    @Field("is_liking")isLiking: Boolean): Call<ServerResonse>
+                    @Field("name")name: String): Call<ServerResonse>
 
     @FormUrlEncoded
     @POST("unlike_place.php")
     fun unlikePlace(@Field("id")id: Int,
                       @Field("email")email: String,
                       @Field("is_liking")isLiking: Boolean): Call<ServerResonse>
-
     @FormUrlEncoded
     @POST("check_like.php")
     fun checkLike(@Field("id")id: Int,
@@ -212,7 +224,7 @@ interface ApiInterface {
 
     @FormUrlEncoded
     @POST("delete_post.php")
-    fun delete(@Field("post_id")post_id: Int): Call<ServerResonse>
+    fun delete(@Field("post_id")post_id: Int, @Field("post_path")postImage: String): Call<ServerResonse>
 
     @FormUrlEncoded
     @POST("delete_comment.php")

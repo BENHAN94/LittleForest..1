@@ -1,9 +1,12 @@
 package com.benhan.bluegreen
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Html
 import android.text.method.ScrollingMovementMethod
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 
@@ -13,10 +16,25 @@ class RegisterAgreement : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register_agreement)
 
+        fun hideKeyboard(activity: Activity) {
+            val imm: InputMethodManager =
+                activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            //Find the currently focused view, so we can grab the correct window token from it.
+            var view = activity.currentFocus
+            //If no view currently has focus, create a new one, just so we can grab a window token from it
+            if (view == null) {
+                view = View(activity)
+            }
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+
         val ivBack = findViewById<ImageView>(R.id.backback)
         ivBack.setOnClickListener {
             finish()
         }
+
+        hideKeyboard(this)
 
         val textView = findViewById<TextView>(R.id.textView)
         textView.movementMethod = ScrollingMovementMethod()
@@ -31,30 +49,22 @@ class RegisterAgreement : AppCompatActivity() {
                 "\n" +
                 "가. 홈페이지 회원가입 및 관리\n" +
                 "\n" +
-                "회원 가입의사 확인, 회원제 서비스 제공에 따른 본인 식별·인증, 회원자격 유지·관리, 제한적 본인확인제 시행에 따른 본인확인, 서비스 부정이용 방지, 각종 고지·통지, 분쟁 조정을 위한 기록 보존 등을 목적으로 개인정보를 처리합니다.\n" +
+                "회원 가입의사 확인, 회원제 서비스 제공에 따른 본인 식별·인증, 회원자격 유지·관리, 서비스 부정이용 방지, 각종 고지·통지, 분쟁 조정을 위한 기록 보존 등을 목적으로 개인정보를 처리합니다.\n" +
                 "\n" +
                 "\n" +
-                "나. 마케팅 및 광고에의 활용\n" +
+                "나. 재화 또는 서비스 제공\n" +
+                "\n" +
+                "콘텐츠 제공 등을 목적으로 개인정보를 처리합니다.\n" +
+                "\n" +
+                "\n" +
+                "다. 마케팅 및 광고에의 활용\n" +
                 "\n" +
                 "신규 서비스(제품) 개발 및 맞춤 서비스 제공, 이벤트 및 광고성 정보 제공 및 참여기회 제공 , 인구통계학적 특성에 따른 서비스 제공 및 광고 게재 , 서비스의 유효성 확인, 접속빈도 파악 또는 회원의 서비스 이용에 대한 통계 등을 목적으로 개인정보를 처리합니다.\n" +
-                "\n" +
-                "\n" +
-                "나. 개인영상정보\n" +
-                "\n" +
-                "범죄의 예방 및 수사, 시설안전 및 화재예방 등을 목적으로 개인정보를 처리합니다.\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "2. 개인정보 파일 현황\n" +
-                "\n" +
-                "1. 개인정보 파일명 : 리틀포레스트 회원가입 약관\n" +
-                "- 개인정보 항목 : 이메일, 휴대전화번호, 비밀번호, 로그인ID, 생년월일, 이름, 직업, 서비스 이용 기록, 접속 로그, 쿠키\n" +
-                "- 수집방법 : 홈페이지, 어플리케이션 회원가입\n" +
-                "- 보유근거 : 서비스 유지\n" +
-                "- 보유기간 : 3년\n" +
-                "- 관련법령 : 신용정보의 수집/처리 및 이용 등에 관한 기록 : 3년, 소비자의 불만 또는 분쟁처리에 관한 기록 : 3년\n" +
-                "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
@@ -70,7 +80,7 @@ class RegisterAgreement : AppCompatActivity() {
                 "-관련법령 : 1)신용정보의 수집/처리 및 이용 등에 관한 기록 : 3년\n" +
                 "2) 소비자의 불만 또는 분쟁처리에 관한 기록 : 3년\n" +
                 "\n" +
-                "-예외사유 : \n" +
+                "-예외사유 :\n" +
                 "\n" +
                 "\n" +
                 "\n" +
@@ -82,8 +92,8 @@ class RegisterAgreement : AppCompatActivity() {
                 "\n" +
                 "\n" +
                 "1. <>\n" +
-                "- 개인정보를 제공받는 자 : \n" +
-                "- 제공받는 자의 개인정보 이용목적 : \n" +
+                "- 개인정보를 제공받는 자 :\n" +
+                "- 제공받는 자의 개인정보 이용목적 :\n" +
                 "- 제공받는 자의 보유.이용기간:\n" +
                 "\n" +
                 "\n" +
@@ -93,8 +103,8 @@ class RegisterAgreement : AppCompatActivity() {
                 "① <소림>('리틀포레스트')은(는) 원활한 개인정보 업무처리를 위하여 다음과 같이 개인정보 처리업무를 위탁하고 있습니다.\n" +
                 "\n" +
                 "1. <>\n" +
-                "- 위탁받는 자 (수탁자) : \n" +
-                "- 위탁하는 업무의 내용 : \n" +
+                "- 위탁받는 자 (수탁자) :\n" +
+                "- 위탁하는 업무의 내용 :\n" +
                 "- 위탁기간 :\n" +
                 "\n" +
                 "\n" +
@@ -113,12 +123,12 @@ class RegisterAgreement : AppCompatActivity() {
                 "\n" +
                 "\n" +
                 "\n" +
-                "7. 처리하는 개인정보의 항목 작성 \n" +
+                "7. 처리하는 개인정보의 항목 작성\n" +
                 "\n" +
                 "① <소림>('리틀포레스트'이하 '리틀포레스트')은(는) 다음의 개인정보 항목을 처리하고 있습니다.\n" +
                 "\n" +
                 "1<홈페이지 회원가입 및 관리>\n" +
-                "- 필수항목 : 이메일, 휴대전화번호, 비밀번호, 로그인ID, 생년월일, 이름, 직업, 서비스 이용 기록, 접속 로그, 쿠키\n" +
+                "- 필수항목 : 이메일, 비밀번호, 로그인ID, 생년월일, 이름, 서비스 이용 기록, 접속 로그\n" +
                 "- 선택항목 :\n" +
                 "\n" +
                 "\n" +
@@ -148,17 +158,17 @@ class RegisterAgreement : AppCompatActivity() {
                 "\n" +
                 "① 소림(‘리틀포레스트’이하 ‘리틀포레스트) 은(는) 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.\n" +
                 "\n" +
-                "▶ 개인정보 보호책임자 \n" +
+                "▶ 개인정보 보호책임자\n" +
                 "성명 :한효범\n" +
                 "직책 :CEO\n" +
                 "직급 :CEO\n" +
-                "연락처 :010-3252-3069, dkfmaek333@gmail.com, \n" +
+                "연락처 :010-3252-3069, dkfmaek333@gmail.com,\n" +
                 "※ 개인정보 보호 담당부서로 연결됩니다.\n" +
                 "\n" +
                 "▶ 개인정보 보호 담당부서\n" +
-                "부서명 :관리\n" +
+                "부서명 :\n" +
                 "담당자 :한효범\n" +
-                "연락처 :01032523069, dkfmaek333@gmail.com, \n" +
+                "연락처 :010-3252-3069, dkfmaek333@gmail.com,\n" +
                 "② 정보주체께서는 소림(‘리틀포레스트’이하 ‘리틀포레스트) 의 서비스(또는 사업)을 이용하시면서 발생한 모든 개인정보 보호 관련 문의, 불만처리, 피해구제 등에 관한 사항을 개인정보 보호책임자 및 담당부서로 문의하실 수 있습니다. 소림(‘리틀포레스트’이하 ‘리틀포레스트) 은(는) 정보주체의 문의에 대해 지체 없이 답변 및 처리해드릴 것입니다.\n" +
                 "\n" +
                 "\n" +

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.plus_fragment_gallery_upload.*
 import kotlinx.android.synthetic.main.post_search_item.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,6 +33,7 @@ class PlacePage : AppCompatActivity() {
 
     var isFollowing: Boolean? = null
     var isLiking = false
+    var name : String? = null
 
 
 
@@ -61,6 +63,7 @@ class PlacePage : AppCompatActivity() {
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         val ivLike = findViewById<ImageView>(R.id.ivLike)
         welcome = findViewById(R.id.welcome)
+        name = sharedPreference.getString(this, "name")
 
 
 
@@ -155,7 +158,8 @@ class PlacePage : AppCompatActivity() {
         tvType.text = placeType
 
         if(!placePhoto.isNullOrEmpty()) {
-            Glide.with(this).load(placePhoto).thumbnail(0.3f)
+            val placePhotoUri = MyApplication.severUrl + placePhoto
+            Glide.with(this).load(placePhotoUri).thumbnail(0.3f)
                 .into(ivPlacePhoto)
         }
         val callGetPageInfo: Call<PlacePageData> = apiInterface.getPageInfo(placeId)
@@ -179,7 +183,7 @@ class PlacePage : AppCompatActivity() {
                 ivLike.setImageResource(R.drawable.tree_selected)
                 tvLikeNumber.text = (Integer.parseInt(tvLikeNumber.text.toString()) + 1).toString()
 
-                val toLike: Call<ServerResonse> = apiInterface.likePlace(placeId, email, isLiking)
+                val toLike: Call<ServerResonse> = apiInterface.likePlace(placeId, email, name!!)
                 toLike.enqueue(object : Callback<ServerResonse>{
                     override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
 
@@ -237,11 +241,7 @@ class PlacePage : AppCompatActivity() {
                         call: Call<ServerResonse>,
                         response: Response<ServerResonse>
                     ) {
-                        var success: Boolean = response.body()?.success!!
-                        if (success) {
 
-
-                        }
                     }
 
 
@@ -265,11 +265,7 @@ class PlacePage : AppCompatActivity() {
                         call: Call<ServerResonse>,
                         response: Response<ServerResonse>
                     ) {
-                        var success: Boolean = response.body()?.success!!
-                        if (success) {
 
-
-                        }
                     }
 
 
@@ -284,6 +280,15 @@ class PlacePage : AppCompatActivity() {
 
 
 
+        val responseListener= object : ResponseListener{
+            override fun onResponse() {
+                getPostData(placeId, 0)
+            }
+
+
+        }
+        val photoUploadToPageActivity = PhotoUploadToPageActivity()
+        photoUploadToPageActivity.responseListener = responseListener
 
 
 
@@ -320,6 +325,7 @@ class PlacePage : AppCompatActivity() {
 
 
 
+
         adapter.onItemClickListener = mOnItemClickListener
 
 
@@ -331,8 +337,11 @@ class PlacePage : AppCompatActivity() {
             pageRecyclerView?.adapter = adapter
             pageRecyclerView?.layoutManager = GridLayoutManager(this@PlacePage, 3)
 
+        setOnLoadMoreListener()
 
-        getPostData(placeId)
+        getPostData(placeId, 0)
+
+
 
         val swipeLayout = findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
 
@@ -340,8 +349,8 @@ class PlacePage : AppCompatActivity() {
             override fun onRefresh() {
 
                 postDataList.removeAll(postDataList)
-                adapter!!.notifyDataChanged()
-                getPostData(placeId)
+                adapter.notifyDataChanged()
+                getPostData(placeId, 0)
                 swipeLayout.isRefreshing = false
             }
 
@@ -354,8 +363,8 @@ class PlacePage : AppCompatActivity() {
 
 
 
-    fun getPostData(place_id: Int){
-        val callGetPagePosts: Call<ArrayList<PostImageData>> = apiInterface.getPagePosts(place_id)
+    fun getPostData(place_id: Int, index: Int){
+        val callGetPagePosts: Call<ArrayList<PostImageData>> = apiInterface.getPagePosts(place_id, index)
         callGetPagePosts.enqueue(object : Callback<ArrayList<PostImageData>>{
             override fun onFailure(call: Call<ArrayList<PostImageData>>, t: Throwable) {
 
@@ -374,6 +383,62 @@ class PlacePage : AppCompatActivity() {
 
 
         })
+    }
+
+    fun getMorePostData(place_id: Int, index: Int){
+
+        postDataList.add(PostImageData("load"))
+        adapter.notifyItemInserted(postDataList.size-1)
+
+        val newIndex = index + 1
+        val call: Call<ArrayList<PostImageData>> = apiInterface.getPagePosts(place_id, newIndex)
+        call.enqueue(object : Callback<ArrayList<PostImageData>> {
+            override fun onFailure(call: Call<ArrayList<PostImageData>>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<PostImageData>>,
+                response: Response<ArrayList<PostImageData>>
+            ) {
+                if(response.isSuccessful){
+                    postDataList.removeAt(postDataList.size - 1)
+                    val result: ArrayList<PostImageData>? = response.body()
+                    if(result!!.size > 0) {
+                        postDataList.addAll(result)
+                    }else {
+                        adapter.isMoreDataAvailable = false
+                    }
+                    adapter.notifyDataChanged()
+                }
+
+            }
+
+
+        })
+
+
+
+
+
+
+    }
+
+    fun setOnLoadMoreListener(){
+
+        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+                pageRecyclerView?.post(object : Runnable{
+                    override fun run() {
+                        val index = postDataList.size - 1
+                        getMorePostData(placeId , index)
+                    }
+
+                })
+            }
+        }
+
+        adapter.loadMoreListener = onLoadMoreListener
     }
 
 

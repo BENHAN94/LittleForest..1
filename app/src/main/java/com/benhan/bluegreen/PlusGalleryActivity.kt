@@ -59,8 +59,7 @@ class PlusGalleryActivity: AppCompatActivity() {
 
         ivX.setOnClickListener {
 
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+            finish()
         }
 
 

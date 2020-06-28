@@ -5,15 +5,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.EventLog
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import retrofit2.Call
@@ -28,6 +34,22 @@ class SearchPlaceFragment: Fragment() {
     var adapter: SearchRecyclerAdapter? = null
     val places = ArrayList<PlaceSearchData>()
     var keyword = ""
+    var searchBar: EditText? = null
+    var recyclerView: RecyclerView? = null
+    var swipeRefreshLayout: SwipeRefreshLayout? = null
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        TedPermission.with(requireContext())
+            .setPermissionListener(permissionListener)
+            .setRationaleMessage("회원님과 가까운 곳을 보기 위해서는 위치 정보 접근 권한이 필요해요")
+            .setDeniedMessage("언제든 [설정] > [권한] 에서 권한을 허용 하시면 가까운 곳을 보실 수 있어요")
+            .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            .check()
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,11 +57,11 @@ class SearchPlaceFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootview = layoutInflater.inflate(R.layout.search_place_fragment, container, false)
-        val recyclerView = rootview.findViewById<RecyclerView>(R.id.recyclerview)
+        recyclerView = rootview.findViewById<RecyclerView>(R.id.recyclerview)
         adapter = SearchRecyclerAdapter(requireContext(), places)
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.hasFixedSize()
+        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView?.hasFixedSize()
 
         val placeOnItemClickListener = object: OnItemClickListener{
 
@@ -62,58 +84,25 @@ class SearchPlaceFragment: Fragment() {
         }
         adapter?.onItemClickListener = placeOnItemClickListener
 
-        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
-            override fun onLoadMore() {
-                recyclerView.post(object : Runnable{
-                    override fun run() {
-                        val index = places.size - 1
-                        loadMore(keyword , index)
-                    }
 
-                })
-            }
-        }
-
-        adapter?.onLoadMoreListener = onLoadMoreListener
-
-        recyclerView.adapter = adapter
+        recyclerView?.adapter = adapter
 
 
 
 
 
 
+        //////////////swipe ///////////////////
+
+        swipeRefreshLayout = rootview.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
+        swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
 
 
 
-        val searchBar = rootview.findViewById<EditText>(R.id.searchBar)
 
 
-
-        searchBar.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-            override fun onEditorAction(
-                v: TextView?,
-                actionId: Int,
-                event: KeyEvent?
-            ): Boolean {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    keyword = searchBar.text.toString()
-
-
-                    if (!keyword.isNullOrEmpty()){
-                        places.removeAll(places)
-                        recyclerView.removeAllViews()
-                        load(keyword, 0)
-                    }
-                    hideKeyboard(requireActivity())
-                    searchBar.text = null
-                    searchBar.clearFocus()
-
-                }
-                return false
-            }
-
-        })
+        searchBar = rootview.findViewById<EditText>(R.id.searchBar)
 
 
 
@@ -139,9 +128,6 @@ class SearchPlaceFragment: Fragment() {
 
 
 
-
-        load(keyword, 0)
-
         return rootview
     }
 
@@ -149,18 +135,127 @@ class SearchPlaceFragment: Fragment() {
 
 
 
+    private val permissionListener = object : PermissionListener {
+        override fun onPermissionGranted() {
+
+            val gpsTracker = GpsTracker(requireContext())
+            val x = gpsTracker.fetchLatitude()
+            val y = gpsTracker.fetchLongtitude()
+
+            swipeRefreshLayout?.setOnRefreshListener {
+                places.removeAll(places)
+                adapter?.notifyDataChanged()
+                loadClose("",0, x, y)
+                adapter?.isMoreDataAvailable = true
+                swipeRefreshLayout?.isRefreshing = false
+                searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+                    override fun onEditorAction(
+                        v: TextView?,
+                        actionId: Int,
+                        event: KeyEvent?
+                    ): Boolean {
+                        if (actionId == EditorInfo.IME_ACTION_DONE){
+                            keyword = searchBar?.text.toString()
+
+
+                            if (!keyword.isNullOrEmpty()){
+                                places.removeAll(places)
+                                recyclerView?.removeAllViews()
+                                loadClose(keyword, 0,x , y)
+                            }
+                            hideKeyboard(requireActivity())
+                            searchBar?.clearFocus()
+
+                        }
+                        return false
+                    }
+
+                })
+            }
+            if(adapter?.itemCount == 0)
+                loadClose("",0, x, y)
+
+
+        }
+
+        override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+            Toast.makeText(requireContext(), "권한 거부", Toast.LENGTH_SHORT).show()
+
+
+            swipeRefreshLayout?.setOnRefreshListener {
+                searchBar?.text = null
+                places.removeAll(places)
+                adapter?.notifyDataChanged()
+                load("", 0)
+                adapter?.isMoreDataAvailable = true
+                swipeRefreshLayout?.isRefreshing = false
+                searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+                    override fun onEditorAction(
+                        v: TextView?,
+                        actionId: Int,
+                        event: KeyEvent?
+                    ): Boolean {
+                        if (actionId == EditorInfo.IME_ACTION_DONE){
+                            keyword = searchBar?.text.toString()
+
+
+                            if (!keyword.isNullOrEmpty()){
+                                places.removeAll(places)
+                                recyclerView?.removeAllViews()
+                                load(keyword, 0)
+                            }
+                            hideKeyboard(requireActivity())
+                            searchBar?.clearFocus()
+
+                        }
+                        return false
+                    }
+
+                })
+            }
+            if(adapter?.itemCount == 0)
+                load("", 0)
+
+        }
 
 
 
-
-
-
+    }
 
 
     fun load(keyword: String ,index: Int) {
 
 
         val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchPlace(keyword, index)
+        call.enqueue(object: Callback<ArrayList<PlaceSearchData>> {
+            override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
+
+                Log.d("사이즈", t.message)
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<PlaceSearchData>>,
+                response: Response<ArrayList<PlaceSearchData>>
+            ) {
+                if(response.isSuccessful){
+                    response.body()?.let { places.addAll(it) }
+                    adapter?.notifyDataChanged()
+                    Log.d("사이즈", response.body()?.size.toString())
+                    if (response.body()?.size == 30)
+                        setOnLoadMoreListener()
+                }
+            }
+
+
+        })
+
+    }
+
+    fun loadClose(keyword: String ,index: Int, x: Double, y: Double) {
+
+
+        val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchClosePlace(keyword, index, x, y)
         call.enqueue(object: Callback<ArrayList<PlaceSearchData>> {
             override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
 
@@ -173,6 +268,8 @@ class SearchPlaceFragment: Fragment() {
                 if(response.isSuccessful){
                     response.body()?.let { places.addAll(it) }
                     adapter?.notifyDataChanged()
+                    if(response.body()?.size == 30 )
+                        setOnLoadCloseMoreListener()
                 }
             }
 
@@ -180,8 +277,6 @@ class SearchPlaceFragment: Fragment() {
         })
 
     }
-
-
 
 
 
@@ -193,6 +288,45 @@ class SearchPlaceFragment: Fragment() {
 
         val newIndex = index + 1
         val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchPlace(keyword, newIndex)
+        call.enqueue(object : Callback<ArrayList<PlaceSearchData>> {
+            override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<PlaceSearchData>>,
+                response: Response<ArrayList<PlaceSearchData>>
+            ) {
+                if(response.isSuccessful){
+                    places.removeAt(places.size - 1)
+                    val result: ArrayList<PlaceSearchData>? = response.body()
+                    if(result!!.size > 0) {
+
+                        places.addAll(result)
+                    }else {
+                        adapter!!.isMoreDataAvailable = false
+                    }
+                    adapter!!.notifyDataChanged()
+                }
+
+            }
+
+
+        })
+
+
+
+
+    }
+
+    fun loadCloseMore(keyword: String, index: Int, x: Double, y: Double){
+
+
+        places.add(PlaceSearchData("load"))
+        adapter?.notifyItemInserted(places.size-1)
+
+        val newIndex = index + 1
+        val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchClosePlace(keyword, newIndex, x, y)
         call.enqueue(object : Callback<ArrayList<PlaceSearchData>> {
             override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
 
@@ -221,6 +355,43 @@ class SearchPlaceFragment: Fragment() {
 
 
 
+    }
+
+    fun setOnLoadMoreListener(){
+
+        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+                recyclerView?.post(object : Runnable{
+                    override fun run() {
+                        val index = places.size - 1
+                        loadMore(keyword , index)
+                    }
+
+                })
+            }
+        }
+
+        adapter?.onLoadMoreListener = onLoadMoreListener
+    }
+
+    fun setOnLoadCloseMoreListener(){
+
+        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+                recyclerView?.post(object : Runnable{
+                    override fun run() {
+                        val index = places.size - 1
+                        val gpsTracker = GpsTracker(requireContext())
+                        val x = gpsTracker.fetchLatitude()
+                        val y = gpsTracker.fetchLongtitude()
+                        loadCloseMore(keyword , index, x, y)
+                    }
+
+                })
+            }
+        }
+
+        adapter?.onLoadMoreListener = onLoadMoreListener
     }
 
     fun hideKeyboard(activity: Activity) {

@@ -17,6 +17,8 @@ class PlaceSearchData(@SerializedName("kind")var kind: String){
     var photo: String? = null
     @SerializedName("id")
     var id: Int? = null
+    @SerializedName("distance")
+    var distance: Double? = null
 
     var isSelected : Boolean = false
 

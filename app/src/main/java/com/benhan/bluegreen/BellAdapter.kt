@@ -85,9 +85,12 @@ class BellAdapter(val context: Context, val bellDataList: ArrayList<BellData>): 
 
             (holder as BellHolder).tvName.text = item.user_name
             holder.tvDate.text = ago
-            Glide.with(context).load(item.profile_photo)
+
+            val profilePhotoUri = MyApplication.severUrl+item.profile_photo
+            val postImageUri = MyApplication.severUrl + item.post_image
+            Glide.with(context).load(profilePhotoUri)
                 .into(holder.ivProfile)
-            Glide.with(context).load(item.post_image)
+            Glide.with(context).load(postImageUri)
                 .into(holder.ivPostImage)
 
             if (item.type == "like") {

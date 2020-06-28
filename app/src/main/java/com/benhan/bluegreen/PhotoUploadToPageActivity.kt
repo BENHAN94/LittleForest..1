@@ -42,6 +42,7 @@ class PhotoUploadToPageActivity: AppCompatActivity(){
     val sharedPreference = SharedPreference()
 
     var desc = ""
+    var responseListener: ResponseListener? = null
 
 
 
@@ -100,6 +101,7 @@ class PhotoUploadToPageActivity: AppCompatActivity(){
 
 
 
+        val selectedPhotoUri = MyApplication.severUrl+selectedPhoto
         Glide.with(this@PhotoUploadToPageActivity).load(selectedPhoto).fitCenter()
             .into(ivSelectedPhoto)
 
@@ -122,9 +124,11 @@ class PhotoUploadToPageActivity: AppCompatActivity(){
                     placeType = response.body()!!.type
 
 
-                    Glide.with(this@PhotoUploadToPageActivity).load(placePhoto)
+                    val placePhotoUri = MyApplication.severUrl+placePhoto
+                    val myPhotoUri = MyApplication.severUrl+myPhoto
+                    Glide.with(this@PhotoUploadToPageActivity).load(placePhotoUri)
                         .into(ivPlacePhoto)
-                    Glide.with(this@PhotoUploadToPageActivity).load(myPhoto)
+                    Glide.with(this@PhotoUploadToPageActivity).load(myPhotoUri)
                         .into(ivMyProfilePhoto)
 
 
@@ -264,7 +268,7 @@ class PhotoUploadToPageActivity: AppCompatActivity(){
                     response: Response<ServerResonse>
                 ) {
 
-
+                    responseListener?.onResponse()
                     Log.d("코드", response.message())
 
 

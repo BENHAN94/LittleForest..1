@@ -303,20 +303,26 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
             }
             // FILL IMAGE VIEW
 
-            Glide.with(context).load(profilePhoto)
+
+            val profileUrl = MyApplication.severUrl+profilePhoto
+            val pageProfileUrl = MyApplication.severUrl+item.pageProfilePhoto
+            val postImageUrl = MyApplication.severUrl+item.postImage
+            val userProfilePhotoUrl = MyApplication.severUrl+item.userProfilePhoto
+
+            Glide.with(context).load(profileUrl)
                 .centerCrop()
                 .into(holder.ivMyProfile)
-            Glide.with(context).load(item.pageProfilePhoto)
+            Glide.with(context).load(pageProfileUrl)
                 .fitCenter()
                 .override(600, 200)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.ivPageProfilePhoto)
 
-            Glide.with(context).load(item.postImage)
+            Glide.with(context).load(postImageUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.ivPostImage)
 
-            Glide.with(context).load(item.userProfilePhoto)
+            Glide.with(context).load(userProfilePhotoUrl)
                 .thumbnail(0.3f)
                 .into(holder.ivUserProfilePhoto)
 

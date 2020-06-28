@@ -83,6 +83,7 @@ class FragmentTree: Fragment(){
 
 
 
+
         val profilePhoto = sharedPreference.getString(requireContext(), "profilePhoto")
 
 
@@ -92,30 +93,22 @@ class FragmentTree: Fragment(){
         recyclerview = rootView?.findViewById<RecyclerView>(R.id.treeRecyclerView)
         adapter = HomeRecyclerAdapter(requireContext(), requireActivity(), postDataList, profilePhoto!!)
 
-        adapter!!.addLoadMoreListener(object: HomeRecyclerAdapter.OnLoadMoreListener{
-            override fun onLoadMore() {
-                recyclerview!!.post(object : Runnable{
-                    override fun run() {
-                         val index = postDataList.size-1
-                        loadMore(index)
-                    }
 
-                })
-            }
-
-        })
         recyclerview!!.layoutManager = SpeedyLinearLayoutManager(requireContext())
         recyclerview!!.adapter = adapter
 
 
 
-        val swipeLayout = rootView?.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
 
+        val swipeLayout = rootView?.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
+        swipeLayout?.setColorSchemeColors(backgroundColor)
         swipeLayout?.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
 
                 postDataList.removeAll(postDataList)
-                adapter!!.notifyDataChanged()
+               adapter?.notifyDataChanged()
+                adapter?.isMoreDataAvailable = true
                 load(0)
                 swipeLayout.isRefreshing = false
             }
@@ -247,14 +240,20 @@ class FragmentTree: Fragment(){
                         recyclerview!!.smoothScrollToPosition(0)
                     }
                     R.id.search -> {
+                        search?.isClickable = false
                         Navigation.findNavController(rootView!!).saveState()
                         Navigation.findNavController(rootView!!).navigate(R.id.from_tree_to_search)
+
                     }
                     R.id.bell -> {
+                        bell?.isClickable = false
                         Navigation.findNavController(rootView!!).navigate(R.id.from_tree_to_bell)
+
                     }
                     R.id.user -> {
+                        user?.isClickable = false
                         Navigation.findNavController(rootView!!).navigate(R.id.from_tree_to_user)
+
                     }
                 }
 
@@ -270,17 +269,30 @@ class FragmentTree: Fragment(){
         clickHandler(user!!)
 
 
+        val responseListener = object: ResponseListener{
+            override fun onResponse() {
+                load(0)
+            }
+        }
+
+        val photoUploadActivity = PhotoUploadActivity()
+        photoUploadActivity.responseListener = responseListener
 
 
 
 
-        if(adapter?.itemCount == 0)
-        load(0)
+
 
         return rootView
 
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(adapter?.itemCount == 0)
+            load(0)
     }
 
 
@@ -299,9 +311,32 @@ class FragmentTree: Fragment(){
                 response: Response<ArrayList<PostData>>
             ) {
 
-                if(response.isSuccessful){
-                    response.body()?.let { postDataList.addAll(it) }
-                    adapter?.notifyDataSetChanged()
+                if(response.isSuccessful) {
+
+
+
+
+                        response.body()?.let { postDataList.addAll(it) }
+                        adapter?.notifyDataChanged()
+
+
+                        if(postDataList.size == 9) {
+                            adapter!!.addLoadMoreListener(object :
+                                HomeRecyclerAdapter.OnLoadMoreListener {
+                                override fun onLoadMore() {
+                                    recyclerview!!.post(object : Runnable {
+                                        override fun run() {
+                                            val index = postDataList.size - 1
+                                            loadMore(index)
+                                        }
+
+                                    })
+                                }
+
+                            })
+                        }
+
+
                 }
 
                 if(adapter?.itemCount==0){

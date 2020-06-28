@@ -14,6 +14,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import kotlinx.android.synthetic.main.home_fragment_bell.*
@@ -39,12 +40,14 @@ class FragmentBell: Fragment() {
 
         myEmail = sharedPreference.getString(requireContext(), "email")
 
-
+        val recyclerview: RecyclerView = rootView.findViewById(R.id.recyclerview)
         val tree = rootView.findViewById<ImageView>(R.id.tree)
         val search = rootView.findViewById<ImageView>(R.id.search)
         val bell = rootView.findViewById<ImageView>(R.id.bell)
         val user = rootView.findViewById<ImageView>(R.id.user)
-
+        val swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
+        swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
         tree.setImageResource(R.drawable.tree)
         search.setImageResource(R.drawable.search)
         bell.setImageResource(R.drawable.bell_selected)
@@ -58,16 +61,22 @@ class FragmentBell: Fragment() {
 
                 when(view.id) {
                     R.id.tree -> {
+                        tree.isClickable = false
                         Navigation.findNavController(rootView).navigate(R.id.from_bell_to_tree)
-                    }
-                    R.id.search -> {
-                        Navigation.findNavController(rootView).navigate(R.id.from_bell_to_search)
-                    }
-                    R.id.bell -> {
 
                     }
+                    R.id.search -> {
+                        search.isClickable = false
+                        Navigation.findNavController(rootView).navigate(R.id.from_bell_to_search)
+
+                    }
+                    R.id.bell -> {
+                            recyclerview.scrollToPosition(0)
+                    }
                     R.id.user -> {
+                        user.isClickable = false
                         Navigation.findNavController(rootView).navigate(R.id.from_bell_to_user)
+
                     }
                 }
             }
@@ -116,30 +125,24 @@ class FragmentBell: Fragment() {
 
         /*=========================================================================================================*/
 
-        val recyclerview: RecyclerView = rootView.findViewById(R.id.recyclerview)
+
         adapter = BellAdapter(requireContext(), bellDataList)
         recyclerview.layoutManager = LinearLayoutManager(requireContext())
         recyclerview.itemAnimator = DefaultItemAnimator()
         recyclerview.adapter = adapter
 
 
-        val onLoadMoreListener = object: HomeRecyclerAdapter.OnLoadMoreListener{
-            override fun onLoadMore() {
 
-                recyclerview!!.post(object : Runnable{
-                    override fun run() {
-                        val index = bellDataList.size-1
-                        getMoreNotificationData(index)
-                    }
 
-                })
-            }
+
+        swipeRefreshLayout.setOnRefreshListener {
+
+            bellDataList.removeAll(bellDataList)
+            getNotificationData(0)
+            adapter?.isMoreDataAvailable = true
+            swipeRefreshLayout.isRefreshing = false
 
         }
-
-        adapter?.onLoadMoreListener = onLoadMoreListener
-
-
 
 
 
@@ -199,6 +202,24 @@ class FragmentBell: Fragment() {
                     }else{
                         adapter!!.isMoreDataAvailable = false
                     }
+                }
+                if(bellDataList[0].total!! > 20) {
+                    val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener {
+                        override fun onLoadMore() {
+
+                            recyclerview!!.post(object : Runnable {
+                                override fun run() {
+                                    val index = bellDataList.size - 1
+                                    getMoreNotificationData(index)
+                                }
+
+                            })
+                        }
+
+                    }
+
+
+                    adapter?.onLoadMoreListener = onLoadMoreListener
                 }
                 adapter?.notifyDataChanged()
             }

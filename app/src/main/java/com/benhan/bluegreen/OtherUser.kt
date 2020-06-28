@@ -1,18 +1,17 @@
 package com.benhan.bluegreen
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import retrofit2.Call
 import retrofit2.Callback
@@ -36,7 +35,7 @@ class OtherUser : AppCompatActivity() {
     var adapter :OtherUserPostAdapter? = null
     var viewModel : LFVIewModel? = null
     var dividerDecoration :GridDividerDecoration? = null
-    var swipeLayout: SwipeRefreshLayout?  =null
+
     val places = ArrayList<PlaceSearchData>()
     var locationAdapter: SearchRecyclerAdapter? = null
     var keyword = ""
@@ -160,10 +159,12 @@ class OtherUser : AppCompatActivity() {
                 tvPostNumber.text = postNumber
                 tvFollowNumber.text = followingNumber
                 tvLikeNumber.text = likeNumber
-                if(!profilePhoto.isNullOrEmpty())
-                Glide.with(this@OtherUser)
-                    .load(profilePhoto)
-                    .into(ivProfilePhoto)
+                if(!profilePhoto.isNullOrEmpty()) {
+                    val profilePhotoUri = MyApplication.severUrl + profilePhoto
+                    Glide.with(this@OtherUser)
+                        .load(profilePhotoUri)
+                        .into(ivProfilePhoto)
+                }
 
 
                 if(postDataList.size == 0 && email !=null)
@@ -320,16 +321,6 @@ class OtherUser : AppCompatActivity() {
 
             locationAdapter!!.onLoadMoreListener = onLoadMoreListener
 
-            swipeLayout?.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
-                override fun onRefresh() {
-                    places.removeAll(places)
-                    recyclerView.removeAllViews()
-                    loadPlace(email!!, 0)
-                    swipeLayout!!.isRefreshing = false
-                }
-
-
-            })
 
             if(places.size == 0)
             loadPlace(email!!, 0)

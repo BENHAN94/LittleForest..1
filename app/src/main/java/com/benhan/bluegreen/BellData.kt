@@ -23,6 +23,9 @@ var kind: String? = null) {
     @SerializedName("post_image")
     var post_image: String? = null
 
+    @SerializedName("total")
+    var total: Int? = null
+
 
 
 }

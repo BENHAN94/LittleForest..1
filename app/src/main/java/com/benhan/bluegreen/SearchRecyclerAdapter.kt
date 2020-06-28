@@ -9,6 +9,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 
 class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<PlaceSearchData>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -33,6 +34,7 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
         val tvPlaceType = view.findViewById<TextView>(R.id.type)
         val layoutSelected = view.findViewById<RelativeLayout>(R.id.layoutSelect)
         val layoutItem = view.findViewById<RelativeLayout>(R.id.searchItem)
+        val tvDistance = view.findViewById<TextView>(R.id.distance)
 
     }
 
@@ -88,15 +90,26 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
 
         if(getItemViewType(position)== TYPE_PLACE) {
             val item = placeList[position]
+            if(item.photo != null && item.photo!!.isNotEmpty() && item.photo!!.isNotBlank()) {
+                var photoUri = MyApplication.severUrl + item.photo
 
+                Glide.with(context).load(photoUri)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into((holder as SearchHolder).ivPlacePhoto)
+            } else {
+                (holder as SearchHolder).ivPlacePhoto.setImageResource(R.drawable.tree)
+            }
 
-
-            Glide.with(context).load(item.photo).thumbnail(0.3f)
-                .into((holder as SearchHolder).ivPlacePhoto)
-
-            holder.tvPlaceName.setText(item.name)
+            (holder as SearchHolder).tvPlaceName.setText(item.name)
             holder.tvPlaceProvince.setText(item.province)
             holder.tvPlaceType.setText(item.type)
+
+            if(item.distance == null){
+                holder.tvDistance.visibility = View.GONE
+            }else {
+                holder.tvDistance.text = item.distance!!.toInt().toString()+"km"
+                holder.tvDistance.visibility = View.VISIBLE
+            }
 
 
 
