@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,7 @@ class UserPostFragment: Fragment() {
     var welcome: TextView? = null
     var recyclerView : RecyclerView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
+    var tvWhenEmptyPost: TextView? = null
 
 
 
@@ -37,12 +39,14 @@ class UserPostFragment: Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.search_post_fragment, container, false)
         myEmail = sharedPreference.getString(requireContext(), "email")
-        recyclerView = rootView.findViewById<RecyclerView>(R.id.recyclerview)
+        recyclerView = rootView.findViewById(R.id.recyclerview)
         val dividerDecoration = GridDividerDecoration(resources, R.drawable.divider_recyler_gallery)
         recyclerView!!.hasFixedSize()
         recyclerView!!.layoutManager = LinearLayoutManager(requireContext())
         recyclerView!!.addItemDecoration(dividerDecoration)
         welcome = rootView.findViewById(R.id.welcome)
+        tvWhenEmptyPost = rootView.findViewById(R.id.tvWhenEmptyPost)
+
 
         adapter = PostImageSearchAdapter(requireContext(), postImageDataList)
         recyclerView!!.adapter = adapter
@@ -60,24 +64,9 @@ class UserPostFragment: Fragment() {
 
         val postNumber = sharedPreference.getInt(requireContext(), "postNumber")
 
-        if(postNumber!! > 30) {
-            val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener {
-                override fun onLoadMore() {
 
-                    recyclerView!!.post(object : Runnable {
-                        override fun run() {
-                            val index = postImageDataList.size - 1
-                            loadMore(index)
-                        }
 
-                    })
-                }
-
-            }
-            adapter!!.loadMoreListener = onLoadMoreListener
-        }
-
-        swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeLayout)
         val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
         swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
         swipeRefreshLayout?.setOnRefreshListener {
@@ -96,8 +85,10 @@ class UserPostFragment: Fragment() {
 
 
 
+
         if(adapter?.itemCount == 0)
         load(0)
+
 
 
 
@@ -144,6 +135,12 @@ class UserPostFragment: Fragment() {
                 if(response.isSuccessful) {
                     response.body()?.let { postImageDataList.addAll(it) }
                     adapter?.notifyDataChanged()
+                    if(response.body()?.size == 30){
+                        setOnLoadMoreListener()
+                    }
+                    if(postImageDataList.size == 0){
+                        tvWhenEmptyPost?.visibility = View.VISIBLE
+                    }
 
 
                 }
@@ -189,6 +186,23 @@ class UserPostFragment: Fragment() {
 
 
 
+
+    }
+
+    fun setOnLoadMoreListener(){
+
+        val onLoadMoreListener = object: HomeRecyclerAdapter.OnLoadMoreListener{
+            override fun onLoadMore() {
+
+                recyclerView!!.post {
+                    val index = postImageDataList.size-1
+                    loadMore(index)
+                }
+            }
+
+        }
+
+        adapter!!.loadMoreListener = onLoadMoreListener
 
     }
 }

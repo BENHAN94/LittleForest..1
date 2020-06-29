@@ -39,16 +39,6 @@ class SearchPlaceFragment: Fragment() {
     var swipeRefreshLayout: SwipeRefreshLayout? = null
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        TedPermission.with(requireContext())
-            .setPermissionListener(permissionListener)
-            .setRationaleMessage("회원님과 가까운 곳을 보기 위해서는 위치 정보 접근 권한이 필요해요")
-            .setDeniedMessage("언제든 [설정] > [권한] 에서 권한을 허용 하시면 가까운 곳을 보실 수 있어요")
-            .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
-            .check()
-    }
 
 
     override fun onCreateView(
@@ -59,6 +49,13 @@ class SearchPlaceFragment: Fragment() {
         val rootview = layoutInflater.inflate(R.layout.search_place_fragment, container, false)
         recyclerView = rootview.findViewById<RecyclerView>(R.id.recyclerview)
         adapter = SearchRecyclerAdapter(requireContext(), places)
+
+        TedPermission.with(requireContext())
+            .setPermissionListener(permissionListener)
+            .setRationaleMessage("회원님과 가까운 곳을 보기 위해서는 위치 정보 접근 권한이 필요해요")
+            .setDeniedMessage("언제든 [설정] > [권한] 에서 권한을 허용 하시면 가까운 곳을 보실 수 있어요")
+            .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            .check()
 
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         recyclerView?.hasFixedSize()
@@ -94,7 +91,7 @@ class SearchPlaceFragment: Fragment() {
 
         //////////////swipe ///////////////////
 
-        swipeRefreshLayout = rootview.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+        swipeRefreshLayout = rootview.findViewById(R.id.swipeLayout)
         val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
         swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
 
@@ -156,30 +153,29 @@ class SearchPlaceFragment: Fragment() {
                 searchBar?.text = null
                 adapter?.isMoreDataAvailable = true
                 swipeRefreshLayout?.isRefreshing = false
-                searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-                    override fun onEditorAction(
-                        v: TextView?,
-                        actionId: Int,
-                        event: KeyEvent?
-                    ): Boolean {
-                        if (actionId == EditorInfo.IME_ACTION_DONE){
-                            keyword = searchBar?.text.toString()
-
-
-                            if (!keyword.isNullOrEmpty()){
-                                places.removeAll(places)
-                                recyclerView?.removeAllViews()
-                                loadClose(keyword, 0,x , y)
-                            }
-                            hideKeyboard(requireActivity())
-                            searchBar?.clearFocus()
-
-                        }
-                        return false
-                    }
-
-                })
             }
+            searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+                override fun onEditorAction(
+                    v: TextView?,
+                    actionId: Int,
+                    event: KeyEvent?
+                ): Boolean {
+                    if (actionId == EditorInfo.IME_ACTION_DONE){
+                        keyword = searchBar?.text.toString()
+
+                        if (!keyword.isNullOrEmpty()){
+                            places.removeAll(places)
+                            recyclerView?.removeAllViews()
+                            loadClose(keyword, 0,x , y)
+                        }
+                        hideKeyboard(requireActivity())
+                        searchBar?.clearFocus()
+
+                    }
+                    return false
+                }
+
+            })
             if(adapter?.itemCount == 0)
                 loadClose("",0, x, y)
 
@@ -197,30 +193,30 @@ class SearchPlaceFragment: Fragment() {
                 load("", 0)
                 adapter?.isMoreDataAvailable = true
                 swipeRefreshLayout?.isRefreshing = false
-                searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-                    override fun onEditorAction(
-                        v: TextView?,
-                        actionId: Int,
-                        event: KeyEvent?
-                    ): Boolean {
-                        if (actionId == EditorInfo.IME_ACTION_DONE){
-                            keyword = searchBar?.text.toString()
-
-
-                            if (!keyword.isNullOrEmpty()){
-                                places.removeAll(places)
-                                recyclerView?.removeAllViews()
-                                load(keyword, 0)
-                            }
-                            hideKeyboard(requireActivity())
-                            searchBar?.clearFocus()
-
-                        }
-                        return false
-                    }
-
-                })
             }
+            searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+                override fun onEditorAction(
+                    v: TextView?,
+                    actionId: Int,
+                    event: KeyEvent?
+                ): Boolean {
+                    if (actionId == EditorInfo.IME_ACTION_DONE){
+                        keyword = searchBar?.text.toString()
+
+
+                        if (!keyword.isNullOrEmpty()){
+                            places.removeAll(places)
+                            recyclerView?.removeAllViews()
+                            load(keyword, 0)
+                        }
+                        hideKeyboard(requireActivity())
+                        searchBar?.clearFocus()
+
+                    }
+                    return false
+                }
+
+            })
             if(adapter?.itemCount == 0)
                 load("", 0)
 

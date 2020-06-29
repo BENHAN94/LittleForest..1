@@ -321,6 +321,21 @@
     </RelativeLayout>
 
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/pageInfo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="120dp"
+        android:fontFamily="@font/nixgonfonts_b"
+        android:gravity="center"
+        android:text="사진을 공유하면 페이지에 표시됩니다. \n \n 첫 번째 사진을 공유해보세요!"
+        android:textColor="@color/background"
+        android:textSize="25sp"
+        android:visibility="invisible"
+        android:id="@+id/tvWhenEmptyPost"
+        />
 
 
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

@@ -84,7 +84,6 @@
         android:id="@+id/postImage"
         android:layout_below="@id/page"
         android:background="@drawable/top_line"
-        android:layout_marginLeft="0dp"
         android:layout_marginVertical="10dp"
         android:adjustViewBounds="true"
         android:minHeight="200dp"

@@ -17,11 +17,10 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
 import com.ethanhua.skeleton.Skeleton
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -35,14 +34,14 @@ class FragmentTree: Fragment(){
 
 
     val apiClient = ApiClient()
-    val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
+    val apiInterface: ApiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
     var postDataList = ArrayList<PostData>()
     val sharedPreference = SharedPreference()
     var adapter: HomeRecyclerAdapter? =null
-     var rootView: View? = null
+     private var rootView: View? = null
 
     var recyclerview: RecyclerView? = null
-    var commentContainer: LinearLayout? = null
+
 
     var imm: InputMethodManager? = null
 
@@ -83,8 +82,6 @@ class FragmentTree: Fragment(){
         val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
 
-/////////////////////////////
-
 
 
 
@@ -92,12 +89,14 @@ class FragmentTree: Fragment(){
         name = sharedPreference.getString(requireContext(), "name")
 
         val profilePhoto = sharedPreference.getString(requireContext(), "profilePhoto")
+        val profilePhotoUri = MyApplication.severUrl+profilePhoto
+        val ivCommentProfilePhoto = rootView?.findViewById<ImageView>(R.id.myProfilePhoto)
+        Glide.with(requireActivity()).load(profilePhotoUri)
+            .override(ivCommentProfilePhoto!!.width, ivCommentProfilePhoto.height)
+            .into(ivCommentProfilePhoto)
 
 
-
-
-
-        recyclerview = rootView?.findViewById<RecyclerView>(R.id.treeRecyclerView)
+        recyclerview = rootView?.findViewById(R.id.treeRecyclerView)
         adapter = HomeRecyclerAdapter(requireContext(), requireActivity(), postDataList, profilePhoto!!)
 
 
@@ -110,38 +109,17 @@ class FragmentTree: Fragment(){
 
 
 
+
         val swipeLayout = rootView?.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
         val backgroundColor = ContextCompat.getColor(requireContext(), R.color.background)
         swipeLayout?.setColorSchemeColors(backgroundColor)
-        swipeLayout?.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
-            override fun onRefresh() {
-
-                postDataList.removeAll(postDataList)
-               adapter?.notifyDataChanged()
-                adapter?.isMoreDataAvailable = true
-                load(0)
-                swipeLayout.isRefreshing = false
-            }
-
-
-        })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        swipeLayout?.setOnRefreshListener {
+            postDataList.removeAll(postDataList)
+            adapter?.notifyDataChanged()
+            adapter?.isMoreDataAvailable = true
+            load(0)
+            swipeLayout.isRefreshing = false
+        }
 
 
 //////////////////////////////////////////////////////////////////////
@@ -149,9 +127,9 @@ class FragmentTree: Fragment(){
 
 
 
-        welcome = rootView?.findViewById<TextView>(R.id.welcome)
-        welcome2 = rootView?.findViewById<TextView>(R.id.welcome2)
-        welcome3 = rootView?.findViewById<TextView>(R.id.welcome3)
+        welcome = rootView?.findViewById(R.id.welcome)
+        welcome2 = rootView?.findViewById(R.id.welcome2)
+        welcome3 = rootView?.findViewById(R.id.welcome3)
 
 
         val skeletonScreen = Skeleton.bind(recyclerview)
@@ -184,7 +162,7 @@ class FragmentTree: Fragment(){
         writeCommentContainer = rootView!!.findViewById(R.id.writeCommentContainer)
         writeComment = rootView!!.findViewById(R.id.writeComment)
 
-        recyclerview?.itemAnimator = DefaultItemAnimator()
+        recyclerview?.itemAnimator = null
 
         tree!!.setImageResource(R.drawable.tree_selected)
         search!!.setImageResource(R.drawable.search)
@@ -352,56 +330,52 @@ class FragmentTree: Fragment(){
 
 
 
-                writeComment?.setOnEditorActionListener(object : TextView.OnEditorActionListener{
-                    override fun onEditorAction(
-                        v: TextView?,
-                        actionId: Int,
-                        event: KeyEvent?
-                    ): Boolean {
-                        if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)){
-                            val comment = writeComment?.text.toString()
-                            postDataList[position].commentNumber = postDataList[position].commentNumber?.plus(1)
-                            postDataList[position].mainCommentUserName = name!!
-                            postDataList[position].mainComment = comment
-                            adapter?.notifyItemChanged(position)
-                            val call: Call<java.util.ArrayList<CommentData>> =
-                                apiInterface.writeComment(
-                                    email!!,
-                                    postDataList[position].postId!!,
-                                    name!!,
-                                    comment)
-                            val handler = Handler()
-                            handler.postDelayed(object : Runnable {
-                                override fun run() {
-                                    navi?.visibility = View.VISIBLE
-                                    writeCommentContainer?.visibility = View.GONE
-                                }
-                            }, 350)
+                writeComment?.setOnEditorActionListener { v, actionId, event ->
+                    if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)){
+                        val comment = writeComment?.text.toString()
+                        postDataList[position].commentNumber = postDataList[position].commentNumber?.plus(1)
+                        postDataList[position].mainCommentUserName = name!!
+                        postDataList[position].mainComment = comment
+                        adapter?.notifyItemChanged(position)
+                        val call: Call<java.util.ArrayList<CommentData>> =
+                            apiInterface.writeComment(
+                                email!!,
+                                postDataList[position].postId!!,
+                                name!!,
+                                comment)
+                        val handler = Handler()
+                        handler.postDelayed({
+                            navi?.visibility = View.VISIBLE
+                            writeCommentContainer?.visibility = View.GONE
+                        }, 350)
 
 
-                            call.clone().enqueue(object : Callback<java.util.ArrayList<CommentData>> {
-                                override fun onFailure(call: Call<java.util.ArrayList<CommentData>>, t: Throwable) {
+                        if(comment.trim().isNotEmpty()) {
+                            call.clone()
+                                .enqueue(object : Callback<java.util.ArrayList<CommentData>> {
+                                    override fun onFailure(
+                                        call: Call<java.util.ArrayList<CommentData>>,
+                                        t: Throwable
+                                    ) {
 
-                                }
+                                    }
 
-                                override fun onResponse(
-                                    call: Call<java.util.ArrayList<CommentData>>,
-                                    response: Response<java.util.ArrayList<CommentData>>
-                                ) {
+                                    override fun onResponse(
+                                        call: Call<java.util.ArrayList<CommentData>>,
+                                        response: Response<java.util.ArrayList<CommentData>>
+                                    ) {
 
-                                }
+                                    }
 
 
-                            })
-                            writeComment?.setText(null)
-                            writeComment?.clearFocus()
-                            UIUtil.hideKeyboard(activity)
+                                })
                         }
-                        return false
+                        writeComment?.text = null
+                        writeComment?.clearFocus()
+                        UIUtil.hideKeyboard(activity)
                     }
-
-
-                })
+                    false
+                }
 
 
             }
@@ -473,17 +447,14 @@ class FragmentTree: Fragment(){
                         adapter?.notifyDataChanged()
 
 
-                        if(postDataList.size == 10) {
+                        if(postDataList.size == 30) {
                             adapter!!.addLoadMoreListener(object :
                                 HomeRecyclerAdapter.OnLoadMoreListener {
                                 override fun onLoadMore() {
-                                    recyclerview!!.post(object : Runnable {
-                                        override fun run() {
-                                            val index = postDataList.size - 1
-                                            loadMore(index)
-                                        }
-
-                                    })
+                                    recyclerview!!.post {
+                                        val index = postDataList.size - 1
+                                        loadMore(index)
+                                    }
                                 }
 
                             })
@@ -500,17 +471,17 @@ class FragmentTree: Fragment(){
                     val fadeOut = AlphaAnimation(1.0f, 0.0f)
                     welcome?.startAnimation(fadeIn)
 //        txtView.startAnimation(fadeOut)
-                    fadeIn.setDuration(1500)
-                    fadeIn.setFillAfter(false)
-                    fadeOut.setDuration(1200)
-                    fadeOut.setFillAfter(false)
-                    fadeOut.setStartOffset(4200 + fadeIn.getStartOffset())
+                    fadeIn.duration = 1500
+                    fadeIn.fillAfter = false
+                    fadeOut.duration = 1200
+                    fadeOut.fillAfter = false
+                    fadeOut.startOffset = 4200 + fadeIn.getStartOffset()
                     val fadeIn2 = AlphaAnimation(0.0f, 1.0f)
                     fadeIn2.startOffset = 1500
-                    fadeIn2.setDuration(1500)
+                    fadeIn2.duration = 1500
                     val fadeIn3 = AlphaAnimation(0.0f, 1.0f)
                     fadeIn3.startOffset = 3000
-                    fadeIn3.setDuration(1500)
+                    fadeIn3.duration = 1500
                     welcome2?.startAnimation(fadeIn2)
                     welcome3?.startAnimation(fadeIn3)
                 } else{

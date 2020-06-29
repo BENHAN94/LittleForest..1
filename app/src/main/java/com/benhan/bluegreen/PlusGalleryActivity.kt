@@ -66,7 +66,7 @@ class PlusGalleryActivity: AppCompatActivity() {
 
 
         galleryAdapter.list[0].selected
-        Glide.with(this).load(galleryAdapter.list[0].imgPath).thumbnail(0.1F)
+        Glide.with(this).load(galleryAdapter.list[0].imgPath)
             .centerCrop().into(selectedView)
         slidingLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
 
@@ -123,7 +123,6 @@ class PlusGalleryActivity: AppCompatActivity() {
                     photoVO.selected = true
 
                     Glide.with(this@PlusGalleryActivity).load(photoVO.imgPath)
-                        .thumbnail(0.1F)
                         .centerCrop()
                         .into(selectedView)
 

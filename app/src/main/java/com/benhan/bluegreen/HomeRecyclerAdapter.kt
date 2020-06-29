@@ -2,21 +2,16 @@ package com.benhan.bluegreen
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.*
-import android.view.inputmethod.EditorInfo
-import android.widget.*
-import androidx.core.content.ContextCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil.hideKeyboard
 import org.ocpsoft.prettytime.PrettyTime
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,22 +23,17 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
     }
 
-    var isLoading = false
+    private var isLoading = false
     var isMoreDataAvailable = true
-    var loadMoreListener:OnLoadMoreListener? = null
+    private var loadMoreListener:OnLoadMoreListener? = null
 
-    val prettyTime = PrettyTime(Locale.KOREA)
+    private val prettyTime = PrettyTime(Locale.KOREA)
 
     val apiClient = ApiClient()
-    val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
+    val apiInterface: ApiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
     val sharedPreference = SharedPreference()
-    val backgroundColor = ContextCompat.getColor(context, R.color.background)
-    val naviColor = ContextCompat.getColor(context, R.color.navi)
-    var onWriteCommentClicked: OnWriteCommentClicked? = null
-    var onPostClicked: OnPostClicked? = null
+    private var onWriteCommentClicked: OnWriteCommentClicked? = null
     val email = sharedPreference.getString(context, "email")
-    val user_name = sharedPreference.getString(context, "name")
-
     var onPageClickListener: OnPageClickListener? = null
     var onUserClickListener : OnUserClickListener? = null
     var onClickShowAllListener: OnClickShowAllListener? = null
@@ -59,26 +49,25 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
     class MyViewHolder(val layout: View) : RecyclerView.ViewHolder(layout), View.OnClickListener {
 
-        val ivPageProfilePhoto: ImageView = layout.findViewById<ImageView>(R.id.pageProfilePhoto)
-        val tvPageName: TextView = layout.findViewById<TextView>(R.id.pageName)
-        val tvPageType: TextView = layout.findViewById<TextView>(R.id.type)
-        val tvPageProvince = layout.findViewById<TextView>(R.id.province)
+        val ivPageProfilePhoto: ImageView = layout.findViewById(R.id.pageProfilePhoto)
+        val tvPageName: TextView = layout.findViewById(R.id.pageName)
+        val tvPageType: TextView = layout.findViewById(R.id.type)
+        val tvPageProvince: TextView = layout.findViewById(R.id.province)
         val ivPostImage: ImageView = layout.findViewById(R.id.postImage)
-        val ivUserProfilePhoto = layout.findViewById<ImageView>(R.id.userProfilePhoto)
-        val tvUserName = layout.findViewById<TextView>(R.id.userName)
-        val tvDescription = layout.findViewById<TextView>(R.id.postDescription)
-        val tvCountLikes = layout.findViewById<TextView>(R.id.countLikes)
-        val tvShowAllComents = layout.findViewById<TextView>(R.id.showAllComents)
-        val tvMainComentUserName = layout.findViewById<TextView>(R.id.commentUserName)
-        val tvMainCommentContents = layout.findViewById<TextView>(R.id.commentContents)
-        val ivMyProfile = layout.findViewById<ImageView>(R.id.myProfilePhoto)
-        val tvWriteComment = layout.findViewById<TextView>(R.id.writeComment)
-        val tvPostedDate = layout.findViewById<TextView>(R.id.postedDate)
-        val uploadComment = layout.findViewById<TextView>(R.id.uploadComment)
-        val page = layout.findViewById<RelativeLayout>(R.id.page)
-        val compass = layout.findViewById<ImageView>(R.id.compass)
-        val likeBtn = layout.findViewById<ImageView>(R.id.likeBtn)
-        val commentContainer = layout.findViewById<RelativeLayout>(R.id.mainComentContainer)
+        val ivUserProfilePhoto: ImageView = layout.findViewById(R.id.userProfilePhoto)
+        val tvUserName: TextView = layout.findViewById(R.id.userName)
+        val tvDescription: TextView = layout.findViewById(R.id.postDescription)
+        val tvCountLikes: TextView = layout.findViewById(R.id.countLikes)
+        val tvShowAllComents: TextView = layout.findViewById(R.id.showAllComents)
+        val tvMainComentUserName: TextView = layout.findViewById(R.id.commentUserName)
+        val tvMainCommentContents: TextView = layout.findViewById(R.id.commentContents)
+        val ivMyProfile: ImageView = layout.findViewById(R.id.myProfilePhoto)
+        val tvWriteComment: TextView = layout.findViewById(R.id.writeComment)
+        val tvPostedDate: TextView = layout.findViewById(R.id.postedDate)
+        val page: RelativeLayout = layout.findViewById(R.id.page)
+        val compass: ImageView = layout.findViewById(R.id.compass)
+        val likeBtn: ImageView = layout.findViewById(R.id.likeBtn)
+        val commentContainer: RelativeLayout = layout.findViewById(R.id.mainComentContainer)
 
 
         override fun onClick(v: View?) {
@@ -157,10 +146,12 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
             Glide.with(context).load(profileUrl)
                 .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(holder.ivMyProfile.width, holder.ivMyProfile.height)
                 .into(holder.ivMyProfile)
             Glide.with(context).load(pageProfileUrl)
                 .fitCenter()
-                .override(600, 200)
+                .override(holder.ivPageProfilePhoto.width, holder.ivPageProfilePhoto.height)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.ivPageProfilePhoto)
 
@@ -169,7 +160,8 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
                 .into(holder.ivPostImage)
 
             Glide.with(context).load(userProfilePhotoUrl)
-                .thumbnail(0.3f)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(holder.ivUserProfilePhoto.width, holder.ivUserProfilePhoto.width )
                 .into(holder.ivUserProfilePhoto)
 
             holder.tvPageName.text = item.pageName
@@ -180,7 +172,7 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
             holder.tvMainComentUserName.text = item.mainCommentUserName
             holder.tvMainCommentContents.text = item.mainComment
 
-            if (commentCount!! > 2) {
+            if (commentCount!! > 1) {
                 holder.tvShowAllComents.text = "댓글 ${commentCount}개 모두 보기"
                 holder.tvShowAllComents.visibility = View.VISIBLE
             } else {
@@ -192,7 +184,9 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
             } else {
                 holder.likeBtn.setImageResource(R.drawable.tree_selected)
             }
-            if (holder.tvMainCommentContents.text.isNullOrBlank()) {
+            if (item.commentNumber!!>0) {
+                holder.commentContainer.visibility = View.VISIBLE
+            } else{
                 holder.commentContainer.visibility = View.GONE
             }
             val date = simpleDateFormat.parse(item.postDate!!)
@@ -200,6 +194,7 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
             holder.tvPostedDate.text = ago
             if(postLikes!! > 0 ){
                 holder.tvCountLikes.text = "좋아요 ${item.postLikes}개"
+                holder.tvCountLikes.visibility = View.VISIBLE
             }else{
                 holder.tvCountLikes.visibility = View.GONE
             }
@@ -250,10 +245,6 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
 
 
-    /////////////////////////////////////
-
-
-
 
 
     fun notifyDataChanged(){
@@ -276,18 +267,7 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
     }
 
-    interface OnPostClicked{
 
-        fun onPostClicked(position: Int)
-
-    }
-
-    fun addOnPostClickListener(listener: OnPostClicked){
-
-        onPostClicked = listener
-
-
-    }
 
     interface OnLoadMoreListener{
         fun onLoadMore()

@@ -194,6 +194,9 @@ class SearchPostFragment: Fragment() {
                 if(response.isSuccessful) {
                     response.body()?.let { postImageDataList.addAll(it) }
                     adapter?.notifyDataChanged()
+                    if(response.body()?.size == 30){
+                        setOnLoadMoreListener()
+                    }
                 }
             }
 
@@ -219,6 +222,9 @@ class SearchPostFragment: Fragment() {
                 if(response.isSuccessful) {
                     response.body()?.let { postImageDataList.addAll(it) }
                     adapter?.notifyDataChanged()
+                    if(response.body()?.size == 30){
+                        setOnLoadCloseMoreListener(x, y)
+                    }
                 }
             }
 
@@ -250,8 +256,6 @@ class SearchPostFragment: Fragment() {
                     val result: ArrayList<PostImageData>? = response.body()
                     if(result!!.size > 0) {
                         postImageDataList.addAll(result)
-                        if(result.size == 10)
-                            setOnLoadMoreListener()
                     }else {
                         adapter!!.isMoreDataAvailable = false
                     }
@@ -289,7 +293,7 @@ class SearchPostFragment: Fragment() {
                     val result: ArrayList<PostImageData>? = response.body()
                     if(result!!.size > 0) {
                         postImageDataList.addAll(result)
-                        if(result.size ==10)
+                        if(result.size ==30)
                             setOnLoadCloseMoreListener(x, y)
                     }else {
                         adapter!!.isMoreDataAvailable = false

@@ -27,9 +27,9 @@ class FragmentUser: Fragment() {
 
     val sharedPreference = SharedPreference()
     val apiClient = ApiClient()
-    val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
-    val postDataList = ArrayList<PostImageData>()
-    var ivProfilePhoto : ImageView? = null
+    val apiInterface: ApiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
+    private val postDataList = ArrayList<PostImageData>()
+    private var ivProfilePhoto : ImageView? = null
 
     var likeNumber: Int?  =null
     var postNumber: Int? = null
@@ -39,9 +39,10 @@ class FragmentUser: Fragment() {
     var tvLikeNumber:TextView? = null
     var email: String? = null
     var adapter: PostImageSearchAdapter? = null
-    var tvUsername: TextView? = null
-    var tvActualname: TextView? = null
-    var tvIntroduction: TextView? = null
+    private var tvUsername: TextView? = null
+    private var tvActualname: TextView? = null
+    private var tvIntroduction: TextView? = null
+    var tvUnfinishedInfo: TextView? = null
 
 
 
@@ -60,12 +61,14 @@ class FragmentUser: Fragment() {
         val search = rootView.findViewById<ImageView>(R.id.search)
         val bell = rootView.findViewById<ImageView>(R.id.bell)
         val user = rootView.findViewById<ImageView>(R.id.user)
+        tvUnfinishedInfo = rootView.findViewById(R.id.tvUnfinishedInfo)
 
 
         tree.setImageResource(R.drawable.tree)
         search.setImageResource(R.drawable.search)
         bell.setImageResource(R.drawable.bell)
         user.setImageResource(R.drawable.user_selected)
+
 
 
         val permissionCheck = ContextCompat.checkSelfPermission(
@@ -168,15 +171,16 @@ class FragmentUser: Fragment() {
         }
 
 
-        tvUsername = rootView.findViewById<TextView>(R.id.profile_username)
-        tvActualname = rootView.findViewById<TextView>(R.id.actualName)
-        tvIntroduction = rootView.findViewById<TextView>(R.id.userIntroduction)
-        val tvLogout = rootView.findViewById<TextView>(R.id.logout)
-        ivProfilePhoto = rootView.findViewById<ImageView>(R.id.placePhoto)
+        tvUsername = rootView.findViewById(R.id.profile_username)
+        tvActualname = rootView.findViewById(R.id.actualName)
+        tvIntroduction = rootView.findViewById(R.id.userIntroduction)
+        val tvLogout: TextView = rootView.findViewById(R.id.logout)
+        ivProfilePhoto = rootView.findViewById(R.id.placePhoto)
         email = sharedPreference.getString(requireContext(), "email")!!
-        tvPostNumber = rootView.findViewById<TextView>(R.id.postNumber)
-        tvFollowerNumber = rootView.findViewById<TextView>(R.id.followerNumber)
-        tvLikeNumber = rootView.findViewById<TextView>(R.id.likeNumber)
+        tvPostNumber = rootView.findViewById(R.id.postNumber)
+        tvFollowerNumber = rootView.findViewById(R.id.followerNumber)
+        tvLikeNumber = rootView.findViewById(R.id.likeNumber)
+
 
 
 
@@ -260,18 +264,23 @@ class FragmentUser: Fragment() {
         super.onResume()
 
         val postFragment = UserPostFragment()
-        tvUsername?.setText(sharedPreference.getString(requireContext(), "name"))
-        tvActualname?.setText(sharedPreference.getString(requireContext(), "actualName"))
-        tvIntroduction?.setText(sharedPreference.getString(requireContext(), "introduction"))
+        tvUsername?.text = sharedPreference.getString(requireContext(), "name")
+        tvActualname?.text = sharedPreference.getString(requireContext(), "actualName")
+        tvIntroduction?.text = sharedPreference.getString(requireContext(), "introduction")
+
+
 
         update(email!!)
         replaceFragment(postFragment)
         val sharedPreference = SharedPreference()
         val profilePhotoUri = sharedPreference.getString(requireContext(), "profilePhoto")
         val profilePhoto = MyApplication.severUrl + profilePhotoUri
-        Glide.with(requireActivity()).load(profilePhoto).thumbnail(0.3F)
+        Glide.with(requireActivity()).load(profilePhoto)
+            .override(ivProfilePhoto!!.width, ivProfilePhoto!!.height)
             .into(ivProfilePhoto!!)
-
+        if(tvActualname?.text == "name" || tvIntroduction?.text == "introducd" || profilePhotoUri == "user_profile_images/vector.jpg"){
+            tvUnfinishedInfo?.visibility = View.VISIBLE
+        }
 
 
 

@@ -34,9 +34,9 @@ class UserPlaceFragment: Fragment() {
     val places = ArrayList<PlaceSearchData>()
     var myEmail: String? = null
     val sharedPreference = SharedPreference()
-    var welcome: TextView? = null
     var recyclerView : RecyclerView? = null
     var index = 0
+    var tvWhenEmptyFollow :TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +50,7 @@ class UserPlaceFragment: Fragment() {
         myEmail = sharedPreference.getString(requireContext(), "email")
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         recyclerView?.hasFixedSize()
-        welcome = rootview.findViewById(R.id.welcome)
+        tvWhenEmptyFollow = rootview.findViewById(R.id.tvWhenEmptyFollow)
 
         val placeOnItemClickListener = object: OnItemClickListener{
 
@@ -75,10 +75,8 @@ class UserPlaceFragment: Fragment() {
 
 
 
-        val followNumber = sharedPreference.getInt(requireContext(), "followNumber")
 
-        if(followNumber!! > 20)
-        setOnLoadMoreListener()
+
 
         recyclerView?.adapter = adapter
 
@@ -87,12 +85,6 @@ class UserPlaceFragment: Fragment() {
 
 
 
-
-
-
-        val searchBar = rootview.findViewById<EditText>(R.id.searchBar)
-
-        searchBar.visibility = View.GONE
 
 
         val swipeRefreshLayout: SwipeRefreshLayout = rootview.findViewById(R.id.swipeLayout)
@@ -147,6 +139,14 @@ class UserPlaceFragment: Fragment() {
                 if(response.isSuccessful){
                     response.body()?.let { places.addAll(it) }
                     adapter?.notifyDataChanged()
+
+                    if(response.body()?.size == 20){
+                        setOnLoadMoreListener()
+                    }
+
+                    if(places.size ==0){
+                        tvWhenEmptyFollow?.visibility = View.VISIBLE
+                    }
 
                 }
             }

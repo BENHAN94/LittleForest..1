@@ -44,8 +44,7 @@ class GalleryAdapter(val context: Context, allImageList: ArrayList<PhotoVO> ): R
 
         val photoVO = list[position]
         Glide.with(context).load(photoVO.imgPath)
-            .thumbnail(0.1F)
-            .override(100, 100)
+            .override(holder.imageViewHolder.width, holder.imageViewHolder.height)
             .centerCrop()
             .into(holder.imageViewHolder)
 

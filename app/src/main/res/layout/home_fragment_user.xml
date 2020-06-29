@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/userFragmentLayout"
     tools:context=".FragmentUser">
 
@@ -225,6 +224,9 @@
         android:layout_marginTop="10dp"
         >
 
+
+
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -233,6 +235,18 @@
             android:text="actualname"
             android:id="@+id/actualName"
             android:textSize="15sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nixgonfonts_b"
+            android:textColor="@color/navi"
+            android:text="프로필을 완성하세요"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="70dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/tvUnfinishedInfo"
             />
 
         <TextView
@@ -306,6 +320,9 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+
+
 
 
 

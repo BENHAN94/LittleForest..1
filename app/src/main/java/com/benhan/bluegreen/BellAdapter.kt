@@ -89,8 +89,10 @@ class BellAdapter(val context: Context, val bellDataList: ArrayList<BellData>): 
             val profilePhotoUri = MyApplication.severUrl+item.profile_photo
             val postImageUri = MyApplication.severUrl + item.post_image
             Glide.with(context).load(profilePhotoUri)
+                .override(holder.ivProfile.width, holder.ivProfile.height)
                 .into(holder.ivProfile)
             Glide.with(context).load(postImageUri)
+                .override(holder.ivPostImage.width, holder.ivPostImage.height)
                 .into(holder.ivPostImage)
 
             if (item.type == "like") {

@@ -163,6 +163,7 @@ class OtherUser : AppCompatActivity() {
                     val profilePhotoUri = MyApplication.severUrl + profilePhoto
                     Glide.with(this@OtherUser)
                         .load(profilePhotoUri)
+                        .override(ivProfilePhoto.width, ivProfilePhoto.height)
                         .into(ivProfilePhoto)
                 }
 

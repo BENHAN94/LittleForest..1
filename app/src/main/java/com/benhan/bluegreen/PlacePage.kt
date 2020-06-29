@@ -1,6 +1,7 @@
 package com.benhan.bluegreen
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,12 +9,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import kotlinx.android.synthetic.main.plus_fragment_gallery_upload.*
 import kotlinx.android.synthetic.main.post_search_item.*
 import retrofit2.Call
@@ -34,6 +38,7 @@ class PlacePage : AppCompatActivity() {
     var isFollowing: Boolean? = null
     var isLiking = false
     var name : String? = null
+    var tvWhenEmptyPost : TextView? = null
 
 
 
@@ -59,12 +64,26 @@ class PlacePage : AppCompatActivity() {
         val tvType = findViewById<TextView>(R.id.placeType)
         val btnPost = findViewById<ImageView>(R.id.btnPost)
         val btnFollow = findViewById<Button>(R.id.btnFollow)
-        pageRecyclerView = findViewById<RecyclerView>(R.id.pageRecycler)
+        pageRecyclerView = findViewById(R.id.pageRecycler)
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         val ivLike = findViewById<ImageView>(R.id.ivLike)
         welcome = findViewById(R.id.welcome)
         name = sharedPreference.getString(this, "name")
 
+        tvWhenEmptyPost = findViewById(R.id.tvWhenEmptyPost)
+
+
+        val permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        val permissionListener = object : PermissionListener {
+
+            override fun onPermissionGranted() {
+                startActivity(Intent(this@PlacePage, PlusGalleryActivity::class.java))
+            }
+            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                Toast.makeText(this@PlacePage, "권한 거부\n" + deniedPermissions.toString(),
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
 
 
 
@@ -78,9 +97,25 @@ class PlacePage : AppCompatActivity() {
         Log.d("아이디", placeId.toString())
 
         btnPost.setOnClickListener {
-            val intent = Intent(this, PlusGalleryActivity::class.java)
-            intent.putExtra("place_id", placeId)
-            startActivity(intent)
+
+            if(permissionCheck == PackageManager.PERMISSION_DENIED) {
+
+
+                TedPermission.with(this)
+                    .setPermissionListener(permissionListener)
+                    .setRationaleMessage("사진첩을 열기 위해서는 갤러리 접근 권한이 필요해요")
+                    .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있어요")
+                    .setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    .check()
+            }
+
+
+            else if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                val intent = Intent(this, PlusGalleryActivity::class.java)
+                intent.putExtra("place_id", placeId)
+                startActivity(intent)
+            }
+
         }
 
         val checkFollowing: Call<ServerResonse> = apiInterface.checkFollowing(placeId, email)
@@ -159,7 +194,7 @@ class PlacePage : AppCompatActivity() {
 
         if(!placePhoto.isNullOrEmpty()) {
             val placePhotoUri = MyApplication.severUrl + placePhoto
-            Glide.with(this).load(placePhotoUri).thumbnail(0.3f)
+            Glide.with(this).load(placePhotoUri).override(ivPlacePhoto.width, ivPlacePhoto.height)
                 .into(ivPlacePhoto)
         }
         val callGetPageInfo: Call<PlacePageData> = apiInterface.getPageInfo(placeId)
@@ -337,25 +372,20 @@ class PlacePage : AppCompatActivity() {
             pageRecyclerView?.adapter = adapter
             pageRecyclerView?.layoutManager = GridLayoutManager(this@PlacePage, 3)
 
-        setOnLoadMoreListener()
+
 
         getPostData(placeId, 0)
 
 
 
         val swipeLayout = findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
-
-        swipeLayout?.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
-            override fun onRefresh() {
-
-                postDataList.removeAll(postDataList)
-                adapter.notifyDataChanged()
-                getPostData(placeId, 0)
-                swipeLayout.isRefreshing = false
-            }
-
-
-        })
+        swipeLayout.setColorSchemeColors(backgroundColor)
+        swipeLayout?.setOnRefreshListener {
+            postDataList.removeAll(postDataList)
+            adapter.notifyDataChanged()
+            getPostData(placeId, 0)
+            swipeLayout.isRefreshing = false
+        }
 
 
     }
@@ -377,6 +407,11 @@ class PlacePage : AppCompatActivity() {
 
                 response.body()?.let { postDataList.addAll(it) }
                 adapter.notifyDataChanged()
+                if(postDataList.size == 0){
+
+                    tvWhenEmptyPost?.visibility = View.VISIBLE
+                }
+
 
 
             }
@@ -406,6 +441,9 @@ class PlacePage : AppCompatActivity() {
                     val result: ArrayList<PostImageData>? = response.body()
                     if(result!!.size > 0) {
                         postDataList.addAll(result)
+                        if(result.size == 20){
+                            setOnLoadMoreListener()
+                        }
                     }else {
                         adapter.isMoreDataAvailable = false
                     }

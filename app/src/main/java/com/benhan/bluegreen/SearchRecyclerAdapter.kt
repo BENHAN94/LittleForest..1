@@ -94,13 +94,14 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
                 var photoUri = MyApplication.severUrl + item.photo
 
                 Glide.with(context).load(photoUri)
+                    .override((holder as SearchHolder).ivPlacePhoto.width, holder.ivPlacePhoto.height)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into((holder as SearchHolder).ivPlacePhoto)
             } else {
                 (holder as SearchHolder).ivPlacePhoto.setImageResource(R.drawable.tree)
             }
 
-            (holder as SearchHolder).tvPlaceName.setText(item.name)
+            holder.tvPlaceName.setText(item.name)
             holder.tvPlaceProvince.setText(item.province)
             holder.tvPlaceType.setText(item.type)
 

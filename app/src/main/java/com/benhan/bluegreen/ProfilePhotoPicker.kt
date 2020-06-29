@@ -45,7 +45,6 @@ class ProfilePhotoPicker: AppCompatActivity() {
 
     val apiClient = ApiClient()
     val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
-    var profilePhotoPath:String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,7 +131,6 @@ class ProfilePhotoPicker: AppCompatActivity() {
                     photoVO.selected = true
 
                     Glide.with(this@ProfilePhotoPicker).load(photoVO.imgPath)
-                        .thumbnail(0.1F)
                         .centerCrop()
                         .into(selectedView)
 
@@ -159,7 +157,7 @@ class ProfilePhotoPicker: AppCompatActivity() {
 
 
         galleryAdapter.list[0].selected
-        Glide.with(this).load(galleryAdapter.list[0].imgPath).thumbnail(0.1F)
+        Glide.with(this).load(galleryAdapter.list[0].imgPath)
             .centerCrop().into(selectedView)
 
         slidingLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
@@ -225,13 +223,9 @@ class ProfilePhotoPicker: AppCompatActivity() {
                 val resultUri = result.uri.path
 
 
-                val file = File(resultUri)
+                val file = File(resultUri!!)
 
-
-
-
-
-                sharePreference.setString(this, "profilePhoto", resultUri!!)
+                sharePreference.setString(this, "profilePhoto", resultUri)
 
 
                 val email = sharePreference.getString(this, "email")?.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -264,6 +258,7 @@ class ProfilePhotoPicker: AppCompatActivity() {
 
         }
         super.onActivityResult(requestCode, resultCode, data)
+
 
 
 

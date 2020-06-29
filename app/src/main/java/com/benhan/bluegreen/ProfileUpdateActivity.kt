@@ -29,31 +29,41 @@ class ProfileUpdateActivity : AppCompatActivity(){
     val apiClient = ApiClient()
     val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
 
+    private var profilePhotoUri : String? = null
+    private var userUpdateProfilePhoto: ImageView? = null
+    private var actualname: String? = null
+    var name: String? = null
+    private var job: String? = null
+    private var introduction: String? = null
+    val sharedPreference = SharedPreference()
+    var profile_photo: String? = null
+    var etActName: EditText? = null
+    var etName: TextView? = null
+    var etJob: EditText? = null
+    var etIntroduce: EditText? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_update)
 
-        val etActName = findViewById<EditText>(R.id.etActname)
-        val etName = findViewById<TextView>(R.id.etName)
-        val etJob = findViewById<EditText>(R.id.etJob)
-        val etIntroduce = findViewById<EditText>(R.id.etIntroduce)
+        etActName = findViewById(R.id.etActname)
+        etName = findViewById(R.id.etName)
+        etJob = findViewById(R.id.etJob)
+        etIntroduce = findViewById(R.id.etIntroduce)
 
 
 
 
 
 
-        val sharedPreference = SharedPreference()
-        var actualname: String?
-        var name: String?
-        var job: String?
-        var introduction: String?
-        var profile_photo: String?
+
+
+
         val email = sharedPreference.getString(this, "email")!!
         val tvChangeProfilePhoto = findViewById<TextView>(R.id.changeProfilePhoto)
-        val userUpdateProfilePhoto = findViewById<ImageView>(R.id.userProfileUpdateProfilePhoto)
+        userUpdateProfilePhoto = findViewById(R.id.userProfileUpdateProfilePhoto)
         val done = findViewById<TextView>(R.id.profileUpdateDone)
 
 
@@ -63,25 +73,20 @@ class ProfileUpdateActivity : AppCompatActivity(){
         introduction = sharedPreference.getString(this, "introduction")
         profile_photo = sharedPreference.getString(this, "profilePhoto")
 
-        etActName.setText(actualname)
-        etName.setText(name)
-        etJob.setText(job)
-        etIntroduce.setText(introduction)
 
-        val profilePhotoUri = MyApplication.severUrl+profile_photo
-        Glide.with(this@ProfileUpdateActivity)
-            .load(profilePhotoUri)
-            .into(userUpdateProfilePhoto)
+
+        profilePhotoUri = MyApplication.severUrl+profile_photo
+
 
 
 
 
 
         done.setOnClickListener {
-            val textActName = etActName.text.toString()
-            val textName = etName.text.toString()
-            val textJob = etJob.text.toString()
-            val textIntroduce = etIntroduce.text.toString()
+            val textActName = etActName?.text.toString()
+            val textName = etName?.text.toString()
+            val textJob = etJob?.text.toString()
+            val textIntroduce = etIntroduce?.text.toString()
             val updateProfile:Call<User> = this.apiInterface.updateProfile(textActName,
                 textName,
                 textJob,
@@ -147,13 +152,9 @@ class ProfileUpdateActivity : AppCompatActivity(){
                 .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있어요")
                 .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .check()
-
-
-            finish()
-
         }
 
-        userUpdateProfilePhoto.setOnClickListener {
+        userUpdateProfilePhoto!!.setOnClickListener {
 
             TedPermission.with(this)
                 .setPermissionListener(permissionListener)
@@ -161,9 +162,6 @@ class ProfileUpdateActivity : AppCompatActivity(){
                 .setDeniedMessage("[설정] > [권한] 에서 권한을 허용할 수 있어요")
                 .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .check()
-
-            finish()
-
         }
 
 
@@ -176,45 +174,57 @@ class ProfileUpdateActivity : AppCompatActivity(){
 
         }
 
-        etActName.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+        etActName?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    etActName.clearFocus()
+                    etActName?.clearFocus()
                     hideKeyboard(this@ProfileUpdateActivity)
                 }
                 return false
             }
         })
 
-        etName.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+        etName?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    etActName.clearFocus()
+                    etActName?.clearFocus()
                     hideKeyboard(this@ProfileUpdateActivity)
                 }
                 return false
             }
         })
 
-        etJob.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+        etJob?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    etActName.clearFocus()
+                    etActName?.clearFocus()
                     hideKeyboard(this@ProfileUpdateActivity)
                 }
                 return false
             }
         })
 
-        etIntroduce.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+        etIntroduce?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    etActName.clearFocus()
+                    etActName?.clearFocus()
                     hideKeyboard(this@ProfileUpdateActivity)
                 }
                 return false
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Glide.with(this@ProfileUpdateActivity)
+            .load(profilePhotoUri)
+            .override(userUpdateProfilePhoto!!.width, userUpdateProfilePhoto!!.height)
+            .into(userUpdateProfilePhoto!!)
+        etActName?.setText(actualname)
+        etName?.text = name
+        etJob?.setText(job)
+        etIntroduce?.setText(introduction)
     }
 
 

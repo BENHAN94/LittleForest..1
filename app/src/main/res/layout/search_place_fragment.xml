@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:focusableInTouchMode="true"
+    >
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:id="@+id/searchBar"
-        android:background="@drawable/button_shape_stroke"
-        app:layout_constraintTop_toTopOf="parent"
-        android:hint="검색"
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="150dp"
         android:fontFamily="@font/nixgonfonts_b"
-        android:paddingLeft="20dp"
-        android:inputType="textNoSuggestions"
-        android:imeOptions="actionDone"
-        android:textColorHint="@color/navi"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="좋아하는 장소를 팔로우 하면 \n프로필에 표시됩니다. \n \n 첫 번째 장소를 팔로우 해보세요!"
         android:textColor="@color/background"
+        android:textSize="25sp"
+        android:visibility="gone"
+        android:id="@+id/tvWhenEmptyFollow"
         />
 
 
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     android:layout_width="match_parent"
-    android:layout_height="0dp"
+    android:layout_height="match_parent"
     android:id="@+id/swipeLayout"
-    app:layout_constraintTop_toBottomOf="@id/searchBar"
-    app:layout_constraintBottom_toBottomOf="parent">
+    >
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
@@ -35,4 +37,4 @@
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

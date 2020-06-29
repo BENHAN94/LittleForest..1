@@ -83,8 +83,9 @@ class OtherUserPostAdapter(val context: Context, val postImageDataList: ArrayLis
 
             Glide.with(context).load(postImageUri)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override((holder as PostViewHolder).ivPostImage.width, holder.ivPostImage.height)
                 .centerCrop()
-                .into((holder as PostViewHolder).ivPostImage)
+                .into(holder.ivPostImage)
 
             holder.ivPostImage.setOnClickListener {
 

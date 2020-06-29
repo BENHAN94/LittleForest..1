@@ -3,6 +3,7 @@ package com.benhan.bluegreen
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -26,7 +27,6 @@ import kotlinx.android.synthetic.main.plus_fragment_gallery_upload.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -35,8 +35,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import kotlin.collections.ArrayList
 
 
@@ -45,22 +45,17 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
     val apiClient = ApiClient()
-    val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
-    var etDescription: EditText? = null
-
-
-
-
-
-
+    val apiInterface: ApiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
+    private var etDescription: EditText? = null
     val places = ArrayList<PlaceSearchData>()
     val adapter = SearchRecyclerAdapter(this, places)
     var keyword: String = ""
     var id: Int? = null
-    var file: File? = null
+    private var file: File? = null
     var responseListener : ResponseListener? =null
-
     var recyclerView: RecyclerView? = null
+    private var progressBar : ProgressBar? = null
+    var email : String? = null
 
 
 
@@ -83,19 +78,19 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         val selectedPhotoString: String? = intent.getStringExtra("photo")
         val selectedPhoto: String = Uri.parse(selectedPhotoString).path!!
+        val actualImageFile = File(selectedPhoto)
+        file = saveBitmapToFile(actualImageFile)
 
         window.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
 
 
-        recyclerView = findViewById<RecyclerView>(R.id.searchRecycler)
-        val searchBar = findViewById<EditText>(R.id.searchBar)
+        recyclerView = findViewById(R.id.searchRecycler)
         recyclerView?.setHasFixedSize(true)
         recyclerView?.adapter = adapter
         recyclerView?.setOnTouchListener(object : View.OnTouchListener{
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-
                 hideKeyboard(this@PhotoUploadActivity)
                 return false
             }
@@ -103,31 +98,21 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         })
 
-        val currentTime = Calendar.getInstance().time
-        var df: SimpleDateFormat = SimpleDateFormat("yyyy-MMM-dd HH:mm:ss")
-        var formattedDate: String = df.format(currentTime)
+        progressBar = findViewById(R.id.progressBar)
         val backgroundColor = ContextCompat.getColor(this, R.color.background)
         val naviColor = ContextCompat.getColor(this, R.color.navi)
 
-
-
         val sharedPreference = SharedPreference()
-        val email = sharedPreference.getString(this, "email")
+        email = sharedPreference.getString(this, "email")
 
         val tvPost = findViewById<TextView>(R.id.post)
-//        val passSelectedPhoto = ViewModelProvider(this)[PassSelectedPhoto::class.java]
-//        val selectedPhoto: PhotoVO? = passSelectedPhoto.selectedPhotoData.value
-        etDescription = findViewById<EditText>(R.id.descriptionUpload)
 
+        etDescription = findViewById(R.id.descriptionUpload)
 
         tvPost.setTextColor(naviColor)
         tvPost.isClickable = false
 
         val ivSelectedPhoto = findViewById<ImageView>(R.id.selectedImageUpload)
-
-
-        var desc = ""
-
 
         val mOnItemClickListener = object: OnItemClickListener{
 
@@ -138,13 +123,11 @@ class PhotoUploadActivity: AppCompatActivity(){
                 }
                 tvPost.setTextColor(backgroundColor)
                 tvPost.isClickable = true
-                if (place.isSelected) {
-                    }
-                else {
+                if (!place.isSelected) {
                     placeSelectedBefore?.isSelected = false
                     place.isSelected = true
                     id = place.id
-                }
+                    }
                 adapter.placeList[position] = place
                 adapter.notifyDataChanged()
 
@@ -155,70 +138,12 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         adapter.onItemClickListener = mOnItemClickListener
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        etDescription?.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                desc = etDescription?.text.toString()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-
-        })
-
-
-
-
-
-
-
-
-
         Glide.with(this).load(selectedPhoto).centerCrop()
             .into(ivSelectedPhoto)
-
-
-
-
-
-
-
-
        tvPost.setOnClickListener {
-            uploadToServer(selectedPhoto!!, email!!, desc!!, formattedDate)
+            uploadToServer(etDescription?.text.toString())
             startActivity(Intent(this, HomeActivity::class.java))
         }
-
-
-
-
-
 
 
         val ivBack = findViewById<ImageView>(R.id.ivBack)
@@ -226,10 +151,6 @@ class PhotoUploadActivity: AppCompatActivity(){
            finish()
             hideKeyboard(this)
         }
-
-
-
-
 
 
     }
@@ -251,28 +172,24 @@ class PhotoUploadActivity: AppCompatActivity(){
 
             if(adapter?.itemCount == 0)
                 loadClose("",0, x, y)
-            searchBar.setOnEditorActionListener(object: TextView.OnEditorActionListener{
-                override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        searchBar.clearFocus()
-                        hideKeyboard(this@PhotoUploadActivity)
+            searchBar.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    searchBar.clearFocus()
+                    hideKeyboard(this@PhotoUploadActivity)
 
 
-                        keyword = searchBar.text.toString()
+                    keyword = searchBar.text.toString()
 
 
-                        if (keyword.isNullOrEmpty()){
-                            keyword = ""}
-                        places.removeAll(places)
-                        recyclerView?.removeAllViews()
-                        adapter.notifyDataChanged()
-                        loadClose(keyword, 0, x, y)
-                    }
-                    return false
+                    if (keyword.isEmpty()){
+                        keyword = ""}
+                    places.removeAll(places)
+                    recyclerView?.removeAllViews()
+                    adapter.notifyDataChanged()
+                    loadClose(keyword, 0, x, y)
                 }
-
-
-            })
+                false
+            }
 
 
         }
@@ -283,34 +200,29 @@ class PhotoUploadActivity: AppCompatActivity(){
 
             if(adapter?.itemCount == 0)
                 load("", 0)
-            searchBar.setOnEditorActionListener(object: TextView.OnEditorActionListener{
-                override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        searchBar.clearFocus()
-                        hideKeyboard(this@PhotoUploadActivity)
+            searchBar.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    searchBar.clearFocus()
+                    hideKeyboard(this@PhotoUploadActivity)
 
-                        keyword = searchBar.text.toString()
+                    keyword = searchBar.text.toString()
 
 
-                        if (keyword.isNullOrEmpty()){
-                            keyword = ""}
-                        places.removeAll(places)
-                        recyclerView?.removeAllViews()
-                        adapter.notifyDataChanged()
-                        load(keyword, 0)
-                    }
-                    return false
+                    if (keyword.isEmpty()){
+                        keyword = ""}
+                    places.removeAll(places)
+                    recyclerView?.removeAllViews()
+                    adapter.notifyDataChanged()
+                    load(keyword, 0)
                 }
-
-
-            })
+                false
+            }
 
         }
 
 
 
     }
-
 
     fun load(keyword: String ,index: Int) {
 
@@ -329,7 +241,7 @@ class PhotoUploadActivity: AppCompatActivity(){
             ) {
                 if(response.isSuccessful){
                     response.body()?.let { places.addAll(it) }
-                    adapter?.notifyDataChanged()
+                    adapter.notifyDataChanged()
                     Log.d("사이즈", response.body()?.size.toString())
                     if (response.body()?.size == 30)
                         setOnLoadMoreListener()
@@ -356,7 +268,7 @@ class PhotoUploadActivity: AppCompatActivity(){
             ) {
                 if(response.isSuccessful){
                     response.body()?.let { places.addAll(it) }
-                    adapter?.notifyDataChanged()
+                    adapter.notifyDataChanged()
                     if(response.body()?.size == 30 )
                         setOnLoadCloseMoreListener()
                 }
@@ -367,13 +279,11 @@ class PhotoUploadActivity: AppCompatActivity(){
 
     }
 
-
-
     fun loadMore(keyword: String, index: Int){
 
 
         places.add(PlaceSearchData("load"))
-        adapter?.notifyItemInserted(places.size-1)
+        adapter.notifyItemInserted(places.size-1)
 
         val newIndex = index + 1
         val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchPlace(keyword, newIndex)
@@ -393,9 +303,9 @@ class PhotoUploadActivity: AppCompatActivity(){
 
                         places.addAll(result)
                     }else {
-                        adapter!!.isMoreDataAvailable = false
+                        adapter.isMoreDataAvailable = false
                     }
-                    adapter!!.notifyDataChanged()
+                    adapter.notifyDataChanged()
                 }
 
             }
@@ -412,7 +322,7 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
         places.add(PlaceSearchData("load"))
-        adapter?.notifyItemInserted(places.size-1)
+        adapter.notifyItemInserted(places.size-1)
 
         val newIndex = index + 1
         val call: Call<ArrayList<PlaceSearchData>> = apiInterface.searchClosePlace(keyword, newIndex, x, y)
@@ -431,9 +341,9 @@ class PhotoUploadActivity: AppCompatActivity(){
                     if(result!!.size > 0) {
                         places.addAll(result)
                     }else {
-                        adapter!!.isMoreDataAvailable = false
+                        adapter.isMoreDataAvailable = false
                     }
-                    adapter!!.notifyDataChanged()
+                    adapter.notifyDataChanged()
                 }
 
             }
@@ -450,13 +360,10 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
             override fun onLoadMore() {
-                recyclerView?.post(object : Runnable{
-                    override fun run() {
-                        val index = places.size - 1
-                        loadMore(keyword , index)
-                    }
-
-                })
+                recyclerView?.post {
+                    val index = places.size - 1
+                    loadMore(keyword , index)
+                }
             }
         }
 
@@ -467,28 +374,18 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
             override fun onLoadMore() {
-                recyclerView?.post(object : Runnable{
-                    override fun run() {
-                        val index = places.size - 1
-                        val gpsTracker = GpsTracker(this@PhotoUploadActivity)
-                        val x = gpsTracker.fetchLatitude()
-                        val y = gpsTracker.fetchLongtitude()
-                        loadCloseMore(keyword , index, x, y)
-                    }
-
-                })
+                recyclerView?.post {
+                    val index = places.size - 1
+                    val gpsTracker = GpsTracker(this@PhotoUploadActivity)
+                    val x = gpsTracker.fetchLatitude()
+                    val y = gpsTracker.fetchLongtitude()
+                    loadCloseMore(keyword , index, x, y)
+                }
             }
         }
 
         adapter?.onLoadMoreListener = onLoadMoreListener
     }
-
-
-
-
-
-
-
 
     fun hideKeyboard(activity: Activity) {
         val imm: InputMethodManager =
@@ -502,31 +399,16 @@ class PhotoUploadActivity: AppCompatActivity(){
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    private fun uploadToServer(desc: String) {
 
 
 
-
-    private fun uploadToServer(imgPath: String, email: String, desc: String, date: String) {
-
-
-        val scope = CoroutineScope(Dispatchers.Main)
-
-        scope.launch {
-        val actualImageFile = File(imgPath)
-
-
-            file = Compressor.compress(this@PhotoUploadActivity, actualImageFile){
-                quality(50)
-                format(Bitmap.CompressFormat.WEBP)
-                size(150_000)
-
-            }
 
 
             val requestBody = file!!.asRequestBody("image/*".toMediaTypeOrNull())
             val fileToUpload = MultipartBody.Part.createFormData("file", file!!.name, requestBody)
             val filename = file!!.name.toRequestBody("text/plain".toMediaTypeOrNull())
-            val mEmail = email.toRequestBody("text/plain".toMediaTypeOrNull())
+            val mEmail = email!!.toRequestBody("text/plain".toMediaTypeOrNull())
             val mdesc = desc.toRequestBody("text/plain".toMediaTypeOrNull())
 
 
@@ -561,9 +443,39 @@ class PhotoUploadActivity: AppCompatActivity(){
 
 
 
+
+
+
+    }
+
+    private fun saveBitmapToFile(file:File): File{
+        val o = BitmapFactory.Options()
+        o.inJustDecodeBounds = true
+        o.inSampleSize = 6
+
+        var inputStream = FileInputStream(file)
+        BitmapFactory.decodeStream(inputStream, null, o)
+        inputStream.close()
+
+        val REQUIRED_SIZE=75
+        var scale = 1
+        while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                o.outHeight / scale / 2 >= REQUIRED_SIZE){
+            scale *= 2
         }
 
+        val o2 = BitmapFactory.Options()
+        o2.inSampleSize = scale
+        inputStream = FileInputStream(file)
 
+        val selectedBitmap = BitmapFactory.decodeStream(inputStream, null ,o2)
+        inputStream.close()
+
+        file.createNewFile()
+        val outputStream = FileOutputStream(file)
+        selectedBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+
+        return file
     }
 
 

@@ -180,14 +180,17 @@ class SearchFullPost : AppCompatActivity() {
                     val userProfileUri = MyApplication.severUrl + userProfilePhoto
                     val myProfilePhotoUri = MyApplication.severUrl + myProfilePhoto
                     Glide.with(this@SearchFullPost).load(pageProfileUri)
+                        .override(ivPageProfilePhoto.width, ivPageProfilePhoto.height)
                         .into(ivPageProfilePhoto)
                     Glide.with(this@SearchFullPost).load(postImageUri)
                         .fitCenter()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(ivPostImage)
                     Glide.with(this@SearchFullPost).load(userProfileUri)
+                        .override(ivUserProfilePhoto.width, ivUserProfilePhoto.height)
                         .into(ivUserProfilePhoto)
                     Glide.with(this@SearchFullPost).load(myProfilePhotoUri)
+                        .override(ivMyProfile.width, ivMyProfile.height)
                         .into(ivMyProfile)
 
 

@@ -127,8 +127,10 @@ class PhotoUploadToPageActivity: AppCompatActivity(){
                     val placePhotoUri = MyApplication.severUrl+placePhoto
                     val myPhotoUri = MyApplication.severUrl+myPhoto
                     Glide.with(this@PhotoUploadToPageActivity).load(placePhotoUri)
+                        .override(ivMyProfilePhoto.width, ivMyProfilePhoto.height)
                         .into(ivPlacePhoto)
                     Glide.with(this@PhotoUploadToPageActivity).load(myPhotoUri)
+                        .override(ivMyProfilePhoto.width, ivMyProfilePhoto.height)
                         .into(ivMyProfilePhoto)
 
 

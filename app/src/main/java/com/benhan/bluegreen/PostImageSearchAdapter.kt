@@ -70,7 +70,8 @@ class PostImageSearchAdapter(val context: Context, val postImageDataList: ArrayL
             Glide.with(context).load(postImageUri)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
-                .into((holder as PostViewHolder).ivPostImage)
+                .override((holder as PostViewHolder).ivPostImage.width, (holder as PostViewHolder).ivPostImage.height)
+                .into(holder.ivPostImage)
 
             holder.ivPostImage.setOnClickListener {
 

@@ -215,9 +215,12 @@ class Comment : AppCompatActivity() {
 
         val profilePhotoUri = MyApplication.severUrl+profilePhoto
             Glide.with(this).load(profilePhotoUri)
+                .override(ivUserProfile!!.width, ivUserProfile!!.height)
                 .into(ivUserProfile!!)
 
-        Glide.with(this).load(myProfile)
+        val myProfielUri = MyApplication.severUrl + myProfile
+        Glide.with(this).load(myProfielUri)
+            .override(ivMyProfile!!.width, ivMyProfile!!.height)
             .into(ivMyProfile!!)
         ivBack?.setOnClickListener {
             finish()
