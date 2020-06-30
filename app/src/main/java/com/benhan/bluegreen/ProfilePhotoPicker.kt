@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.request.RequestOptions
+import com.daimajia.numberprogressbar.NumberProgressBar
 import com.isseiaoki.simplecropview.CropImageView
 import com.isseiaoki.simplecropview.callback.CropCallback
 import com.isseiaoki.simplecropview.callback.SaveCallback
@@ -45,10 +46,12 @@ class ProfilePhotoPicker: AppCompatActivity() {
 
     val apiClient = ApiClient()
     val apiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
+    val sharedPreference = SharedPreference()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_photo_picker)
+
 
 
         val recyclerView = findViewById<RecyclerView>(R.id.galleryRecyclerView)
@@ -179,15 +182,15 @@ class ProfilePhotoPicker: AppCompatActivity() {
     fun onNextClicked(selectedPhoto: PhotoVO) {
 
 
-//        startActivity(Intent(this, CropImageActivity::class.java))
-
-//        val passSelectedPhoto = ViewModelProvider(this)[PassSelectedPhoto::class.java]
-//        passSelectedPhoto.passSelectedPhoto(selectedPhoto)
-
         val MIN_IMAGE_SIZE = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, resources.displayMetrics)
             .toInt()
-        val MAX_IMAGE_SIZE = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000f, resources.displayMetrics)
-            .toInt()
+//        val MAX_IMAGE_SIZE = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1000f, resources.displayMetrics)
+//            .toInt()
+
+
+
+        sharedPreference.setString(this, "tmpProfilePhoto", selectedPhoto.imgPath.toString())
+
 
 
 
@@ -201,8 +204,6 @@ class ProfilePhotoPicker: AppCompatActivity() {
             .setMinCropWindowSize(MIN_IMAGE_SIZE, MIN_IMAGE_SIZE)
             .setAllowRotation(false)
             .setBorderLineThickness(0F)
-            .setFixAspectRatio(true)
-            .setMaxCropResultSize(MAX_IMAGE_SIZE,MAX_IMAGE_SIZE)
             .start(this)
 
 
@@ -221,14 +222,15 @@ class ProfilePhotoPicker: AppCompatActivity() {
             val result :CropImage.ActivityResult = CropImage.getActivityResult(data)
             if(resultCode == Activity.RESULT_OK){
                 val resultUri = result.uri.path
-
-
                 val file = File(resultUri!!)
 
-                sharePreference.setString(this, "profilePhoto", resultUri)
+
+
 
 
                 val email = sharePreference.getString(this, "email")?.toRequestBody("text/plain".toMediaTypeOrNull())
+
+
                 val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
                 val fileToUpload = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
@@ -244,6 +246,8 @@ class ProfilePhotoPicker: AppCompatActivity() {
                         response: Response<ServerResonse>
                     ) {
                         Log.d("코드", response.message())
+                        val profilePhoto = response.body()?.profile_photo
+                        sharePreference.setString(this@ProfilePhotoPicker, "profilePhoto", profilePhoto!!)
 
                     }
 
@@ -252,13 +256,11 @@ class ProfilePhotoPicker: AppCompatActivity() {
 
 
             } else if(resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
-                val error = result.error
-                Log.d("프로필사진 크롭 ", error.message)
+
             }
 
         }
         super.onActivityResult(requestCode, resultCode, data)
-
 
 
 

@@ -149,6 +149,7 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .override(holder.ivMyProfile.width, holder.ivMyProfile.height)
                 .into(holder.ivMyProfile)
+            if(pageProfileUrl != "http://18.223.20.219/null")
             Glide.with(context).load(pageProfileUrl)
                 .fitCenter()
                 .override(holder.ivPageProfilePhoto.width, holder.ivPageProfilePhoto.height)

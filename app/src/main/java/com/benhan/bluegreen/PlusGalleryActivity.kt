@@ -189,11 +189,9 @@ class PlusGalleryActivity: AppCompatActivity() {
                 }else {
                     startActivity(intent)
                 }
-
-            }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
-
-                val error = result.error
             }
+
+            finish()
         }
     }
 

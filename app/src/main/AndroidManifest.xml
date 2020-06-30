@@ -25,8 +25,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".RegisterAgreement"></activity>
-        <activity android:name=".PhotoUploadToPageActivity" />
+        <activity android:name=".RegisterAgreement"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"></activity>
+        <activity android:name=".PhotoUploadToPageActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
         <activity
             android:name=".OtherUser"
             android:screenOrientation="portrait"
@@ -42,7 +47,8 @@
         <activity
             android:name=".SearchFullPost"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="LockedOrientationActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".PlusGalleryActivity"
             android:screenOrientation="portrait"
@@ -97,7 +103,9 @@
             android:name=".Register1"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".SplashActivity">
+        <activity android:name=".SplashActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

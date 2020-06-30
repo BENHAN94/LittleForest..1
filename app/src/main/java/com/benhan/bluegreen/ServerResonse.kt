@@ -25,6 +25,8 @@ class ServerResonse {
     @SerializedName("is_liking")
     var isLiking: Boolean? = null
 
+    @SerializedName("profile_photo")
+    var profile_photo: String? = null
 
 
 }

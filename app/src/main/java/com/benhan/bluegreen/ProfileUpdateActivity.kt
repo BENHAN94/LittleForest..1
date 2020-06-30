@@ -217,10 +217,21 @@ class ProfileUpdateActivity : AppCompatActivity(){
 
     override fun onResume() {
         super.onResume()
-        Glide.with(this@ProfileUpdateActivity)
-            .load(profilePhotoUri)
-            .override(userUpdateProfilePhoto!!.width, userUpdateProfilePhoto!!.height)
-            .into(userUpdateProfilePhoto!!)
+
+        profile_photo = sharedPreference.getString(this, "profilePhoto")
+        profilePhotoUri = MyApplication.severUrl+profile_photo
+        val tmpProfilePhoto = sharedPreference.getString(this,"tmpProfilePhoto")
+        if(tmpProfilePhoto!!.isNotBlank()){
+            Glide.with(this@ProfileUpdateActivity)
+                .load(tmpProfilePhoto)
+                .override(userUpdateProfilePhoto!!.width, userUpdateProfilePhoto!!.height)
+                .into(userUpdateProfilePhoto!!)
+        }else {
+            Glide.with(this@ProfileUpdateActivity)
+                .load(profilePhotoUri)
+                .override(userUpdateProfilePhoto!!.width, userUpdateProfilePhoto!!.height)
+                .into(userUpdateProfilePhoto!!)
+        }
         etActName?.setText(actualname)
         etName?.text = name
         etJob?.setText(job)

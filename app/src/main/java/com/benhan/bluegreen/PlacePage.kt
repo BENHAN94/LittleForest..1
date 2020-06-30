@@ -114,6 +114,8 @@ class PlacePage : AppCompatActivity() {
                 val intent = Intent(this, PlusGalleryActivity::class.java)
                 intent.putExtra("place_id", placeId)
                 startActivity(intent)
+                finish()
+
             }
 
         }

@@ -72,7 +72,6 @@ class HomeActivity : AppCompatActivity() {
 
                 Log.d("업데이트", t.message)
             }
-
             override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
 
                 Log.d("업데이트", "성공")

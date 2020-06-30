@@ -244,9 +244,10 @@
             android:textColor="@color/navi"
             android:text="프로필을 완성하세요"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="70dp"
+            android:layout_marginRight="75dp"
             android:layout_centerHorizontal="true"
             android:id="@+id/tvUnfinishedInfo"
+            android:visibility="gone"
             />
 
         <TextView

@@ -51,6 +51,8 @@ class UserPlaceFragment: Fragment() {
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         recyclerView?.hasFixedSize()
         tvWhenEmptyFollow = rootview.findViewById(R.id.tvWhenEmptyFollow)
+        val searchBar: EditText = rootview.findViewById(R.id.searchBar)
+        searchBar.visibility = View.GONE
 
         val placeOnItemClickListener = object: OnItemClickListener{
 

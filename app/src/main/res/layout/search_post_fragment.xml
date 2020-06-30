@@ -10,10 +10,11 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="150dp"
         android:fontFamily="@font/nixgonfonts_b"
+        android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="사진을 공유하면 프로필에 표시됩니다. \n \n 첫 번째 사진을 공유해보세요!"
+        android:text="사진을 공유하면 프로필에 표시됩니다.\n \n 첫 번째 사진을 공유해보세요!"
         android:textColor="@color/background"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:visibility="gone"
         android:id="@+id/tvWhenEmptyPost"
         />

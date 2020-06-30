@@ -47,7 +47,7 @@ class SearchPlaceFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootview = layoutInflater.inflate(R.layout.search_place_fragment, container, false)
-        recyclerView = rootview.findViewById<RecyclerView>(R.id.recyclerview)
+        recyclerView = rootview.findViewById(R.id.recyclerview)
         adapter = SearchRecyclerAdapter(requireContext(), places)
 
         TedPermission.with(requireContext())

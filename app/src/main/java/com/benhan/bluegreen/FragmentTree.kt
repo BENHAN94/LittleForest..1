@@ -95,6 +95,7 @@ class FragmentTree: Fragment(){
             .override(ivCommentProfilePhoto!!.width, ivCommentProfilePhoto.height)
             .into(ivCommentProfilePhoto)
 
+        Log.d("프로필", profilePhoto)
 
         recyclerview = rootView?.findViewById(R.id.treeRecyclerView)
         adapter = HomeRecyclerAdapter(requireContext(), requireActivity(), postDataList, profilePhoto!!)
@@ -333,9 +334,8 @@ class FragmentTree: Fragment(){
                 writeComment?.setOnEditorActionListener { v, actionId, event ->
                     if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)){
                         val comment = writeComment?.text.toString()
-                        postDataList[position].commentNumber = postDataList[position].commentNumber?.plus(1)
-                        postDataList[position].mainCommentUserName = name!!
-                        postDataList[position].mainComment = comment
+
+
                         adapter?.notifyItemChanged(position)
                         val call: Call<java.util.ArrayList<CommentData>> =
                             apiInterface.writeComment(
@@ -350,7 +350,10 @@ class FragmentTree: Fragment(){
                         }, 350)
 
 
-                        if(comment.trim().isNotEmpty()) {
+                        if(comment.isNotBlank()) {
+                            postDataList[position].mainCommentUserName = name!!
+                            postDataList[position].mainComment = comment
+                            postDataList[position].commentNumber = postDataList[position].commentNumber?.plus(1)
                             call.clone()
                                 .enqueue(object : Callback<java.util.ArrayList<CommentData>> {
                                     override fun onFailure(

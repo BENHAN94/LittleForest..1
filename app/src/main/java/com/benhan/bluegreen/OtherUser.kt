@@ -337,6 +337,11 @@ class OtherUser : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        adapter?.notifyDataChanged()
+    }
+
     fun load(email: String, index: Int) {
 
 

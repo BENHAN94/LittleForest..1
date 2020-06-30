@@ -28,7 +28,6 @@ class FragmentUser: Fragment() {
     val sharedPreference = SharedPreference()
     val apiClient = ApiClient()
     val apiInterface: ApiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
-    private val postDataList = ArrayList<PostImageData>()
     private var ivProfilePhoto : ImageView? = null
 
     var likeNumber: Int?  =null
@@ -38,11 +37,12 @@ class FragmentUser: Fragment() {
     var tvFollowerNumber:TextView? = null
     var tvLikeNumber:TextView? = null
     var email: String? = null
-    var adapter: PostImageSearchAdapter? = null
     private var tvUsername: TextView? = null
     private var tvActualname: TextView? = null
     private var tvIntroduction: TextView? = null
     var tvUnfinishedInfo: TextView? = null
+    var postFragment: UserPostFragment? = null
+    var placeFragment: UserPlaceFragment? = null
 
 
 
@@ -110,8 +110,8 @@ class FragmentUser: Fragment() {
             }
         }
 
-        val postFragment = UserPostFragment()
-        val placeFragment = UserPlaceFragment()
+        postFragment = UserPostFragment()
+        placeFragment = UserPlaceFragment()
 
         fun clickHandler(view: ImageView) {
 
@@ -135,7 +135,7 @@ class FragmentUser: Fragment() {
 
                     }
                     R.id.user -> {
-                        postFragment.recyclerView?.scrollToPosition(0)
+                        postFragment!!.recyclerView?.scrollToPosition(0)
                     }
                 }
             }
@@ -161,7 +161,7 @@ class FragmentUser: Fragment() {
         locationTab.isClickable = true
 
 
-        adapter = PostImageSearchAdapter(requireContext(), postDataList)
+
         val btnUpdate = rootView.findViewById<Button>(R.id.btnProfileUpdate)
 
 
@@ -203,6 +203,7 @@ class FragmentUser: Fragment() {
 
 
 
+        replaceFragment(postFragment!!)
 
         /////////////////////////////////////////////////////////
 
@@ -219,10 +220,10 @@ class FragmentUser: Fragment() {
             ivLocation.setImageResource(R.drawable.location_white)
 
             user.setOnClickListener {
-                postFragment.recyclerView?.scrollToPosition(0)
+                postFragment!!.recyclerView?.scrollToPosition(0)
             }
 
-            replaceFragment(postFragment)
+            replaceFragment(postFragment!!)
 
 
         }
@@ -246,10 +247,10 @@ class FragmentUser: Fragment() {
             locationTab.isClickable = false
 
             user.setOnClickListener {
-                placeFragment.recyclerView?.scrollToPosition(0)
+                placeFragment!!.recyclerView?.scrollToPosition(0)
             }
 
-            replaceFragment(placeFragment)
+            replaceFragment(placeFragment!!)
 
 
         }
@@ -262,23 +263,24 @@ class FragmentUser: Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        val postFragment = UserPostFragment()
         tvUsername?.text = sharedPreference.getString(requireContext(), "name")
         tvActualname?.text = sharedPreference.getString(requireContext(), "actualName")
         tvIntroduction?.text = sharedPreference.getString(requireContext(), "introduction")
-
-
-
         update(email!!)
-        replaceFragment(postFragment)
         val sharedPreference = SharedPreference()
         val profilePhotoUri = sharedPreference.getString(requireContext(), "profilePhoto")
         val profilePhoto = MyApplication.severUrl + profilePhotoUri
-        Glide.with(requireActivity()).load(profilePhoto)
-            .override(ivProfilePhoto!!.width, ivProfilePhoto!!.height)
-            .into(ivProfilePhoto!!)
-        if(tvActualname?.text == "name" || tvIntroduction?.text == "introducd" || profilePhotoUri == "user_profile_images/vector.jpg"){
+        val tmpProfilePhoto = sharedPreference.getString(requireContext(),"tmpProfilePhoto")
+        if(tmpProfilePhoto!!.isNotBlank()){
+            Glide.with(requireActivity()).load(tmpProfilePhoto)
+                .override(ivProfilePhoto!!.width, ivProfilePhoto!!.height)
+                .into(ivProfilePhoto!!)
+        } else {
+            Glide.with(requireActivity()).load(profilePhoto)
+                .override(ivProfilePhoto!!.width, ivProfilePhoto!!.height)
+                .into(ivProfilePhoto!!)
+        }
+        if(tvActualname?.text == "name" || tvIntroduction?.text == "introduce" || profilePhotoUri == "user_profile_images/vector.jpg"){
             tvUnfinishedInfo?.visibility = View.VISIBLE
         }
 

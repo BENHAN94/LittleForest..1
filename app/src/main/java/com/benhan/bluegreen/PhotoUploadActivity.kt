@@ -6,30 +6,27 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.*
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.daimajia.numberprogressbar.NumberProgressBar
+import com.daimajia.numberprogressbar.OnProgressBarListener
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
-import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.format
-import id.zelory.compressor.constraint.quality
-import id.zelory.compressor.constraint.size
 import kotlinx.android.synthetic.main.plus_fragment_gallery_upload.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -37,10 +34,9 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import kotlin.collections.ArrayList
 
 
-class PhotoUploadActivity: AppCompatActivity(){
+class PhotoUploadActivity: AppCompatActivity(), ProgressRequestBody.UploadCallbacks, OnProgressBarListener{
 
 
 
@@ -54,15 +50,16 @@ class PhotoUploadActivity: AppCompatActivity(){
     private var file: File? = null
     var responseListener : ResponseListener? =null
     var recyclerView: RecyclerView? = null
-    private var progressBar : ProgressBar? = null
     var email : String? = null
+    var progressBar: NumberProgressBar? = null
+
+
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.plus_fragment_gallery_upload)
-
 
 
         TedPermission.with(this)
@@ -72,7 +69,7 @@ class PhotoUploadActivity: AppCompatActivity(){
             .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
             .check()
 
-
+        val backgroundColor = ContextCompat.getColor(this, R.color.background)
 
 
 
@@ -84,6 +81,7 @@ class PhotoUploadActivity: AppCompatActivity(){
         window.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
+        progressBar = findViewById(R.id.number_progress_bar)
 
 
         recyclerView = findViewById(R.id.searchRecycler)
@@ -98,8 +96,8 @@ class PhotoUploadActivity: AppCompatActivity(){
 
         })
 
-        progressBar = findViewById(R.id.progressBar)
-        val backgroundColor = ContextCompat.getColor(this, R.color.background)
+
+
         val naviColor = ContextCompat.getColor(this, R.color.navi)
 
         val sharedPreference = SharedPreference()
@@ -108,6 +106,12 @@ class PhotoUploadActivity: AppCompatActivity(){
         val tvPost = findViewById<TextView>(R.id.post)
 
         etDescription = findViewById(R.id.descriptionUpload)
+        etDescription?.setOnEditorActionListener { v, actionId, event ->
+            if(actionId == EditorInfo.IME_ACTION_DONE)
+                etDescription?.clearFocus()
+                hideKeyboard(this)
+             false
+        }
 
         tvPost.setTextColor(naviColor)
         tvPost.isClickable = false
@@ -142,7 +146,7 @@ class PhotoUploadActivity: AppCompatActivity(){
             .into(ivSelectedPhoto)
        tvPost.setOnClickListener {
             uploadToServer(etDescription?.text.toString())
-            startActivity(Intent(this, HomeActivity::class.java))
+
         }
 
 
@@ -170,7 +174,7 @@ class PhotoUploadActivity: AppCompatActivity(){
             val y = gpsTracker.fetchLongtitude()
 
 
-            if(adapter?.itemCount == 0)
+            if(adapter.itemCount == 0)
                 loadClose("",0, x, y)
             searchBar.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -367,7 +371,7 @@ class PhotoUploadActivity: AppCompatActivity(){
             }
         }
 
-        adapter?.onLoadMoreListener = onLoadMoreListener
+        adapter.onLoadMoreListener = onLoadMoreListener
     }
 
     fun setOnLoadCloseMoreListener(){
@@ -401,49 +405,44 @@ class PhotoUploadActivity: AppCompatActivity(){
 
     private fun uploadToServer(desc: String) {
 
-
-
-
-
-            val requestBody = file!!.asRequestBody("image/*".toMediaTypeOrNull())
-            val fileToUpload = MultipartBody.Part.createFormData("file", file!!.name, requestBody)
+            progressBar?.visibility = View.VISIBLE
+            val fileBody = ProgressRequestBody(file!!,"image", this)
+            val filePart = MultipartBody.Part.createFormData("file", file?.name, fileBody)
+//            val requestBody = file!!.asRequestBody("image/*".toMediaTypeOrNull())
+//            val fileToUpload = MultipartBody.Part.createFormData("file", file!!.name, requestBody)
             val filename = file!!.name.toRequestBody("text/plain".toMediaTypeOrNull())
             val mEmail = email!!.toRequestBody("text/plain".toMediaTypeOrNull())
             val mdesc = desc.toRequestBody("text/plain".toMediaTypeOrNull())
-
-
             val callUpload: Call<ServerResonse> = this@PhotoUploadActivity.apiInterface.uploadImage(
-                fileToUpload, id!!, filename, mEmail,
+                filePart, id!!, filename, mEmail,
                 mdesc
             )
             callUpload.enqueue(object : Callback<ServerResonse> {
                 override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-
                     Log.d("에러 ", t.message)
-
                 }
-
                 override fun onResponse(
                     call: Call<ServerResonse>,
                     response: Response<ServerResonse>
                 ) {
-
-
-
+                    startActivity(Intent(this@PhotoUploadActivity, HomeActivity::class.java))
+                    finish()
                     responseListener?.onResponse()
-
                     Log.d("코드", response.message())
-
-
                 }
-
-
             })
+    }
+
+    override fun onProgressUpdate(percentage: Int) {
+        progressBar?.progress = percentage
+    }
 
 
+    override fun onError() {
 
+    }
 
-
+    override fun onFinish() {
 
 
     }
@@ -478,6 +477,9 @@ class PhotoUploadActivity: AppCompatActivity(){
         return file
     }
 
+    override fun onProgressChange(current: Int, max: Int) {
+
+    }
 
 
 }

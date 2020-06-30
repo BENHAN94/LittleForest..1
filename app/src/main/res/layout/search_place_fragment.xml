@@ -5,6 +5,20 @@
     android:focusableInTouchMode="true"
     >
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/searchBar"
+        android:background="@drawable/button_shape_stroke"
+        android:layout_alignParentTop="true"
+        android:hint="검색"
+        android:fontFamily="@font/nixgonfonts_b"
+        android:paddingLeft="10dp"
+        android:inputType="textNoSuggestions"
+        android:imeOptions="actionDone"
+        android:textColorHint="@color/navi"
+        android:textColor="@color/background"
+        />
 
 
     <TextView
@@ -15,9 +29,9 @@
         android:fontFamily="@font/nixgonfonts_b"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="좋아하는 장소를 팔로우 하면 \n프로필에 표시됩니다. \n \n 첫 번째 장소를 팔로우 해보세요!"
+        android:text="좋아하는 장소를 팔로우 하면\n프로필에 표시됩니다. \n \n 첫 번째 장소를 팔로우 해보세요!"
         android:textColor="@color/background"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:visibility="gone"
         android:id="@+id/tvWhenEmptyFollow"
         />
@@ -27,6 +41,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/swipeLayout"
+    android:layout_below="@id/searchBar"
     >
 
     <androidx.recyclerview.widget.RecyclerView

@@ -364,9 +364,7 @@ class SearchFullPost : AppCompatActivity() {
             ): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-
-
-
+                    if(etWriteComment.text.isNotBlank())
                     commentContainer.visibility = View.VISIBLE
                     tvMainComentUserName.text =
                         sharedPreference.getString(this@SearchFullPost, "name")
