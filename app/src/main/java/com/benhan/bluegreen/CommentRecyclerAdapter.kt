@@ -251,10 +251,7 @@ class CommentRecyclerAdapter(val context: Context, val commentList: ArrayList<Co
             holder.tvDelete.visibility = View.VISIBLE
                 holder.tvDelete.setOnClickListener {
 
-                    deleteComment(item.comment_no!!)
-
-                    if(onItemDeleted != null)
-                    onItemDeleted?.onItemDeleted(position)
+                    deleteComment(item.comment_no!!, position)
 
 
                 }
@@ -441,15 +438,19 @@ class CommentRecyclerAdapter(val context: Context, val commentList: ArrayList<Co
 
     }
 
-    fun deleteComment(comment_no: Int){
+    fun deleteComment(comment_no: Int, position: Int){
 
         val call: Call<ServerResonse> = apiInterface.delteComment(comment_no, null)
         call.enqueue(object : Callback<ServerResonse>{
             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+                if(onItemDeleted != null)
+                    onItemDeleted?.onItemDeleted(position)
 
             }
 
             override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
+
+
 
             }
 

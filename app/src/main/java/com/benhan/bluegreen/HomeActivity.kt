@@ -27,18 +27,9 @@ import retrofit2.Retrofit
 class HomeActivity : AppCompatActivity() {
 
 
-
-
-
-
-
-    private val TAG: String = "로그"
-
-
-
     val apiClient = ApiClient()
     val apiInterface: ApiInterface = apiClient.getApiClient().create(ApiInterface::class.java)
-    val update: Call<ServerResonse> = apiInterface.updatePlaceBestPost()
+//    val update: Call<ServerResonse> = apiInterface.updatePlaceBestPost()
 
 
 
@@ -64,23 +55,23 @@ class HomeActivity : AppCompatActivity() {
     }
 
 
-    override fun onResume() {
-        super.onResume()
-
-        update.clone().enqueue(object: Callback<ServerResonse>{
-            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-
-                Log.d("업데이트", t.message)
-            }
-            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
-
-                Log.d("업데이트", "성공")
-            }
-
-
-        })
-
-    }
+//    override fun onResume() {
+//        super.onResume()
+//
+//        update.clone().enqueue(object: Callback<ServerResonse>{
+//            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+//
+//                Log.d("업데이트", t.message)
+//            }
+//            override fun onResponse(call: Call<ServerResonse>, response: Response<ServerResonse>) {
+//
+//                Log.d("업데이트", "성공")
+//            }
+//
+//
+//        })
+//
+//    }
 
     override fun onBackPressed() {
 

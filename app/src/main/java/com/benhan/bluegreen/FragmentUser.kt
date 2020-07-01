@@ -147,6 +147,7 @@ class FragmentUser: Fragment() {
         clickHandler(bell)
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -254,6 +255,8 @@ class FragmentUser: Fragment() {
 
 
         }
+
+
 
         return rootView
 

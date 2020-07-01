@@ -131,8 +131,23 @@ class Comment : AppCompatActivity() {
         val onItemDeleted = object : CommentRecyclerAdapter.OnItemDeleted{
             override fun onItemDeleted(position: Int) {
 
-                commentList.removeAt(position)
-                adapter?.notifyItemRemoved(position)
+                call.clone().enqueue(object : Callback<ArrayList<CommentData>>{
+                    override fun onFailure(call: Call<ArrayList<CommentData>>, t: Throwable) {
+
+                        Log.d("실패?",t.message)
+                    }
+
+                    override fun onResponse(
+                        call: Call<ArrayList<CommentData>>,
+                        response: Response<ArrayList<CommentData>>
+                    ) {
+                        commentList.removeAll(commentList)
+                        response.body()?.let { commentList.addAll(it) }
+                        adapter?.notifyDataSetChanged()
+                    }
+
+
+                })
             }
         }
         adapter?.onItemDeleted = onItemDeleted

@@ -1,10 +1,12 @@
 package com.benhan.bluegreen
 
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -15,12 +17,17 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.ethanhua.skeleton.Skeleton
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -28,6 +35,8 @@ import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class FragmentTree: Fragment(){
@@ -63,6 +72,8 @@ class FragmentTree: Fragment(){
     var email: String? = null
     var name: String?= null
 
+    var profilePhoto: String? = null
+
 
 
 
@@ -85,10 +96,11 @@ class FragmentTree: Fragment(){
 
 
 
+
         email = sharedPreference.getString(requireContext(), "email")!!
         name = sharedPreference.getString(requireContext(), "name")
 
-        val profilePhoto = sharedPreference.getString(requireContext(), "profilePhoto")
+        profilePhoto = sharedPreference.getString(requireContext(), "profilePhoto")
         val profilePhotoUri = MyApplication.severUrl+profilePhoto
         val ivCommentProfilePhoto = rootView?.findViewById<ImageView>(R.id.myProfilePhoto)
         Glide.with(requireActivity()).load(profilePhotoUri)
@@ -105,6 +117,11 @@ class FragmentTree: Fragment(){
         linearLayoutManager.isItemPrefetchEnabled = true
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerview!!.layoutManager = linearLayoutManager
+
+
+
+
+//        recyclerview?.findViewHolderForAdapterPosition()
 
 
 
@@ -240,7 +257,26 @@ class FragmentTree: Fragment(){
         clickHandler(user!!)
 
 
+        //////////////////////////////////////////////////////////////////////////
 
+//        val ivMyProfilePreloadProvide = ViewPreloadSizeProvider<PostData>()
+//        val ivPageProfilePreloadProvide = ViewPreloadSizeProvider<PostData>()
+//        val ivUserProfilePreloadProvide = ViewPreloadSizeProvider<PostData>()
+//        val myProfileProviderModel = MyProfilePreloadModelProvider()
+//        val pageProfileProvideModel = PageProfilePreloadModelProvider()
+//        val userProfileProviderModel = UserProfilePreloadModelProvider()
+
+
+
+
+
+
+
+
+
+
+
+        //////////////////////////////////////////////////////////////////////////
         val responseListener = object: ResponseListener{
             override fun onResponse() {
                 load(0)
@@ -310,8 +346,10 @@ class FragmentTree: Fragment(){
                     postDataList[position].postLikes = postDataList[position].postLikes?.minus(1)
                     postDataList[position].isLikingPost = false
                 }
-                adapter?.notifyItemChanged(position)
+                upadetBestPost(position)
             }
+
+
         }
 
         adapter?.onLikeClickListener = onLikeClickListener
@@ -396,6 +434,67 @@ class FragmentTree: Fragment(){
     }
 
 
+    inner class PostProviderModel: ListPreloader.PreloadModelProvider<PostData>{
+        override fun getPreloadItems(position: Int): MutableList<PostData> {
+            val postData = postDataList[position]
+            if(postDataList[position].postImage?.isEmpty()!!){
+                return Collections.emptyList()
+            }
+            return Collections.singletonList(postData)
+        }
+
+        override fun getPreloadRequestBuilder(item: PostData): RequestBuilder<*>? {
+            return  Glide.with(requireContext())
+                .load(MyApplication.severUrl+item.postImage)
+        }
+
+
+    }
+
+
+
+
+    inner class MyProfilePreloadModelProvider: ListPreloader.PreloadModelProvider<PostData>{
+        override fun getPreloadItems(position: Int): MutableList<PostData> {
+            val postData = postDataList[position]
+            return Collections.singletonList(postData)
+        }
+
+        override fun getPreloadRequestBuilder(item: PostData): RequestBuilder<*>? {
+            return  Glide.with(requireContext())
+                .load(MyApplication.severUrl+profilePhoto)
+        }
+
+
+    }
+
+    inner class PageProfilePreloadModelProvider: ListPreloader.PreloadModelProvider<PostData>{
+        override fun getPreloadItems(position: Int): MutableList<PostData> {
+            val postData = postDataList[position]
+            return Collections.singletonList(postData)
+        }
+
+        override fun getPreloadRequestBuilder(item: PostData): RequestBuilder<*>? {
+            return  Glide.with(requireContext())
+                .load(MyApplication.severUrl+item.pageProfilePhoto)
+        }
+
+
+    }
+
+    inner class UserProfilePreloadModelProvider: ListPreloader.PreloadModelProvider<PostData>{
+        override fun getPreloadItems(position: Int): MutableList<PostData> {
+            val postData = postDataList[position]
+            return Collections.singletonList(postData)
+        }
+
+        override fun getPreloadRequestBuilder(item: PostData): RequestBuilder<*>? {
+            return  Glide.with(requireContext())
+                .load(MyApplication.severUrl+item.userProfilePhoto)
+        }
+
+
+    }
 
 
 
@@ -409,8 +508,20 @@ class FragmentTree: Fragment(){
 
 
 
+    fun upadetBestPost(position: Int){
+        val call:Call<ServerResonse> = apiInterface.updateBestPost(postDataList[position].pageId)
+        call.enqueue(object: Callback<ServerResonse>{
+            override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+                adapter?.notifyItemChanged(position)
+            }
+            override fun onResponse(
+                call: Call<ServerResonse>,
+                response: Response<ServerResonse>
+            ) {
 
-
+            }
+        })
+    }
 
 
 
@@ -448,6 +559,11 @@ class FragmentTree: Fragment(){
                         response.body()?.let { postDataList.addAll(it) }
                     recyclerview!!.adapter = adapter
                         adapter?.notifyDataChanged()
+                    val postPreloadProvider = ViewPreloadSizeProvider<PostData>()
+                    val postProviderModel = PostProviderModel()
+                    val preloader: RecyclerViewPreloader<PostData> = RecyclerViewPreloader(Glide.with(requireContext()), postProviderModel, postPreloadProvider, 10
+                    )
+                    recyclerview?.addOnScrollListener(preloader)
 
 
                         if(postDataList.size == 30) {

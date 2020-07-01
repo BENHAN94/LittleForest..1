@@ -2,6 +2,7 @@ package com.benhan.bluegreen
 
 import android.app.Activity
 import android.content.Context
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,10 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.util.ViewPreloadSizeProvider
 import org.ocpsoft.prettytime.PrettyTime
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,7 +51,7 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
 
 
-    class MyViewHolder(val layout: View) : RecyclerView.ViewHolder(layout), View.OnClickListener {
+    class MyViewHolder(val layout: View) : RecyclerView.ViewHolder(layout){
 
         val ivPageProfilePhoto: ImageView = layout.findViewById(R.id.pageProfilePhoto)
         val tvPageName: TextView = layout.findViewById(R.id.pageName)
@@ -70,9 +74,6 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
         val commentContainer: RelativeLayout = layout.findViewById(R.id.mainComentContainer)
 
 
-        override fun onClick(v: View?) {
-
-        }
 
 
     }
@@ -90,7 +91,6 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
         val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val treeRecyclerRow = inflater.inflate(R.layout.tree_recycler_row, parent, false)
         val loadLayout = inflater.inflate(R.layout.search_recycler_load, parent, false)
-
 
 
         if(viewType == TYPE_POST)
@@ -118,6 +118,9 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
     }
 
+
+
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
 
@@ -132,17 +135,14 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
         if(getItemViewType(position) == TYPE_POST) {
             holder as MyViewHolder
             val item = postList[position]
-            var isLikingPost = item?.isLikingPost
-            var postLikes = item?.postLikes
-            var commentCount = item?.commentNumber
+            var isLikingPost = item.isLikingPost
+            var postLikes = item.postLikes
+            var commentCount = item.commentNumber
             val profileUrl = MyApplication.severUrl+profilePhoto
-            val pageProfileUrl = MyApplication.severUrl+item?.pageProfilePhoto
-            val postImageUrl = MyApplication.severUrl+item?.postImage
-            val userProfilePhotoUrl = MyApplication.severUrl+item?.userProfilePhoto
+            val pageProfileUrl = MyApplication.severUrl+item.pageProfilePhoto
+            val postImageUrl = MyApplication.severUrl+item.postImage
+            val userProfilePhotoUrl = MyApplication.severUrl+item.userProfilePhoto
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-
-
-
 
             Glide.with(context).load(profileUrl)
                 .centerCrop()
@@ -212,8 +212,6 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
             holder.compass.setOnClickListener {
                 onPageClickListener?.onPageClick(position)
             }
-
-
             holder.ivUserProfilePhoto.setOnClickListener{
                 onUserClickListener?.onUserClick(position)
             }
@@ -235,9 +233,6 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
             holder.tvWriteComment.setOnClickListener {
                 onWriteCommentClicked?.onWriteCommentClicked(position)
             }
-
-
-
         }
 
 

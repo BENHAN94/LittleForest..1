@@ -29,6 +29,15 @@ class UserPostFragment: Fragment() {
     var recyclerView : RecyclerView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
     var tvWhenEmptyPost: TextView? = null
+    val searchFullPost = SearchFullPost()
+    val deleteListener = object : DeleteListener{
+        override fun onPostDelete(position: Int) {
+            postImageDataList.removeAt(position)
+            adapter?.notifyItemRemoved(position)
+        }
+
+    }
+
 
 
 
@@ -47,6 +56,7 @@ class UserPostFragment: Fragment() {
         welcome = rootView.findViewById(R.id.welcome)
         tvWhenEmptyPost = rootView.findViewById(R.id.tvWhenEmptyPost)
 
+        searchFullPost.deleteListener = deleteListener
 
         adapter = PostImageSearchAdapter(requireContext(), postImageDataList)
         recyclerView!!.adapter = adapter
@@ -58,11 +68,12 @@ class UserPostFragment: Fragment() {
                 val intent = Intent(requireContext(), SearchFullPost::class.java)
                 intent.putExtra("place_or_user_name", name)
                 intent.putExtra("post_id", post_id)
+                intent.putExtra("post_position", position)
                 startActivity(intent)
             }
         }
 
-        val postNumber = sharedPreference.getInt(requireContext(), "postNumber")
+
 
 
 
@@ -98,12 +109,6 @@ class UserPostFragment: Fragment() {
 
 
     }
-
-
-
-
-
-
 
 
 

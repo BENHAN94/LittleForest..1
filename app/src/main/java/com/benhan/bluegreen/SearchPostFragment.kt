@@ -29,18 +29,6 @@ class SearchPostFragment: Fragment() {
     var recyclerView: RecyclerView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        TedPermission.with(requireContext())
-            .setPermissionListener(permissionListener)
-            .setRationaleMessage("회원님과 가까운 곳을 보기 위해서는 위치 정보 접근 권한이 필요해요")
-            .setDeniedMessage("언제든 [설정] > [권한] 에서 권한을 허용 하시면 가까운 곳을 보실 수 있어요")
-            .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
-            .check()
-
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +38,12 @@ class SearchPostFragment: Fragment() {
         val rootView = inflater.inflate(R.layout.search_post_fragment, container, false)
 
 
+        TedPermission.with(requireContext())
+            .setPermissionListener(permissionListener)
+            .setRationaleMessage("회원님과 가까운 곳을 보기 위해서는 위치 정보 접근 권한이 필요해요")
+            .setDeniedMessage("언제든 [설정] > [권한] 에서 권한을 허용 하시면 가까운 곳을 보실 수 있어요")
+            .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            .check()
 
 
 
@@ -131,6 +125,7 @@ class SearchPostFragment: Fragment() {
 
 
 
+
     private val permissionListener = object : PermissionListener {
         override fun onPermissionGranted() {
 
@@ -145,6 +140,7 @@ class SearchPostFragment: Fragment() {
                 adapter?.isMoreDataAvailable = true
                 swipeRefreshLayout?.isRefreshing = false
             }
+
             if(adapter?.itemCount == 0)
                 loadClose(0, x, y)
 

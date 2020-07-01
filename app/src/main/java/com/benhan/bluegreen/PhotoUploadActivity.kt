@@ -433,6 +433,10 @@ class PhotoUploadActivity: AppCompatActivity(), ProgressRequestBody.UploadCallba
             })
     }
 
+
+
+
+
     override fun onProgressUpdate(percentage: Int) {
         progressBar?.progress = percentage
     }

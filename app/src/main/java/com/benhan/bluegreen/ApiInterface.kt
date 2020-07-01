@@ -224,11 +224,15 @@ interface ApiInterface {
 
     @FormUrlEncoded
     @POST("delete_post.php")
-    fun delete(@Field("post_id")post_id: Int, @Field("post_path")postImage: String): Call<ServerResonse>
+    fun delete(@Field("post_id")post_id: Int, @Field("post_path")postImage: String, @Field("place_id")place_id: Int): Call<ServerResonse>
 
     @FormUrlEncoded
     @POST("delete_comment.php")
     fun delteComment(@Field("comment_no")comment_no: Int?,
                      @Field("id")id: Int?): Call<ServerResonse>
+
+    @FormUrlEncoded
+    @POST("update_place_best_post_single.php")
+    fun updateBestPost(@Field("place_id")place_id: Int?): Call<ServerResonse>
 
 }

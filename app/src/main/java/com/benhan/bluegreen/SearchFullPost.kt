@@ -57,12 +57,16 @@ class SearchFullPost : AppCompatActivity() {
 
     var functions : Functions? = null
 
+    var deleteListener: DeleteListener? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_full_post)
 
 
+
+        val position = intent.getIntExtra("post_position", 0)
 
         functions = Functions(this)
         val backgroundColor = ContextCompat.getColor(this, R.color.background)
@@ -149,9 +153,16 @@ class SearchFullPost : AppCompatActivity() {
 
 
                     tvDelete.setOnClickListener {
-                        val delete : Call<ServerResonse> = apiInterface.delete(post_id, postImage!!)
+
+
+
+                        val delete : Call<ServerResonse> = apiInterface.delete(post_id, postImage!!, pageId!!)
                         delete.enqueue(object : Callback<ServerResonse>{
                             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
+                                if(position != 0 && deleteListener != null) {
+                                    deleteListener?.onPostDelete(position)
+                                }
+                                Log.d("삭제", t.message)
                                 finish()
                             }
 
@@ -159,6 +170,9 @@ class SearchFullPost : AppCompatActivity() {
                                 call: Call<ServerResonse>,
                                 response: Response<ServerResonse>
                             ) {
+                                if(position != 0 && deleteListener != null) {
+                                    deleteListener?.onPostDelete(position)
+                                }
                                 finish()
                             }
 
@@ -595,6 +609,9 @@ class SearchFullPost : AppCompatActivity() {
         })
 
     }
+
+
+
 
 
 
