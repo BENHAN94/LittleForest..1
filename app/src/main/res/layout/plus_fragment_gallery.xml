@@ -10,7 +10,7 @@
     android:clickable="true"
     android:weightSum="10"
     android:id="@+id/plus_fragment_gallery"
-    tools:context=".PlusGalleryActivity"
+    tools:context=".plus.PlusGalleryActivity"
     >
 
     <LinearLayout

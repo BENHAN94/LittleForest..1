@@ -15,7 +15,7 @@
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
-        android:name=".MyApplication"
+        android:name=".utill.MyApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
         android:icon="@drawable/tree_selected"
@@ -25,40 +25,40 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".RegisterAgreement"
+        <activity android:name=".register.RegisterAgreement"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"></activity>
-        <activity android:name=".PhotoUploadToPageActivity"
+        <activity android:name=".place.PhotoUploadToPageActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
         <activity
-            android:name=".OtherUser"
+            android:name=".user.OtherUser"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ImageCropper"
+            android:name=".utill.ImageCropper"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".PlacePage"
+            android:name=".place.PlacePage"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".SearchFullPost"
+            android:name=".fullpost.FullPost"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
             android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name=".PlusGalleryActivity"
+            android:name=".plus.PlusGalleryActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".PhotoUploadActivity"
+            android:name=".plus.PhotoUploadActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Comment"
+            android:name=".comment.Comment"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
@@ -67,17 +67,17 @@
             android:theme="@style/Base.Theme.AppCompat"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ProfilePhotoPicker"
+            android:name=".user.ProfilePhotoPicker"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ProfileUpdateActivity"
+            android:name=".user.ProfileUpdateActivity"
             android:fitsSystemWindows="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".PlusActivity"
+            android:name=".plus.PlusActivity"
             android:fitsSystemWindows="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"
@@ -88,19 +88,19 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Register4"
+            android:name=".register.Register4"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Register3"
+            android:name=".register.Register3"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Register2"
+            android:name=".register.Register2"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Register1"
+            android:name=".register.Register1"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity android:name=".SplashActivity"
@@ -113,17 +113,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity2"
+            android:name=".login.LoginActivity2"
             android:fitsSystemWindows="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".login.LoginActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".login.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
     </application>

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="20"
-    tools:context=".ProfileUpdateActivity"
+    tools:context=".user.ProfileUpdateActivity"
     android:focusable="true"
     android:focusableInTouchMode="true">
 

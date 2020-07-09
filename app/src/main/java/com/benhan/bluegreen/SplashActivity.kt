@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.widget.ImageView
+import com.benhan.bluegreen.localdata.SharedPreference
+import com.benhan.bluegreen.login.MainActivity
 
 class SplashActivity : AppCompatActivity() {
 
@@ -19,7 +21,8 @@ class SplashActivity : AppCompatActivity() {
         val hd = Handler()
         hd.postDelayed(object: Runnable{
             override fun run(){
-                val sharedPreference = SharedPreference()
+                val sharedPreference =
+                    SharedPreference()
                 val success = sharedPreference.getBoolean(this@SplashActivity, "success")
                 if(success!!){
 
