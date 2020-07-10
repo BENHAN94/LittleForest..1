@@ -1,24 +1,29 @@
 package com.benhan.bluegreen.tree
 
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.TypedValue
+import android.view.*
 import android.view.animation.AlphaAnimation
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.benhan.bluegreen.*
+import com.benhan.bluegreen.HomeActivity
+import com.benhan.bluegreen.R
 import com.benhan.bluegreen.adapter.HomeRecyclerAdapter
 import com.benhan.bluegreen.comment.Comment
 import com.benhan.bluegreen.dataclass.CommentData
@@ -46,18 +51,20 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class FragmentTree: Fragment(){
+class FragmentTree : Fragment() {
 
 
     val apiClient = ApiClient()
     val apiInterface: ApiInterface = apiClient.getApiClient().create(
-        ApiInterface::class.java)
+        ApiInterface::class.java
+    )
     var postDataList = ArrayList<PostData>()
     val sharedPreference = SharedPreference()
-    var adapter: HomeRecyclerAdapter? =null
-     private var rootView: View? = null
+    var adapter: HomeRecyclerAdapter? = null
+    private var rootView: View? = null
 
     var recyclerview: RecyclerView? = null
+
 
 
     var imm: InputMethodManager? = null
@@ -72,17 +79,11 @@ class FragmentTree: Fragment(){
     var welcome3: TextView? = null
 
     var email: String? = null
-    var name: String?= null
+    var name: String? = null
 
     var profilePhoto: String? = null
 
     lateinit var tree: ImageView
-
-
-
-
-
-
 
 
     override fun onCreateView(
@@ -90,15 +91,13 @@ class FragmentTree: Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if(rootView == null)
-         rootView =  inflater.inflate(R.layout.home_fragment_tree, container, false)
+        if (rootView == null)
+            rootView = inflater.inflate(R.layout.home_fragment_tree, container, false)
 
-
-        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-
-
-
-
+        imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        writeCommentContainer = rootView?.findViewById(R.id.writeCommentContainer)
+        writeComment = rootView?.findViewById(R.id.writeComment)
+        navi = requireActivity().findViewById(R.id.navigation_bar)
         tree = requireActivity().findViewById(R.id.tree)
 
 
@@ -106,7 +105,7 @@ class FragmentTree: Fragment(){
         name = sharedPreference.getString(requireContext(), "name")
 
         profilePhoto = sharedPreference.getString(requireContext(), "profilePhoto")
-        val profilePhotoUri = MyApplication.severUrl+profilePhoto
+        val profilePhotoUri = MyApplication.severUrl + profilePhoto
         val ivCommentProfilePhoto = rootView?.findViewById<ImageView>(R.id.myProfilePhoto)
         Glide.with(requireActivity()).load(profilePhotoUri)
             .override(ivCommentProfilePhoto!!.width, ivCommentProfilePhoto.height)
@@ -124,22 +123,17 @@ class FragmentTree: Fragment(){
 
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
-        linearLayoutManager.isItemPrefetchEnabled = true
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerview!!.layoutManager = linearLayoutManager
-
-
+        recyclerview?.itemAnimator = null
 
 
 //        recyclerview?.findViewHolderForAdapterPosition()
 
 
-
-
-
-
         val swipeLayout = rootView?.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
-        val backgroundColor = ContextCompat.getColor(requireContext(),
+        val backgroundColor = ContextCompat.getColor(
+            requireContext(),
             R.color.background
         )
         swipeLayout?.setColorSchemeColors(backgroundColor)
@@ -155,37 +149,24 @@ class FragmentTree: Fragment(){
 //////////////////////////////////////////////////////////////////////
 
 
-
-
         welcome = rootView?.findViewById(R.id.welcome)
         welcome2 = rootView?.findViewById(R.id.welcome2)
         welcome3 = rootView?.findViewById(R.id.welcome3)
 
 
         val skeletonScreen = Skeleton.bind(recyclerview)
-            .adapter(adapter).
-            shimmer(true).
-            angle(20).
-            duration(1000).
-            load(R.layout.layout_default_item_skeleton).
-            show()
+            .adapter(adapter).shimmer(true).angle(20).duration(1000)
+            .load(R.layout.layout_default_item_skeleton).show()
 
 
 
-        recyclerview!!.postDelayed( { skeletonScreen.hide() }, 1000)
-
-
-
-
-
-
+        recyclerview!!.postDelayed({ skeletonScreen.hide() }, 1000)
 
 
         /////////////////////////////////////////////////////////
 
 
-
-        val responseListener = object:
+        val responseListener = object :
             ResponseListener {
             override fun onResponse() {
                 load(0)
@@ -196,12 +177,11 @@ class FragmentTree: Fragment(){
         photoUploadActivity.responseListener = responseListener
 
 
-        if(adapter?.itemCount == 0)
+        if (adapter?.itemCount == 0)
             load(0)
 
 
-
-        val onPageClickListener = object: HomeRecyclerAdapter.OnPageClickListener {
+        val onPageClickListener = object : HomeRecyclerAdapter.OnPageClickListener {
             override fun onPageClick(position: Int) {
                 val intent = Intent(context, PlacePage::class.java)
                 intent.putExtra("placeName", postDataList[position].pageName)
@@ -216,7 +196,7 @@ class FragmentTree: Fragment(){
         }
         adapter?.onPageClickListener = onPageClickListener
 
-        val onUserClickListener = object: HomeRecyclerAdapter.OnUserClickListener{
+        val onUserClickListener = object : HomeRecyclerAdapter.OnUserClickListener {
             override fun onUserClick(position: Int) {
                 val intent = Intent(context, OtherUser::class.java)
                 intent.putExtra("otherUserName", postDataList[position].userName)
@@ -228,7 +208,7 @@ class FragmentTree: Fragment(){
 
         adapter?.onUserClickListener = onUserClickListener
 
-        val onClickShowAllListener = object : HomeRecyclerAdapter.OnClickShowAllListener{
+        val onClickShowAllListener = object : HomeRecyclerAdapter.OnClickShowAllListener {
             override fun onClickShowAll(position: Int) {
                 val intent = Intent(context, Comment::class.java)
                 intent.putExtra("post_user_name", postDataList[position].userName)
@@ -242,7 +222,7 @@ class FragmentTree: Fragment(){
 
         adapter?.onClickShowAllListener = onClickShowAllListener
 
-        val onLikeClickListener = object : HomeRecyclerAdapter.OnLikeClickListener{
+        val onLikeClickListener = object : HomeRecyclerAdapter.OnLikeClickListener {
 
             override fun onLikeClick(position: Int) {
                 if (!postDataList[position].isLikingPost!!) {
@@ -264,46 +244,34 @@ class FragmentTree: Fragment(){
         adapter?.onLikeClickListener = onLikeClickListener
 
 
-
-
-
-        navi = requireActivity().findViewById(R.id.navigation_bar)
-
-
         adapter!!.addWriteCommentClickListener(object :
             HomeRecyclerAdapter.OnWriteCommentClicked {
             override fun onWriteCommentClicked(position: Int) {
-                navi?.visibility = View.GONE
-                writeCommentContainer?.visibility = View.VISIBLE
+
+
+
                 writeComment?.requestFocus()
-                imm.showSoftInput(writeComment, 0)
+                imm?.showSoftInput(writeComment, 0)
                 Log.d("나비", "곤")
 
-
-
                 writeComment?.setOnEditorActionListener { v, actionId, event ->
-                    if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)){
+                    if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                         val comment = writeComment?.text.toString()
-
-
-                        adapter?.notifyItemChanged(position)
+                        writeComment?.text = null
+                        writeComment?.clearFocus()
+                        UIUtil.hideKeyboard(activity)
                         val call: Call<java.util.ArrayList<CommentData>> =
                             apiInterface.writeComment(
                                 email!!,
                                 postDataList[position].postId!!,
                                 name!!,
-                                comment)
-                        val handler = Handler()
-                        handler.postDelayed({
-                            navi?.visibility = View.VISIBLE
-                            writeCommentContainer?.visibility = View.GONE
-                        }, 350)
-
-
-                        if(comment.isNotBlank()) {
+                                comment
+                            )
+                        if (comment.isNotEmpty()) {
                             postDataList[position].mainCommentUserName = name!!
                             postDataList[position].mainComment = comment
-                            postDataList[position].commentNumber = postDataList[position].commentNumber?.plus(1)
+                            postDataList[position].commentNumber =
+                                postDataList[position].commentNumber?.plus(1)
                             call.clone()
                                 .enqueue(object : Callback<java.util.ArrayList<CommentData>> {
                                     override fun onFailure(
@@ -317,15 +285,13 @@ class FragmentTree: Fragment(){
                                         call: Call<java.util.ArrayList<CommentData>>,
                                         response: Response<java.util.ArrayList<CommentData>>
                                     ) {
-
+                                        adapter?.notifyItemChanged(position)
                                     }
 
 
                                 })
                         }
-                        writeComment?.text = null
-                        writeComment?.clearFocus()
-                        UIUtil.hideKeyboard(activity)
+
                     }
                     false
                 }
@@ -336,59 +302,80 @@ class FragmentTree: Fragment(){
 
         })
 
+        rootView?.viewTreeObserver?.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val heightDiff: Int =
+                    rootView!!.rootView.height - rootView!!.height
+                if (heightDiff > dpToPx(
+                        requireContext(),
+                        200F
+                    )
+                ) {
+                    navi?.visibility = View.GONE
+                    writeCommentContainer?.visibility = View.VISIBLE
+                } else{
+                    val handler = Handler()
+                    handler.postDelayed({
+                        navi?.visibility = View.VISIBLE
+                        writeCommentContainer?.visibility = View.GONE
+                    }, 100)
+
+                }
+            }
+        })
+
 
 
 
         return rootView
 
 
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        tree.setOnClickListener {
-            recyclerview!!.smoothScrollToPosition(0)
-        }
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        (activity as HomeActivity).clickHandler(tree)
     }
 
 
-    inner class PostProviderModel: ListPreloader.PreloadModelProvider<PostData>{
+    fun dpToPx(context: Context, valueInDp: Float): Float {
+        val metrics: DisplayMetrics = context.getResources().getDisplayMetrics()
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics)
+    }
+
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden)
+            (activity as HomeActivity).clickHandler(tree)
+        else
+            tree.setOnClickListener {
+                recyclerview!!.smoothScrollToPosition(0)
+            }
+
+    }
+
+
+    inner class PostProviderModel : ListPreloader.PreloadModelProvider<PostData> {
         override fun getPreloadItems(position: Int): MutableList<PostData> {
             val postData = postDataList[position]
-            if(postDataList[position].postImage?.isEmpty()!!){
+            if (postDataList[position].postImage?.isEmpty()!!) {
                 return Collections.emptyList()
             }
             return Collections.singletonList(postData)
         }
 
         override fun getPreloadRequestBuilder(item: PostData): RequestBuilder<*>? {
-            return  Glide.with(requireContext())
-                .load(MyApplication.severUrl+item.postImage)
+            return Glide.with(requireContext())
+                .load(MyApplication.severUrl + item.postImage)
         }
 
 
     }
 
 
-
-
-
-
-
-    fun upadetBestPost(position: Int){
-        val call:Call<ServerResonse> = apiInterface.updateBestPost(postDataList[position].pageId)
-        call.enqueue(object: Callback<ServerResonse>{
+    fun upadetBestPost(position: Int) {
+        val call: Call<ServerResonse> = apiInterface.updateBestPost(postDataList[position].pageId)
+        call.enqueue(object : Callback<ServerResonse> {
             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
                 adapter?.notifyItemChanged(position)
             }
+
             override fun onResponse(
                 call: Call<ServerResonse>,
                 response: Response<ServerResonse>
@@ -399,26 +386,11 @@ class FragmentTree: Fragment(){
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     fun load(index: Int) {
 
 
-        val call:Call<ArrayList<PostData>> = apiInterface.getPostData(email!!, index)
-        call.enqueue(object : Callback<ArrayList<PostData>>{
+        val call: Call<ArrayList<PostData>> = apiInterface.getPostData(email!!, index)
+        call.enqueue(object : Callback<ArrayList<PostData>> {
             override fun onFailure(call: Call<ArrayList<PostData>>, t: Throwable) {
 
                 Log.d("콜에러", t.message)
@@ -429,35 +401,36 @@ class FragmentTree: Fragment(){
                 response: Response<ArrayList<PostData>>
             ) {
 
-                if(response.isSuccessful) {
+                if (response.isSuccessful) {
 
-                        response.body()?.let { postDataList.addAll(it) }
+                    response.body()?.let { postDataList.addAll(it) }
                     recyclerview!!.adapter = adapter
-                        adapter?.notifyDataChanged()
+                    adapter?.notifyDataChanged()
                     val postPreloadProvider = ViewPreloadSizeProvider<PostData>()
                     val postProviderModel = PostProviderModel()
-                    val preloader: RecyclerViewPreloader<PostData> = RecyclerViewPreloader(Glide.with(requireContext()), postProviderModel, postPreloadProvider, 10
+                    val preloader: RecyclerViewPreloader<PostData> = RecyclerViewPreloader(
+                        Glide.with(requireContext()), postProviderModel, postPreloadProvider, 10
                     )
                     recyclerview?.addOnScrollListener(preloader)
 
 
-                        if(postDataList.size == 30) {
-                            adapter!!.addLoadMoreListener(object :
-                                HomeRecyclerAdapter.OnLoadMoreListener {
-                                override fun onLoadMore() {
-                                    recyclerview!!.post {
-                                        val index = postDataList.size - 1
-                                        loadMore(index)
-                                    }
+                    if (postDataList.size == 30) {
+                        adapter!!.addLoadMoreListener(object :
+                            HomeRecyclerAdapter.OnLoadMoreListener {
+                            override fun onLoadMore() {
+                                recyclerview!!.post {
+                                    val index = postDataList.size - 1
+                                    loadMore(index)
                                 }
+                            }
 
-                            })
-                        }
+                        })
+                    }
 
 
                 }
 
-                if(adapter?.itemCount==0){
+                if (adapter?.itemCount == 0) {
                     welcome?.visibility = View.VISIBLE
                     welcome2?.visibility = View.VISIBLE
                     welcome3?.visibility = View.VISIBLE
@@ -478,7 +451,7 @@ class FragmentTree: Fragment(){
                     fadeIn3.duration = 1500
                     welcome2?.startAnimation(fadeIn2)
                     welcome3?.startAnimation(fadeIn3)
-                } else{
+                } else {
                     welcome?.visibility = View.GONE
                     welcome2?.visibility = View.GONE
                     welcome3?.visibility = View.GONE
@@ -490,16 +463,16 @@ class FragmentTree: Fragment(){
 
     }
 
-    fun loadMore(index: Int){
+    fun loadMore(index: Int) {
 
         val email = sharedPreference.getString(requireContext(), "email")!!
         postDataList.add(PostData("load"))
-        adapter!!.notifyItemInserted(postDataList.size-1)
+        adapter!!.notifyItemInserted(postDataList.size - 1)
 
         val newIndex = index + 1
 
-        val call:Call<ArrayList<PostData>> = apiInterface.getPostData(email, newIndex)
-        call.enqueue(object : Callback<ArrayList<PostData>>{
+        val call: Call<ArrayList<PostData>> = apiInterface.getPostData(email, newIndex)
+        call.enqueue(object : Callback<ArrayList<PostData>> {
             override fun onFailure(call: Call<ArrayList<PostData>>, t: Throwable) {
 
             }
@@ -508,12 +481,12 @@ class FragmentTree: Fragment(){
                 call: Call<ArrayList<PostData>>,
                 response: Response<ArrayList<PostData>>
             ) {
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     postDataList.removeAt(postDataList.size - 1)
                     val result: ArrayList<PostData>? = response.body()
-                    if(result!!.size > 0) {
+                    if (result!!.size > 0) {
                         postDataList.addAll(result)
-                    }else {
+                    } else {
                         adapter!!.isMoreDataAvailable = false
                     }
                     adapter!!.notifyDataChanged()
@@ -559,5 +532,7 @@ class FragmentTree: Fragment(){
         })
 
     }
+
+
 }
 

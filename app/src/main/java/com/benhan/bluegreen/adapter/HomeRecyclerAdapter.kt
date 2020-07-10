@@ -21,9 +21,14 @@ import org.ocpsoft.prettytime.PrettyTime
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HomeRecyclerAdapter(val context: Context, val activity: Activity, var postList: ArrayList<PostData>, val profilePhoto: String ): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class HomeRecyclerAdapter(
+    val context: Context,
+    val activity: Activity,
+    private var postList: ArrayList<PostData>,
+    val profilePhoto: String
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    companion object{
+    companion object {
         const val TYPE_POST = 0
         const val TYPE_LOAD = 1
 
@@ -37,24 +42,18 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
     val apiClient = ApiClient()
     val apiInterface: ApiInterface = apiClient.getApiClient().create(
-        ApiInterface::class.java)
+        ApiInterface::class.java
+    )
     val sharedPreference = SharedPreference()
     private var onWriteCommentClicked: OnWriteCommentClicked? = null
     val email = sharedPreference.getString(context, "email")
     var onPageClickListener: OnPageClickListener? = null
-    var onUserClickListener : OnUserClickListener? = null
+    var onUserClickListener: OnUserClickListener? = null
     var onClickShowAllListener: OnClickShowAllListener? = null
     var onLikeClickListener: OnLikeClickListener? = null
 
 
-
-
-
-
-
-
-
-   inner class MyViewHolder(val layout: View) : RecyclerView.ViewHolder(layout){
+    inner class MyViewHolder(val layout: View) : RecyclerView.ViewHolder(layout) {
 
         val ivPageProfilePhoto: ImageView = layout.findViewById(R.id.pageProfilePhoto)
         val tvPageName: TextView = layout.findViewById(R.id.pageName)
@@ -77,37 +76,123 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
         val commentContainer: RelativeLayout = layout.findViewById(R.id.mainComentContainer)
 
 
-       fun bind(postData: PostData){
-           Glide.with(context)
-               .load(postData.pageProfilePhoto)
-               .centerCrop()
-               .override(ivPageProfilePhoto.width, ivPageProfilePhoto.height)
-               .into(ivPageProfilePhoto)
-
-       }
+        fun bind(postData: PostData) {
 
 
+            val pageProfileUrl = MyApplication.severUrl + postData.pageProfilePhoto
+            val postImageUrl = MyApplication.severUrl + postData.postImage
+            val userProfilePhotoUrl = MyApplication.severUrl + postData.userProfilePhoto
+            var isLikingPost = postData.isLikingPost
+            var postLikes = postData.postLikes
+            var commentCount = postData.commentNumber
+            val profileUrl = MyApplication.severUrl + profilePhoto
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+
+            if (pageProfileUrl != "http://18.223.20.219/null")
+                Glide.with(context).load(pageProfileUrl)
+                    .fitCenter()
+                    .override(ivPageProfilePhoto.width, ivPageProfilePhoto.height)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivPageProfilePhoto)
+
+            Glide.with(context).load(profileUrl)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(ivMyProfile.width, ivMyProfile.height)
+                .into(ivMyProfile)
+
+            Glide.with(context).load(postImageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(ivPostImage)
+
+            Glide.with(context).load(userProfilePhotoUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(ivUserProfilePhoto.width, ivUserProfilePhoto.width)
+                .into(ivUserProfilePhoto)
+
+            tvPageName.text = postData.pageName
+            tvPageType.text = postData.pageType
+            tvPageProvince.text = postData.pageProvince
+            tvUserName.text = postData.userName
+            tvDescription.text = postData.postDescription
+            tvMainComentUserName.text = postData.mainCommentUserName
+            tvMainCommentContents.text = postData.mainComment
+
+            if (commentCount!! > 1) {
+                tvShowAllComents.text = "댓글 ${commentCount}개 모두 보기"
+                tvShowAllComents.visibility = View.VISIBLE
+            } else {
+                tvShowAllComents.visibility = View.GONE
+                tvShowAllComents.text = null
+            }
+            if (!isLikingPost!!) {
+                likeBtn.setImageResource(R.drawable.tree)
+            } else {
+                likeBtn.setImageResource(R.drawable.tree_selected)
+            }
+            if (postData.commentNumber!! > 0) {
+                commentContainer.visibility = View.VISIBLE
+            } else {
+                commentContainer.visibility = View.GONE
+            }
+            val date = simpleDateFormat.parse(postData.postDate!!)
+            val ago = prettyTime.format(date)
+            tvPostedDate.text = ago
+            if (postLikes!! > 0) {
+                tvCountLikes.text = "좋아요 ${postData.postLikes}개"
+                tvCountLikes.visibility = View.VISIBLE
+            } else {
+                tvCountLikes.visibility = View.GONE
+            }
+
+        }
+
+        fun setInterfaces(position: Int) {
+
+            page.setOnClickListener {
+                onPageClickListener?.onPageClick(position)
+            }
+            compass.setOnClickListener {
+                onPageClickListener?.onPageClick(position)
+            }
+            ivUserProfilePhoto.setOnClickListener {
+                onUserClickListener?.onUserClick(position)
+            }
+            tvUserName.setOnClickListener {
+                onUserClickListener?.onUserClick(position)
+            }
+
+
+            tvShowAllComents.setOnClickListener {
+                onClickShowAllListener?.onClickShowAll(position)
+            }
+
+
+            likeBtn.setOnClickListener {
+                onLikeClickListener?.onLikeClick(position)
+            }
+
+
+            tvWriteComment.setOnClickListener {
+                onWriteCommentClicked?.onWriteCommentClicked(position)
+            }
+
+        }
 
 
     }
 
-    class LoadHolder(view: View): RecyclerView.ViewHolder(view){
-
-
-    }
-
-
-
+    class LoadHolder(view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater: LayoutInflater =
+            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val treeRecyclerRow = inflater.inflate(R.layout.tree_recycler_row, parent, false)
         val loadLayout = inflater.inflate(R.layout.search_recycler_load, parent, false)
 
 
-        if(viewType == TYPE_POST)
-        {
+        if (viewType == TYPE_POST) {
             return MyViewHolder(treeRecyclerRow)
         } else {
             return LoadHolder(
@@ -118,9 +203,9 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
 
     override fun getItemViewType(position: Int): Int {
 
-        return if(postList[position].kind == "post"){
+        return if (postList[position].kind == "post") {
             TYPE_POST
-        }else{
+        } else {
             TYPE_LOAD
         }
 
@@ -134,171 +219,65 @@ class HomeRecyclerAdapter(val context: Context, val activity: Activity, var post
     }
 
 
-
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
 
-
-        if(position>= itemCount-1 && isMoreDataAvailable && !isLoading && loadMoreListener!=null)
-        {
+        if (position >= itemCount - 1 && isMoreDataAvailable && !isLoading && loadMoreListener != null) {
             isLoading = true
             loadMoreListener?.onLoadMore()
         }
 
 
-        if(getItemViewType(position) == TYPE_POST) {
+        if (getItemViewType(position) == TYPE_POST) {
             holder as MyViewHolder
             val item = postList[position]
-            var isLikingPost = item.isLikingPost
-            var postLikes = item.postLikes
-            var commentCount = item.commentNumber
-            val profileUrl = MyApplication.severUrl+profilePhoto
-            val pageProfileUrl = MyApplication.severUrl+item.pageProfilePhoto
-            val postImageUrl = MyApplication.severUrl+item.postImage
-            val userProfilePhotoUrl = MyApplication.severUrl+item.userProfilePhoto
-            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-
-            Glide.with(context).load(profileUrl)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .override(holder.ivMyProfile.width, holder.ivMyProfile.height)
-                .into(holder.ivMyProfile)
-            if(pageProfileUrl != "http://18.223.20.219/null")
-            Glide.with(context).load(pageProfileUrl)
-                .fitCenter()
-                .override(holder.ivPageProfilePhoto.width, holder.ivPageProfilePhoto.height)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.ivPageProfilePhoto)
-
-            Glide.with(context).load(postImageUrl)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.ivPostImage)
-
-            Glide.with(context).load(userProfilePhotoUrl)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .override(holder.ivUserProfilePhoto.width, holder.ivUserProfilePhoto.width )
-                .into(holder.ivUserProfilePhoto)
-
-            holder.tvPageName.text = item.pageName
-            holder.tvPageType.text = item.pageType
-            holder.tvPageProvince.text = item.pageProvince
-            holder.tvUserName.text = item.userName
-            holder.tvDescription.text = item.postDescription
-            holder.tvMainComentUserName.text = item.mainCommentUserName
-            holder.tvMainCommentContents.text = item.mainComment
-
-            if (commentCount!! > 1) {
-                holder.tvShowAllComents.text = "댓글 ${commentCount}개 모두 보기"
-                holder.tvShowAllComents.visibility = View.VISIBLE
-            } else {
-                holder.tvShowAllComents.visibility = View.GONE
-                holder.tvShowAllComents.text = null
-            }
-            if (!isLikingPost!!) {
-                holder.likeBtn.setImageResource(R.drawable.tree)
-            } else {
-                holder.likeBtn.setImageResource(R.drawable.tree_selected)
-            }
-            if (item.commentNumber!!>0) {
-                holder.commentContainer.visibility = View.VISIBLE
-            } else{
-                holder.commentContainer.visibility = View.GONE
-            }
-            val date = simpleDateFormat.parse(item.postDate!!)
-            val ago = prettyTime.format(date)
-            holder.tvPostedDate.text = ago
-            if(postLikes!! > 0 ){
-                holder.tvCountLikes.text = "좋아요 ${item.postLikes}개"
-                holder.tvCountLikes.visibility = View.VISIBLE
-            }else{
-                holder.tvCountLikes.visibility = View.GONE
-            }
-
-
-
-
-
-
-
-            holder.page.setOnClickListener {
-                onPageClickListener?.onPageClick(position)
-            }
-            holder.compass.setOnClickListener {
-                onPageClickListener?.onPageClick(position)
-            }
-            holder.ivUserProfilePhoto.setOnClickListener{
-                onUserClickListener?.onUserClick(position)
-            }
-            holder.tvUserName.setOnClickListener{
-                onUserClickListener?.onUserClick(position)
-            }
-
-
-            holder.tvShowAllComents.setOnClickListener {
-                onClickShowAllListener?.onClickShowAll(position)
-            }
-
-
-            holder.likeBtn.setOnClickListener {
-                onLikeClickListener?.onLikeClick(position)
-            }
-
-
-            holder.tvWriteComment.setOnClickListener {
-                onWriteCommentClicked?.onWriteCommentClicked(position)
-            }
+            holder.bind(item)
+            holder.setInterfaces(position)
         }
 
 
     }
 
 
-
-
-
-
-    fun notifyDataChanged(){
+    fun notifyDataChanged() {
         notifyDataSetChanged()
         isLoading = false
     }
 
 
-
-
-
-    interface OnWriteCommentClicked{
+    interface OnWriteCommentClicked {
 
         fun onWriteCommentClicked(position: Int)
     }
 
-    fun addWriteCommentClickListener(listener: OnWriteCommentClicked){
+    fun addWriteCommentClickListener(listener: OnWriteCommentClicked) {
 
         onWriteCommentClicked = listener
 
     }
 
-
-
-    interface OnLoadMoreListener{
+    interface OnLoadMoreListener {
         fun onLoadMore()
     }
 
-    fun addLoadMoreListener(listener: OnLoadMoreListener){
+    fun addLoadMoreListener(listener: OnLoadMoreListener) {
 
         this.loadMoreListener = listener
     }
 
-    interface OnPageClickListener{
+    interface OnPageClickListener {
         fun onPageClick(position: Int)
     }
-    interface OnUserClickListener{
+
+    interface OnUserClickListener {
         fun onUserClick(position: Int)
     }
-    interface OnClickShowAllListener{
+
+    interface OnClickShowAllListener {
         fun onClickShowAll(position: Int)
     }
-    interface OnLikeClickListener{
+
+    interface OnLikeClickListener {
         fun onLikeClick(position: Int)
     }
 }

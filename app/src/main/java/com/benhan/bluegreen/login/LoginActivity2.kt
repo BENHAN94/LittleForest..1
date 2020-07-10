@@ -107,6 +107,7 @@ class LoginActivity2 : AppCompatActivity() {
                         }
                         val intent = Intent(this@LoginActivity2, HomeActivity::class.java)
                         startActivity(intent)
+                        finish()
 
                     } else{
 

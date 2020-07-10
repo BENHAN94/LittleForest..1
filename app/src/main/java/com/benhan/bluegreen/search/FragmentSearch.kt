@@ -1,6 +1,7 @@
 package com.benhan.bluegreen.search
 
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -10,18 +11,25 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.benhan.bluegreen.HomeActivity
 import com.benhan.bluegreen.R
+import com.benhan.bluegreen.utill.GpsTracker
+import com.benhan.bluegreen.utill.MyApplication
 import java.util.*
 
 
-class FragmentSearch: Fragment(){
-
+class FragmentSearch : Fragment() {
 
 
     lateinit var search: ImageView
 
+    var postFragment: SearchPostFragment? = null
+    var placeFragment: SearchPlaceFragment? = null
+    var permissionCheck : Int? = null
+    var x: Double? = null
+    var y: Double? = null
 
 
     override fun onCreateView(
@@ -33,15 +41,28 @@ class FragmentSearch: Fragment(){
 
         val rootView = inflater.inflate(R.layout.home_fragment_search, container, false)
 
+
+        val gpsTracker =
+            GpsTracker(requireContext())
+        x = gpsTracker.fetchLatitude()
+        y = gpsTracker.fetchLongtitude()
+
+
+        permissionCheck = ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+
         search = requireActivity().findViewById(R.id.search)
-        val postFragment = SearchPostFragment()
-        val placeFragment = SearchPlaceFragment()
+        postFragment = SearchPostFragment()
+        placeFragment = SearchPlaceFragment()
         val gridTab = rootView.findViewById<RelativeLayout>(R.id.layoutGrid)
         val locationTab = rootView.findViewById<RelativeLayout>(R.id.layoutLocation)
         val ivGrid = rootView.findViewById<ImageView>(R.id.ivGrid)
         val ivLocation = rootView.findViewById<ImageView>(R.id.ivLocation)
 
-        replaceFragment(postFragment)
+        replaceFragment(postFragment!!)
 
 
 
@@ -59,10 +80,10 @@ class FragmentSearch: Fragment(){
             ivLocation.setImageResource(R.drawable.location_white)
 
             search.setOnClickListener {
-                postFragment.recyclerView?.scrollToPosition(0)
+                postFragment!!.recyclerView?.scrollToPosition(0)
             }
 
-            replaceFragment(postFragment)
+            replaceFragment(postFragment!!)
 
         }
 
@@ -80,11 +101,11 @@ class FragmentSearch: Fragment(){
             ivLocation.setImageResource(R.drawable.location_green)
 
             search.setOnClickListener {
-                placeFragment.recyclerView?.scrollToPosition(0)
+                placeFragment!!.recyclerView?.scrollToPosition(0)
             }
 
 
-            replaceFragment(placeFragment)
+            replaceFragment(placeFragment!!)
         }
 
 
@@ -100,8 +121,6 @@ class FragmentSearch: Fragment(){
     }
 
 
-
-
     fun hideKeyboard(activity: Activity) {
         val imm: InputMethodManager =
             activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -113,7 +132,6 @@ class FragmentSearch: Fragment(){
         }
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
-
 
 
     private fun replaceFragment(fragment: Fragment) {
@@ -134,14 +152,32 @@ class FragmentSearch: Fragment(){
     ): String? { /*지오코더... GPS를 주소로 변환*/
         val geocoder = Geocoder(requireContext(), Locale.getDefault())
         val addresses: List<Address>?
-        addresses =  geocoder.getFromLocation(latitude, longitude, 100)
+        addresses = geocoder.getFromLocation(latitude, longitude, 100)
         val address: Address = addresses[0]
         return address.getAddressLine(0).toString().toString() + "\n"
     }
 
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden)
+            (activity as HomeActivity).clickHandler(search)
+        else
+            search.setOnClickListener {
+                postFragment!!. recyclerView ?. smoothScrollToPosition (0)
+                placeFragment!!. recyclerView ?. smoothScrollToPosition (0)
+            }
 
-
+        if(MyApplication.isChanged){
+            postFragment?.postImageDataList?.removeAll(postFragment?.postImageDataList!!)
+            if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                postFragment?.loadClose(0, x!!, y!!)
+            }else{
+                postFragment?.load(0)
+            }
+            MyApplication.isChanged = false
+        }
+    }
 
 
 }

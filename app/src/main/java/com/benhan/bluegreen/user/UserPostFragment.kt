@@ -23,6 +23,7 @@ import com.benhan.bluegreen.localdata.SharedPreference
 import com.benhan.bluegreen.network.ApiClient
 import com.benhan.bluegreen.network.ApiInterface
 import com.benhan.bluegreen.utill.GridDividerDecoration
+import com.benhan.bluegreen.utill.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,14 +40,8 @@ class UserPostFragment: Fragment() {
     var recyclerView : RecyclerView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
     var tvWhenEmptyPost: TextView? = null
-    val searchFullPost = FullPost()
-    val deleteListener = object : DeleteListener {
-        override fun onPostDelete(position: Int) {
-            postImageDataList.removeAt(position)
-            adapter?.notifyItemRemoved(position)
-        }
+    val myApplication = MyApplication()
 
-    }
 
 
 
@@ -57,19 +52,20 @@ class UserPostFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.search_post_fragment, container, false)
+
         myEmail = sharedPreference.getString(requireContext(), "email")
         recyclerView = rootView.findViewById(R.id.recyclerview)
         val dividerDecoration = GridDividerDecoration(
             resources,
             R.drawable.divider_recyler_gallery
         )
+
         recyclerView!!.hasFixedSize()
         recyclerView!!.layoutManager = LinearLayoutManager(requireContext())
         recyclerView!!.addItemDecoration(dividerDecoration)
         welcome = rootView.findViewById(R.id.welcome)
         tvWhenEmptyPost = rootView.findViewById(R.id.tvWhenEmptyPost)
 
-        searchFullPost.deleteListener = deleteListener
 
         adapter = PostImageSearchAdapter(
             requireContext(),
@@ -114,26 +110,11 @@ class UserPostFragment: Fragment() {
         adapter!!.onItemClickListener = mOnItemClickListener
 
 
-
-
-        if(adapter?.itemCount == 0)
-        load(0)
-
-
-
-
-
         return rootView
 
 
 
     }
-
-
-
-
-
-
 
 
 
@@ -165,8 +146,6 @@ class UserPostFragment: Fragment() {
                     if(postImageDataList.size == 0){
                         tvWhenEmptyPost?.visibility = View.VISIBLE
                     }
-
-
                 }
             }
 
@@ -212,6 +191,18 @@ class UserPostFragment: Fragment() {
 
 
     }
+
+
+
+
+    override fun onStart() {
+        super.onStart()
+
+            postImageDataList.removeAll(postImageDataList)
+            load(0)
+
+    }
+
 
     fun setOnLoadMoreListener(){
 

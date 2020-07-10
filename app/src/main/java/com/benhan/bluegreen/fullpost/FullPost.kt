@@ -21,7 +21,6 @@ import com.benhan.bluegreen.comment.Comment
 import com.benhan.bluegreen.dataclass.CommentData
 import com.benhan.bluegreen.dataclass.PostData
 import com.benhan.bluegreen.dataclass.ServerResonse
-import com.benhan.bluegreen.listener.DeleteListener
 import com.benhan.bluegreen.localdata.SharedPreference
 import com.benhan.bluegreen.network.ApiClient
 import com.benhan.bluegreen.network.ApiInterface
@@ -29,6 +28,7 @@ import com.benhan.bluegreen.utill.Functions
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.pnikosis.materialishprogress.ProgressWheel
 import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
@@ -65,24 +65,28 @@ class FullPost : AppCompatActivity() {
     var myName: String? = null
     var ago: String? = null
 
-    var functions : Functions? = null
 
-    var deleteListener: DeleteListener? = null
+    var functions: Functions? = null
 
+    var container: RelativeLayout? = null
+    var progressWheel: ProgressWheel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_full_post)
 
 
-
-        val position = intent.getIntExtra("post_position", 0)
+        container = findViewById(R.id.container)
+        container?.visibility = View.GONE
+        progressWheel = findViewById(R.id.progress_wheel)
 
         functions = Functions(this)
-        val backgroundColor = ContextCompat.getColor(this,
+        val backgroundColor = ContextCompat.getColor(
+            this,
             R.color.background
         )
-        val naviColor = ContextCompat.getColor(this,
+        val naviColor = ContextCompat.getColor(
+            this,
             R.color.navi
         )
 
@@ -123,7 +127,7 @@ class FullPost : AppCompatActivity() {
         val commentContainer = findViewById<RelativeLayout>(R.id.mainComentContainer)
         val tvDelete = findViewById<TextView>(R.id.delete)
 
-        if(myName == place_or_user_name){
+        if (myName == place_or_user_name) {
             tvDelete.visibility = View.VISIBLE
         } else {
             tvDelete.visibility = View.GONE
@@ -132,10 +136,10 @@ class FullPost : AppCompatActivity() {
 
         etWriteComment.clearFocus()
 
-        fun getSinglePost(email: String, post_id: Int){
+        fun getSinglePost(email: String, post_id: Int) {
 
             val call: Call<PostData> = apiInterface.getSinglePost(email, post_id)
-            call.enqueue(object: Callback<PostData>{
+            call.enqueue(object : Callback<PostData> {
                 override fun onFailure(call: Call<PostData>, t: Throwable) {
 
                     Log.d("문제", t.message)
@@ -156,7 +160,7 @@ class FullPost : AppCompatActivity() {
                     countLikes = res?.postLikes
                     mainComentUserName = res?.mainCommentUserName
                     mainCommentContents = res?.mainComment
-                    commentNumber= res?.commentNumber
+                    commentNumber = res?.commentNumber
                     isLikingComment = res?.isLikingComment
                     isLikingPost = res?.isLikingPost
                     mainCommentId = res?.mainCommentId
@@ -168,14 +172,11 @@ class FullPost : AppCompatActivity() {
 
                     tvDelete.setOnClickListener {
 
-
-
-                        val delete : Call<ServerResonse> = apiInterface.delete(post_id, postImage!!, pageId!!)
-                        delete.enqueue(object : Callback<ServerResonse>{
+                        MyApplication.isChanged = true
+                        val delete: Call<ServerResonse> =
+                            apiInterface.delete(post_id, postImage!!, pageId!!)
+                        delete.enqueue(object : Callback<ServerResonse> {
                             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
-                                if(position != 0 && deleteListener != null) {
-                                    deleteListener?.onPostDelete(position)
-                                }
                                 Log.d("삭제", t.message)
                                 finish()
                             }
@@ -184,9 +185,6 @@ class FullPost : AppCompatActivity() {
                                 call: Call<ServerResonse>,
                                 response: Response<ServerResonse>
                             ) {
-                                if(position != 0 && deleteListener != null) {
-                                    deleteListener?.onPostDelete(position)
-                                }
                                 finish()
                             }
 
@@ -194,12 +192,12 @@ class FullPost : AppCompatActivity() {
                         })
                     }
 
-                    if(!postedDate.isNullOrEmpty()){
-                    val prettyTime = PrettyTime(Locale.KOREA)
-                    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-                    val date = simpleDateFormat.parse(postedDate)
-                    ago = prettyTime.format(date)
-                    tvPostedDate.text = ago
+                    if (!postedDate.isNullOrEmpty()) {
+                        val prettyTime = PrettyTime(Locale.KOREA)
+                        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                        val date = simpleDateFormat.parse(postedDate)
+                        ago = prettyTime.format(date)
+                        tvPostedDate.text = ago
                     }
 
 
@@ -237,8 +235,8 @@ class FullPost : AppCompatActivity() {
 
 
                     if (countLikes!! == 0) {
-                       tvCountLikes.visibility = View.GONE
-                       tvCountLikes.text = null
+                        tvCountLikes.visibility = View.GONE
+                        tvCountLikes.text = null
                     } else {
                         tvCountLikes.visibility = View.VISIBLE
                         tvCountLikes.text = "좋아요 ${countLikes}개"
@@ -295,7 +293,7 @@ class FullPost : AppCompatActivity() {
                         intent.putExtra("otherUserName", userName)
                         startActivity(intent)
                     }
-                   ivUserProfilePhoto.setOnClickListener {
+                    ivUserProfilePhoto.setOnClickListener {
 
 
                         startOtherUserPage()
@@ -347,6 +345,9 @@ class FullPost : AppCompatActivity() {
                             }
                         }
                     }
+
+                    container?.visibility = View.VISIBLE
+                    progressWheel?.visibility = View.GONE
                 }
 
 
@@ -356,10 +357,6 @@ class FullPost : AppCompatActivity() {
 
 
         getSinglePost(myEmail!!, post_id)
-
-
-
-
 
 
 
@@ -392,8 +389,8 @@ class FullPost : AppCompatActivity() {
             ): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-                    if(etWriteComment.text.isNotBlank())
-                    commentContainer.visibility = View.VISIBLE
+                    if (etWriteComment.text.isNotBlank())
+                        commentContainer.visibility = View.VISIBLE
                     tvMainComentUserName.text =
                         sharedPreference.getString(this@FullPost, "name")
                     val call: Call<java.util.ArrayList<CommentData>> = this@FullPost.apiInterface
@@ -405,7 +402,10 @@ class FullPost : AppCompatActivity() {
                         )
                     if (etWriteComment.text.isNotEmpty() && etWriteComment.text.isNotBlank()) {
                         call.clone().enqueue(object : Callback<java.util.ArrayList<CommentData>> {
-                            override fun onFailure(call: Call<java.util.ArrayList<CommentData>>, t: Throwable) {
+                            override fun onFailure(
+                                call: Call<java.util.ArrayList<CommentData>>,
+                                t: Throwable
+                            ) {
 
                             }
 
@@ -447,32 +447,36 @@ class FullPost : AppCompatActivity() {
                     uploadComment.setOnClickListener {
 
 
-
                         commentContainer.visibility = View.VISIBLE
                         tvMainComentUserName.text =
                             sharedPreference.getString(this@FullPost, "name")
-                        val call: Call<java.util.ArrayList<CommentData>> = this@FullPost.apiInterface
-                            .writeComment(
-                                myEmail,
-                                post_id,
-                                myName!!,
-                                etWriteComment.text.toString()
-                            )
+                        val call: Call<java.util.ArrayList<CommentData>> =
+                            this@FullPost.apiInterface
+                                .writeComment(
+                                    myEmail,
+                                    post_id,
+                                    myName!!,
+                                    etWriteComment.text.toString()
+                                )
                         if (etWriteComment.text.isNotEmpty() && etWriteComment.text.isNotBlank()) {
-                            call.clone().enqueue(object : Callback<java.util.ArrayList<CommentData>> {
-                                override fun onFailure(call: Call<java.util.ArrayList<CommentData>>, t: Throwable) {
+                            call.clone()
+                                .enqueue(object : Callback<java.util.ArrayList<CommentData>> {
+                                    override fun onFailure(
+                                        call: Call<java.util.ArrayList<CommentData>>,
+                                        t: Throwable
+                                    ) {
 
-                                }
+                                    }
 
-                                override fun onResponse(
-                                    call: Call<java.util.ArrayList<CommentData>>,
-                                    response: Response<java.util.ArrayList<CommentData>>
-                                ) {
+                                    override fun onResponse(
+                                        call: Call<java.util.ArrayList<CommentData>>,
+                                        response: Response<java.util.ArrayList<CommentData>>
+                                    ) {
 
-                                }
+                                    }
 
 
-                            })
+                                })
 
                             commentNumber = commentNumber!! + 1
 
@@ -486,7 +490,6 @@ class FullPost : AppCompatActivity() {
                         etWriteComment.text = null
                         etWriteComment.clearFocus()
                         UIUtil.hideKeyboard(this@FullPost)
-
 
 
                     }
@@ -515,23 +518,7 @@ class FullPost : AppCompatActivity() {
 
             functions?.hideKeyboard(etWriteComment)
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
-
-
 
 
     fun likeComment(email: String, commentId: Int, user_name: String) {
@@ -623,10 +610,6 @@ class FullPost : AppCompatActivity() {
         })
 
     }
-
-
-
-
 
 
 }

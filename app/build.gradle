@@ -110,6 +110,7 @@ dependencies {
     implementation 'org.ocpsoft.prettytime:prettytime:4.0.4.Final'
 
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+    implementation 'com.pnikosis:materialish-progress:1.7'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.ext.kotlin_version"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.1'

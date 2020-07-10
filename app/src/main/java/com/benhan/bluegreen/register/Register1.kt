@@ -129,6 +129,7 @@ class Register1 : AppCompatActivity() {
             val intent = Intent(this@Register1, Register2::class.java)
             intent.putExtra("birthday", tvBirthday.text.toString() )
             startActivity(intent)
+            finish()
         }
 
 

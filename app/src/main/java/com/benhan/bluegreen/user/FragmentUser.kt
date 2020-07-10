@@ -1,6 +1,7 @@
 package com.benhan.bluegreen.user
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import com.bumptech.glide.Glide
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class FragmentUser: Fragment() {
 
@@ -157,9 +159,6 @@ class FragmentUser: Fragment() {
             gridTab.isClickable = true
             locationTab.isClickable = false
 
-            user.setOnClickListener {
-                placeFragment!!.recyclerView?.scrollToPosition(0)
-            }
 
             replaceFragment(placeFragment!!)
 
@@ -170,6 +169,20 @@ class FragmentUser: Fragment() {
 
         return rootView
 
+
+    }
+
+
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if(hidden)
+            (activity as HomeActivity).clickHandler(user)
+        else
+            user.setOnClickListener {
+                placeFragment!!.recyclerView?.smoothScrollToPosition(0)
+                postFragment!!.recyclerView?.smoothScrollToPosition(0)
+            }
 
     }
 

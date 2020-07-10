@@ -2,7 +2,7 @@ package com.benhan.bluegreen.utill
 
 import android.app.Application
 
-class MyApplication: Application() {
+open class MyApplication: Application() {
 
     init {
         INSTANCE = this
@@ -15,6 +15,8 @@ class MyApplication: Application() {
     companion object {
         lateinit var INSTANCE: MyApplication
         const val severUrl = "http://18.223.20.219/"
-
+        var isChanged = false
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.benhan.bluegreen.search
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import com.benhan.bluegreen.dataclass.PostImageData
 import com.benhan.bluegreen.listener.OnItemClickListener
 import com.benhan.bluegreen.network.ApiClient
 import com.benhan.bluegreen.network.ApiInterface
+import com.benhan.bluegreen.utill.MyApplication
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import retrofit2.Call
@@ -37,6 +39,7 @@ class SearchPostFragment: Fragment() {
     var adapter: PostImageSearchAdapter? = null
     var recyclerView: RecyclerView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
+
 
 
     override fun onCreateView(
@@ -112,35 +115,9 @@ class SearchPostFragment: Fragment() {
         adapter!!.onItemClickListener = mOnItemClickListener
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         return rootView
 
-
-
     }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -207,6 +184,7 @@ class SearchPostFragment: Fragment() {
             ) {
 
                 if(response.isSuccessful) {
+                    MyApplication.isChanged = false
                     response.body()?.let { postImageDataList.addAll(it) }
                     adapter?.notifyDataChanged()
                     if(response.body()?.size == 30){

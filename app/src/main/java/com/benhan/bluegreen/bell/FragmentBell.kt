@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.benhan.bluegreen.HomeActivity
 import com.benhan.bluegreen.R
 import com.benhan.bluegreen.adapter.BellAdapter
 import com.benhan.bluegreen.adapter.HomeRecyclerAdapter
@@ -30,6 +32,8 @@ class FragmentBell: Fragment() {
     val sharedPreference = SharedPreference()
     var adapter: BellAdapter? = null
     var myEmail: String? = null
+    var bell: ImageView? = null
+    var recyclerView: RecyclerView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,9 +44,11 @@ class FragmentBell: Fragment() {
 
         myEmail = sharedPreference.getString(requireContext(), "email")
 
-        val recyclerview: RecyclerView = rootView.findViewById(R.id.recyclerview)
+        recyclerView = rootView.findViewById(R.id.recyclerview)
 
 
+
+        bell = requireActivity().findViewById(R.id.bell)
 
 
         /*=========================================================================================================*/
@@ -52,9 +58,9 @@ class FragmentBell: Fragment() {
             requireContext(),
             bellDataList
         )
-        recyclerview.layoutManager = LinearLayoutManager(requireContext())
-        recyclerview.itemAnimator = DefaultItemAnimator()
-        recyclerview.adapter = adapter
+        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView?.itemAnimator = DefaultItemAnimator()
+        recyclerView?.adapter = adapter
 
 
         val swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
@@ -81,6 +87,17 @@ class FragmentBell: Fragment() {
 
 
         return rootView
+
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if(hidden)
+            (activity as HomeActivity).clickHandler(bell!!)
+        else
+            bell?.setOnClickListener {
+                recyclerView?.smoothScrollToPosition(0)
+            }
 
     }
 
