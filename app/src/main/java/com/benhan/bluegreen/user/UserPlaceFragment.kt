@@ -23,6 +23,7 @@ import com.benhan.bluegreen.listener.OnItemClickListener
 import com.benhan.bluegreen.localdata.SharedPreference
 import com.benhan.bluegreen.network.ApiClient
 import com.benhan.bluegreen.network.ApiInterface
+import com.pnikosis.materialishprogress.ProgressWheel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,6 +41,9 @@ class UserPlaceFragment: Fragment() {
     var recyclerView : RecyclerView? = null
     var index = 0
     var tvWhenEmptyFollow :TextView? = null
+    var progressWheel: ProgressWheel? = null
+    var swipeRefreshLayout: SwipeRefreshLayout? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,11 +52,14 @@ class UserPlaceFragment: Fragment() {
     ): View? {
         val rootview = layoutInflater.inflate(R.layout.search_place_fragment, container, false)
 
-        recyclerView = rootview.findViewById<RecyclerView>(R.id.recyclerview)
+        recyclerView = rootview.findViewById(R.id.recyclerview)
+        swipeRefreshLayout = rootview.findViewById(R.id.swipeLayout)
         adapter = SearchRecyclerAdapter(
             requireContext(),
             places
         )
+
+
 
         myEmail = sharedPreference.getString(requireContext(), "email")
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
@@ -60,6 +67,7 @@ class UserPlaceFragment: Fragment() {
         tvWhenEmptyFollow = rootview.findViewById(R.id.tvWhenEmptyFollow)
         val searchBar: EditText = rootview.findViewById(R.id.searchBar)
         searchBar.visibility = View.GONE
+        progressWheel = rootview.findViewById(R.id.progress_wheel)
 
         val placeOnItemClickListener = object:
             OnItemClickListener {
@@ -97,12 +105,12 @@ class UserPlaceFragment: Fragment() {
 
 
 
-        val swipeRefreshLayout: SwipeRefreshLayout = rootview.findViewById(R.id.swipeLayout)
+
         val backgroundColor = ContextCompat.getColor(requireContext(),
             R.color.background
         )
         swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
-        swipeRefreshLayout.setOnRefreshListener {
+        swipeRefreshLayout?.setOnRefreshListener {
 
             places.removeAll(places)
             adapter?.notifyDataChanged()
@@ -110,15 +118,18 @@ class UserPlaceFragment: Fragment() {
             load(0)
             adapter?.isMoreDataAvailable = true
 
-            swipeRefreshLayout.isRefreshing = false
+            swipeRefreshLayout?.isRefreshing = false
 
         }
 
 
 
 
-        if(adapter?.itemCount == 0)
-        load(0)
+        if(adapter?.itemCount == 0) {
+            progressWheel?.visibility = View.VISIBLE
+            swipeRefreshLayout?.visibility = View.GONE
+            load(0)
+        }
 
         return rootview
     }
@@ -148,11 +159,14 @@ class UserPlaceFragment: Fragment() {
                 call: Call<ArrayList<PlaceSearchData>>,
                 response: Response<ArrayList<PlaceSearchData>>
             ) {
+                progressWheel?.visibility = View.GONE
+                swipeRefreshLayout?.visibility = View.VISIBLE
+
                 if(response.isSuccessful){
                     response.body()?.let { places.addAll(it) }
                     adapter?.notifyDataChanged()
 
-                    if(response.body()?.size == 20){
+                    if(response.body()?.size == 20 && index == 0){
                         setOnLoadMoreListener()
                     }
 
@@ -199,7 +213,6 @@ class UserPlaceFragment: Fragment() {
                     }
                     adapter!!.notifyDataChanged()
                 }
-
             }
 
 

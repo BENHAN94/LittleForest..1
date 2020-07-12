@@ -3,6 +3,7 @@ package com.benhan.bluegreen.user
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -28,6 +29,7 @@ import com.benhan.bluegreen.place.PlacePage
 import com.benhan.bluegreen.utill.GridDividerDecoration
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
+import com.pnikosis.materialishprogress.ProgressWheel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,19 +44,19 @@ class OtherUser : AppCompatActivity() {
     var introduction: String? = null
     var postNumber: String? = null
     var followingNumber: String? = null
-    var likeNumber: String? =null
+    var likeNumber: String? = null
     var profilePhoto: String? = null
     var email: String? = null
     var name: String? = null
     var postDataList = ArrayList<PostData>()
-    var adapter : OtherUserPostAdapter? = null
-    var viewModel : LFVIewModel? = null
-    var dividerDecoration : GridDividerDecoration? = null
+    var adapter: OtherUserPostAdapter? = null
+    var viewModel: LFVIewModel? = null
+    var dividerDecoration: GridDividerDecoration? = null
 
     val places = ArrayList<PlaceSearchData>()
     var locationAdapter: SearchRecyclerAdapter? = null
-    var keyword = ""
-
+    var progressWheel: ProgressWheel? = null
+    var recyclerView: RecyclerView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,9 +67,8 @@ class OtherUser : AppCompatActivity() {
         val tvUsername = findViewById<TextView>(R.id.profile_username)
         val tvActualname = findViewById<TextView>(R.id.actualName)
         val tvIntroduction = findViewById<TextView>(R.id.userIntroduction)
-        val ivMenu = findViewById<ImageView>(R.id.profile_menu)
         val ivProfilePhoto = findViewById<ImageView>(R.id.placePhoto)
-        val recyclerView = findViewById<RecyclerView>(R.id.userPostRecycler)
+        recyclerView = findViewById<RecyclerView>(R.id.userPostRecycler)
         val tvPostNumber = findViewById<TextView>(R.id.postNumber)
         val tvFollowNumber = findViewById<TextView>(R.id.followNumber)
         val tvLikeNumber = findViewById<TextView>(R.id.likeNumber)
@@ -77,6 +78,9 @@ class OtherUser : AppCompatActivity() {
         val locationTab = findViewById<RelativeLayout>(R.id.layoutLocation)
         name = intent.getStringExtra("otherUserName")
         val ivX: ImageView = findViewById(R.id.ivBack)
+        progressWheel = findViewById(R.id.progress_wheel)
+
+        recyclerView?.visibility = View.GONE
 
         ivX.setOnClickListener {
             finish()
@@ -89,26 +93,16 @@ class OtherUser : AppCompatActivity() {
 
         postDataList = viewModel!!.postDataList
 
+        progressWheel?.visibility = View.VISIBLE
+
 
 
 
         adapter =
             OtherUserPostAdapter(this, postDataList)
-        adapter!!.addLoadMoreListener(object : OtherUserPostAdapter.OnLoadMoreListener{
 
-            override fun onLoadMore() {
 
-                recyclerView.post{
-
-                    val index = postDataList.size - 1
-                    loadMore(email!!, index)
-
-                }
-            }
-
-        })
-
-        val mOnItemClickListener = object:
+        val mOnItemClickListener = object :
             OnItemClickListener {
             override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
 
@@ -124,26 +118,23 @@ class OtherUser : AppCompatActivity() {
             }
 
 
-
         }
 
 
         adapter?.onItemClickListener = mOnItemClickListener
 
 
-
-        ///////////////////---------=====recyclerview======-----/////////////////////////////////////////////////////////////////////////////////
+        ///////////////////---------=====recyclerView?======-----/////////////////////////////////////////////////////////////////////////////////
 
         dividerDecoration = GridDividerDecoration(
             resources,
             R.drawable.divider_recyler_gallery
         )
-        recyclerView.layoutManager = GridLayoutManager(this, 3)
-        recyclerView.removeItemDecoration(dividerDecoration!!)
-        recyclerView.addItemDecoration(dividerDecoration!!)
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = adapter
-
+        recyclerView?.layoutManager = GridLayoutManager(this, 3)
+        recyclerView?.removeItemDecoration(dividerDecoration!!)
+        recyclerView?.addItemDecoration(dividerDecoration!!)
+        recyclerView?.itemAnimator = DefaultItemAnimator()
+        recyclerView?.adapter = adapter
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +143,7 @@ class OtherUser : AppCompatActivity() {
         locationTab.isClickable = true
 
         val call: Call<User> = apiInterface.getOtherUserData(name!!)
-        call.enqueue(object : Callback<User>{
+        call.enqueue(object : Callback<User> {
             override fun onFailure(call: Call<User>, t: Throwable) {
 
                 Log.d("아더유저", t.message)
@@ -166,7 +157,7 @@ class OtherUser : AppCompatActivity() {
 
                 val res = response.body()!!
 
-            actual_name = res.actualname
+                actual_name = res.actualname
                 introduction = res.introduction
                 postNumber = res.postNumber.toString()
                 followingNumber = res.followerNumber.toString()
@@ -179,7 +170,7 @@ class OtherUser : AppCompatActivity() {
                 tvPostNumber.text = postNumber
                 tvFollowNumber.text = followingNumber
                 tvLikeNumber.text = likeNumber
-                if(!profilePhoto.isNullOrEmpty()) {
+                if (!profilePhoto.isNullOrEmpty()) {
                     val profilePhotoUri = MyApplication.severUrl + profilePhoto
                     Glide.with(this@OtherUser)
                         .load(profilePhotoUri)
@@ -188,7 +179,7 @@ class OtherUser : AppCompatActivity() {
                 }
 
 
-                if(postDataList.size == 0 && email !=null)
+                if (postDataList.size == 0 && email != null)
                     load(email!!, 0)
             }
 
@@ -198,12 +189,12 @@ class OtherUser : AppCompatActivity() {
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
         gridTab.setOnClickListener {
 
             gridTab.isClickable = false
             locationTab.isClickable = true
+
+
 
             gridTab.setBackgroundResource(R.drawable.button_shape_stroke)
             ivGrid.setImageResource(R.drawable.grid_green)
@@ -218,21 +209,9 @@ class OtherUser : AppCompatActivity() {
                 this,
                 postDataList
             )
-            adapter!!.addLoadMoreListener(object : OtherUserPostAdapter.OnLoadMoreListener{
 
-                override fun onLoadMore() {
 
-                    recyclerView.post{
-
-                        val index = postDataList.size - 1
-                        loadMore(email!!, index)
-
-                    }
-                }
-
-            })
-
-            val mOnItemClickListener = object:
+            val mOnItemClickListener = object :
                 OnItemClickListener {
                 override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
 
@@ -248,7 +227,6 @@ class OtherUser : AppCompatActivity() {
                 }
 
 
-
             }
 
 
@@ -256,28 +234,28 @@ class OtherUser : AppCompatActivity() {
 
 
 
-            recyclerView.removeAllViews()
+            recyclerView?.removeAllViews()
             dividerDecoration = GridDividerDecoration(
                 resources,
                 R.drawable.divider_recyler_gallery
             )
-            recyclerView.layoutManager = GridLayoutManager(this, 3)
+            recyclerView?.layoutManager = GridLayoutManager(this, 3)
 
-            recyclerView.removeItemDecoration(dividerDecoration!!)
+            recyclerView?.removeItemDecoration(dividerDecoration!!)
 
-            recyclerView.addItemDecoration(dividerDecoration!!)
-            recyclerView.itemAnimator = DefaultItemAnimator()
-            recyclerView.adapter = adapter
+            recyclerView?.addItemDecoration(dividerDecoration!!)
+            recyclerView?.itemAnimator = DefaultItemAnimator()
+            recyclerView?.adapter = adapter
 
 
-            if(adapter?.itemCount == 0)
-            load(email!!, 0)
-
+            if (adapter?.itemCount == 0) {
+                progressWheel?.visibility = View.VISIBLE
+                recyclerView?.visibility = View.GONE
+                load(email!!, 0)
+            }
 
 
         }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -286,7 +264,9 @@ class OtherUser : AppCompatActivity() {
 
             locationAdapter =
                 SearchRecyclerAdapter(this, places)
-            recyclerView.removeItemDecoration(dividerDecoration!!)
+            recyclerView?.removeItemDecoration(dividerDecoration!!)
+
+
 
             gridTab.isClickable = true
             locationTab.isClickable = false
@@ -298,12 +278,12 @@ class OtherUser : AppCompatActivity() {
             ivLocation.setImageResource(R.drawable.location_green)
 
 
-            recyclerView.removeAllViews()
+            recyclerView?.removeAllViews()
 
-            recyclerView.adapter = locationAdapter
-            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView?.adapter = locationAdapter
+            recyclerView?.layoutManager = LinearLayoutManager(this)
 
-            val mOnItemClickListener = object:
+            val mOnItemClickListener = object :
                 OnItemClickListener {
 
                 override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
@@ -311,7 +291,7 @@ class OtherUser : AppCompatActivity() {
                     val intent = Intent(this@OtherUser, PlacePage::class.java)
                     val selectedPlace = places[position]
                     val placeName = selectedPlace.name
-                    val placeId =selectedPlace.id
+                    val placeId = selectedPlace.id
                     val placePhoto = selectedPlace.photo
                     val placeType = selectedPlace.type
                     val placeProvince = selectedPlace.province
@@ -323,59 +303,31 @@ class OtherUser : AppCompatActivity() {
                     startActivity(intent)
 
 
-
                 }
 
             }
 
             locationAdapter!!.onItemClickListener = mOnItemClickListener
-            locationAdapter?.notifyDataSetChanged()
-
-
-            val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener{
-
-                override fun onLoadMore() {
-                    recyclerView.post(object : Runnable{
-                        override fun run() {
-
-                            val index = places.size - 1
-
-                            loadMorePlace(email!! , index)
-
-                        }
-
-                    })
-
-                }
+            if (places.size == 0){
+                progressWheel?.visibility = View.VISIBLE
+                recyclerView?.visibility = View.GONE
+                loadPlace(email!!, 0)
             }
 
-            locationAdapter!!.onLoadMoreListener = onLoadMoreListener
-
-
-            if(places.size == 0)
-            loadPlace(email!!, 0)
 
         }
-
 
 
 /////////////////////////function/////////////////////////////////////////
 
 
-
-
     }
 
-    override fun onResume() {
-        super.onResume()
-        adapter?.notifyDataChanged()
-    }
+
 
     fun load(email: String, index: Int) {
-
-
-        val call:Call<ArrayList<PostData>> = apiInterface.getOtherUserPost(email, index)
-        call.enqueue(object : Callback<ArrayList<PostData>>{
+        val call: Call<ArrayList<PostData>> = apiInterface.getOtherUserPost(email, index)
+        call.enqueue(object : Callback<ArrayList<PostData>> {
             override fun onFailure(call: Call<ArrayList<PostData>>, t: Throwable) {
 
                 Log.d("콜에러", t.message)
@@ -385,8 +337,20 @@ class OtherUser : AppCompatActivity() {
                 call: Call<ArrayList<PostData>>,
                 response: Response<ArrayList<PostData>>
             ) {
-                Log.d("콜에러", response.message())
+                if(response.body()!!.size == 30){
+                    adapter!!.addLoadMoreListener(object : OtherUserPostAdapter.OnLoadMoreListener{
+                        override fun onLoadMore() {
+                            recyclerView?.post{
+                                val index = postDataList.size - 1
+                                loadMore(email, index)
+                            }
+                        }
 
+                    })
+                }
+                progressWheel?.visibility = View.GONE
+                recyclerView?.visibility = View.VISIBLE
+                Log.d("콜에러", response.message())
                 response.body()?.let { postDataList.addAll(it) }
                 adapter!!.notifyDataChanged()
             }
@@ -396,7 +360,7 @@ class OtherUser : AppCompatActivity() {
 
     }
 
-    fun loadMore(email: String, index: Int){
+    fun loadMore(email: String, index: Int) {
 
 
         postDataList.add(PostData("load"))
@@ -405,7 +369,7 @@ class OtherUser : AppCompatActivity() {
         val newindex = index + 1
 
         val call: Call<ArrayList<PostData>> = apiInterface.getOtherUserPost(email, newindex)
-        call.enqueue(object : Callback<ArrayList<PostData>>{
+        call.enqueue(object : Callback<ArrayList<PostData>> {
             override fun onFailure(call: Call<ArrayList<PostData>>, t: Throwable) {
 
             }
@@ -415,16 +379,16 @@ class OtherUser : AppCompatActivity() {
                 response: Response<ArrayList<PostData>>
             ) {
 
-                if(response.isSuccessful) {
-                    if(postDataList.size > 0 )
+                if (response.isSuccessful) {
+                    if (postDataList.size > 0)
                         postDataList.removeAt(postDataList.size - 1)
 
                     val result: ArrayList<PostData>? = response.body()
 
 
-                    if(!result.isNullOrEmpty() && result.size > 0){
+                    if (!result.isNullOrEmpty() && result.size > 0) {
                         postDataList.addAll(result)
-                    }else {
+                    } else {
 
                         adapter!!.isMoreDataAvailable = false
 
@@ -438,19 +402,14 @@ class OtherUser : AppCompatActivity() {
         })
 
 
-
-
     }
 
-    fun loadPlace(email: String ,index: Int){
+    fun loadPlace(email: String, index: Int) {
 
 
+        val call: Call<ArrayList<PlaceSearchData>> = apiInterface.getOtherUserPlace(email, index)
 
-
-
-        val call:Call<ArrayList<PlaceSearchData>> = apiInterface.getOtherUserPlace(email, index)
-
-        call.enqueue(object : Callback<ArrayList<PlaceSearchData>>{
+        call.enqueue(object : Callback<ArrayList<PlaceSearchData>> {
             override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
 
                 Log.d("실패", t.message)
@@ -461,31 +420,55 @@ class OtherUser : AppCompatActivity() {
                 response: Response<ArrayList<PlaceSearchData>>
             ) {
 
+
+
                 if (response.isSuccessful) {
+                    progressWheel?.visibility = View.GONE
+                    recyclerView?.visibility = View.VISIBLE
                     response.body()?.let { places.addAll(it) }
                     locationAdapter?.notifyDataChanged()
                     Log.d("플레이스", places.isEmpty().toString())
-                } else{ Log.d("메세지", response.isSuccessful.toString())}
+                    if (response.body()?.size!! == 20 && index == 0) {
+                        val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener {
+
+                            override fun onLoadMore() {
+                                recyclerView?.post(object : Runnable {
+                                    override fun run() {
+
+                                        val index = places.size - 1
+
+                                        loadMorePlace(email!!, index)
+
+                                    }
+
+                                })
+
+                            }
+                        }
+
+                        locationAdapter!!.onLoadMoreListener = onLoadMoreListener
+                    }
+                } else {
+                    Log.d("메세지", response.isSuccessful.toString())
+                }
             }
 
 
         })
 
 
-
-
     }
 
-    fun loadMorePlace(email: String, startRow: Int){
+    fun loadMorePlace(email: String, startRow: Int) {
 
 
         places.add(PlaceSearchData("load"))
-        locationAdapter?.notifyItemInserted(places.size-1)
+        locationAdapter?.notifyItemInserted(places.size - 1)
 
 
-        val  newindex = startRow + 1
-        val call:Call<ArrayList<PlaceSearchData>> = apiInterface.getOtherUserPlace(email, newindex)
-        call.enqueue(object : Callback<ArrayList<PlaceSearchData>>{
+        val newindex = startRow + 1
+        val call: Call<ArrayList<PlaceSearchData>> = apiInterface.getOtherUserPlace(email, newindex)
+        call.enqueue(object : Callback<ArrayList<PlaceSearchData>> {
             override fun onFailure(call: Call<ArrayList<PlaceSearchData>>, t: Throwable) {
 
             }
@@ -495,15 +478,15 @@ class OtherUser : AppCompatActivity() {
                 response: Response<ArrayList<PlaceSearchData>>
             ) {
 
-                if(response.isSuccessful){
-                    if(places.size > 0)
+                if (response.isSuccessful) {
+                    if (places.size > 0)
                         places.removeAt(places.size - 1)
                     val result: ArrayList<PlaceSearchData>? = response.body()
 
-                    if(!result.isNullOrEmpty() && result.size > 0) {
+                    if (!result.isNullOrEmpty() && result.size > 0) {
 
                         places.addAll(result)
-                    }else {
+                    } else {
                         locationAdapter?.isMoreDataAvailable = false
 
                     }
@@ -511,8 +494,7 @@ class OtherUser : AppCompatActivity() {
                     locationAdapter?.notifyDataChanged()
 
 
-
-                }else {
+                } else {
 
                     Log.e("콜", response.message())
 
@@ -522,8 +504,6 @@ class OtherUser : AppCompatActivity() {
 
 
         })
-
-
 
 
     }

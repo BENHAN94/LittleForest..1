@@ -8,14 +8,11 @@ open class MyApplication: Application() {
         INSTANCE = this
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
-
     companion object {
         lateinit var INSTANCE: MyApplication
-        const val severUrl = "http://18.223.20.219/"
+        const val severUrl = "http://15.165.70.243/"
         var isChanged = false
+        var isProfileUpdated = false
     }
 
 

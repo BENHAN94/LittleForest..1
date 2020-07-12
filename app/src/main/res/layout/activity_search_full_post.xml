@@ -144,8 +144,6 @@
         android:layout_marginLeft="0dp"
         android:layout_marginVertical="10dp"
         android:adjustViewBounds="true"
-        android:minHeight="200dp"
-        android:maxHeight="400dp"
         />
     <LinearLayout
         android:layout_marginTop="5dp"
@@ -239,10 +237,9 @@
                 android:id="@+id/userName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/background"
-                android:layout_alignParentTop="true"
                 android:fontFamily="@font/nixgonfonts_b"
                 android:text=""
+                android:textColor="@color/background"
                 android:textSize="16sp"
 
 

@@ -187,7 +187,7 @@ class SearchPostFragment: Fragment() {
                     MyApplication.isChanged = false
                     response.body()?.let { postImageDataList.addAll(it) }
                     adapter?.notifyDataChanged()
-                    if(response.body()?.size == 30){
+                    if(response.body()?.size == 30 && index == 0){
                         setOnLoadMoreListener()
                     }
                 }
@@ -215,7 +215,7 @@ class SearchPostFragment: Fragment() {
                 if(response.isSuccessful) {
                     response.body()?.let { postImageDataList.addAll(it) }
                     adapter?.notifyDataChanged()
-                    if(response.body()?.size == 30){
+                    if(response.body()?.size == 30 && index == 0){
                         setOnLoadCloseMoreListener(x, y)
                     }
                 }

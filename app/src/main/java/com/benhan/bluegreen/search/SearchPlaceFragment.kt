@@ -28,6 +28,7 @@ import com.benhan.bluegreen.network.ApiClient
 import com.benhan.bluegreen.network.ApiInterface
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.pnikosis.materialishprogress.ProgressWheel
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import retrofit2.Call
@@ -45,6 +46,7 @@ class SearchPlaceFragment: Fragment() {
     var searchBar: EditText? = null
     var recyclerView: RecyclerView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
+    var progressWheel: ProgressWheel? = null
 
 
 
@@ -61,6 +63,10 @@ class SearchPlaceFragment: Fragment() {
             requireContext(),
             places
         )
+
+        progressWheel = rootview.findViewById(R.id.progress_wheel)
+
+
 
         TedPermission.with(requireContext())
             .setPermissionListener(permissionListener)
@@ -114,7 +120,7 @@ class SearchPlaceFragment: Fragment() {
 
 
 
-        searchBar = rootview.findViewById<EditText>(R.id.searchBar)
+        searchBar = rootview.findViewById(R.id.searchBar)
 
 
 
@@ -192,10 +198,11 @@ class SearchPlaceFragment: Fragment() {
                 }
 
             })
-            if(adapter?.itemCount == 0)
-                loadClose("",0, x, y)
-
-
+            if(adapter?.itemCount == 0) {
+                progressWheel?.visibility = View.VISIBLE
+                recyclerView?.visibility = View.GONE
+                loadClose("", 0, x, y)
+            }
         }
 
         override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
@@ -233,8 +240,12 @@ class SearchPlaceFragment: Fragment() {
                 }
 
             })
-            if(adapter?.itemCount == 0)
+            if(adapter?.itemCount == 0){
+                progressWheel?.visibility = View.VISIBLE
+                recyclerView?.visibility = View.GONE
                 load("", 0)
+            }
+
 
         }
 
@@ -259,10 +270,12 @@ class SearchPlaceFragment: Fragment() {
                 response: Response<ArrayList<PlaceSearchData>>
             ) {
                 if(response.isSuccessful){
+                    progressWheel?.visibility = View.GONE
+                    recyclerView?.visibility = View.VISIBLE
                     response.body()?.let { places.addAll(it) }
                     adapter?.notifyDataChanged()
                     Log.d("사이즈", response.body()?.size.toString())
-                    if (response.body()?.size == 30)
+                    if (response.body()?.size == 30 && index == 0)
                         setOnLoadMoreListener()
                 }
             }
@@ -286,9 +299,11 @@ class SearchPlaceFragment: Fragment() {
                 response: Response<ArrayList<PlaceSearchData>>
             ) {
                 if(response.isSuccessful){
+                    progressWheel?.visibility = View.GONE
+                    recyclerView?.visibility = View.VISIBLE
                     response.body()?.let { places.addAll(it) }
                     adapter?.notifyDataChanged()
-                    if(response.body()?.size == 30 )
+                    if(response.body()?.size == 30 && index == 0)
                         setOnLoadCloseMoreListener()
                 }
             }

@@ -26,6 +26,7 @@ import com.benhan.bluegreen.network.ApiInterface
 import com.benhan.bluegreen.utill.Functions
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
+import com.pnikosis.materialishprogress.ProgressWheel
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Callback
@@ -55,6 +56,7 @@ class Comment : AppCompatActivity() {
     var itemPosition: Int? =null
     var userToReply: String? = null
     var recyclerView: RecyclerView? = null
+    var progressWheel : ProgressWheel? = null
 
 
 
@@ -82,6 +84,9 @@ class Comment : AppCompatActivity() {
         etWriteComment = findViewById(R.id.writeComment)
         tvUploadComment = findViewById(R.id.uploadComment)
         recyclerView = findViewById(R.id.commentsRecycler)
+        progressWheel = findViewById(R.id.progress_wheel)
+
+        recyclerView?.visibility = View.GONE
 
         val functions = Functions(this)
 
@@ -119,6 +124,8 @@ class Comment : AppCompatActivity() {
                 call: Call<ArrayList<CommentData>>,
                 response: Response<ArrayList<CommentData>>
             ) {
+                progressWheel?.visibility = View.GONE
+                recyclerView?.visibility = View.VISIBLE
                 response.body()?.let { commentList.addAll(it) }
                 adapter?.notifyDataSetChanged()
             }
@@ -136,7 +143,8 @@ class Comment : AppCompatActivity() {
 
         adapter = CommentRecyclerAdapter(
             this,
-            commentList
+            commentList,
+            progressWheel!!
         )
         val onItemDeleted = object : CommentRecyclerAdapter.OnItemDeleted{
             override fun onItemDeleted(position: Int) {
@@ -163,8 +171,6 @@ class Comment : AppCompatActivity() {
         adapter?.onItemDeleted = onItemDeleted
         adapter!!.addOnClickReply(object : CommentRecyclerAdapter.OnClickReply{
             override fun onClickReply(userName: String, position: Int) {
-
-
 
                 etWriteComment?.requestFocus()
                 etWriteComment?.setText("@$userName ", TextView.BufferType.EDITABLE)

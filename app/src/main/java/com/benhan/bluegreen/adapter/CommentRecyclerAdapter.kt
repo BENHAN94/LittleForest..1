@@ -18,6 +18,7 @@ import com.benhan.bluegreen.network.ApiInterface
 import com.benhan.bluegreen.utill.Functions
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
+import com.pnikosis.materialishprogress.ProgressWheel
 import de.hdodenhof.circleimageview.CircleImageView
 import org.ocpsoft.prettytime.PrettyTime
 import retrofit2.Call
@@ -27,7 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class CommentRecyclerAdapter(val context: Context, val commentList: ArrayList<CommentData>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CommentRecyclerAdapter(val context: Context, val commentList: ArrayList<CommentData>, val progressWheel : ProgressWheel): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     val functions = Functions(context)
@@ -261,6 +262,7 @@ class CommentRecyclerAdapter(val context: Context, val commentList: ArrayList<Co
             holder.tvDelete.visibility = View.VISIBLE
                 holder.tvDelete.setOnClickListener {
 
+                    progressWheel.visibility = View.VISIBLE
                     deleteComment(item.comment_no!!, position)
 
 
@@ -455,6 +457,7 @@ class CommentRecyclerAdapter(val context: Context, val commentList: ArrayList<Co
             override fun onFailure(call: Call<ServerResonse>, t: Throwable) {
                 if(onItemDeleted != null)
                     onItemDeleted?.onItemDeleted(position)
+                progressWheel.visibility = View.GONE
 
             }
 

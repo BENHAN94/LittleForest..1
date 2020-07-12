@@ -2,7 +2,9 @@ package com.benhan.bluegreen.user
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.util.TypedValue
 import android.widget.ImageView
@@ -21,7 +23,9 @@ import com.benhan.bluegreen.network.ApiClient
 import com.benhan.bluegreen.network.ApiInterface
 import com.benhan.bluegreen.utill.GetImageUri
 import com.benhan.bluegreen.utill.GridDividerDecoration
+import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
+import com.nanchen.compresshelper.CompressHelper
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theartofdev.edmodo.cropper.CropImage
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -222,15 +226,16 @@ class ProfilePhotoPicker: AppCompatActivity() {
             if(resultCode == Activity.RESULT_OK){
                 val resultUri = result.uri.path
                 val file = File(resultUri!!)
-
-
-
-
-
+                val newFile = CompressHelper.Builder(this)
+                    .setQuality(80)    // 默认压缩质量为80
+                    .setFileName(file.name) // 设置你需要修改的文件名
+                    .setCompressFormat(Bitmap.CompressFormat.JPEG) // 设置默认压缩为jpg格式
+                    .build()
+                    .compressToFile(file)
                 val email = sharePreference.getString(this, "email")?.toRequestBody("text/plain".toMediaTypeOrNull())
 
 
-                val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+                val requestBody = newFile.asRequestBody("image/*".toMediaTypeOrNull())
                 val fileToUpload = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
 
@@ -261,7 +266,7 @@ class ProfilePhotoPicker: AppCompatActivity() {
         }
         super.onActivityResult(requestCode, resultCode, data)
 
-
+        MyApplication.isProfileUpdated = true
 
         finish()
 

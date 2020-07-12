@@ -14,7 +14,7 @@ class ApiClient {
 
     companion object{
 
-        const val BASE_URL = "http://18.223.20.219/"
+        const val BASE_URL = "http://15.165.70.243/"
 
         private lateinit var retrofit: Retrofit
 

@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
@@ -29,11 +30,14 @@ import com.benhan.bluegreen.localdata.SharedPreference
 import com.benhan.bluegreen.network.ApiClient
 import com.benhan.bluegreen.network.ApiInterface
 import com.benhan.bluegreen.network.ProgressRequestBody
+import com.benhan.bluegreen.utill.CommentEditText
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
 import com.daimajia.numberprogressbar.NumberProgressBar
 import com.daimajia.numberprogressbar.OnProgressBarListener
+import com.nanchen.compresshelper.CompressHelper
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_place_page_upload.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -58,7 +62,7 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
 
 
 
-    var file: File? = null
+    private var file: File? = null
     var email : String? = null
     var placeName: String ? = null
     var placePhoto : String? = null
@@ -68,7 +72,8 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
     var followerNumber: Int? = null
     var likeNumber: Int? = null
     var placeId: Int? = null
-    var progressBar: NumberProgressBar? = null
+    private var progressBar: NumberProgressBar? = null
+    private var newFile: File? = null
 
 
 
@@ -95,11 +100,9 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
 
 
 
-        val email = sharedPreference.getString(this, "email")
-
 
         val ivSelectedPhoto = findViewById<ImageView>(R.id.selectedImageUpload)
-        val etDescription: EditText = findViewById(R.id.writeComment)
+        val etDescription: CommentEditText = findViewById(R.id.writeComment)
         val tvDescription = findViewById<TextView>(R.id.postDescription)
         val tvPost =findViewById<TextView>(R.id.post)
         val ivPlacePhoto = findViewById<CircleImageView>(R.id.placePhoto)
@@ -115,8 +118,26 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
         val myProfilePhoto: CircleImageView = findViewById(R.id.myProfilePhoto)
 
 
+        etDescription.setKeyImeChangeListener(object : CommentEditText.KeyImeChange{
+            override fun onKeyIme(keyCode: Int, event: KeyEvent?) {
+                if(KeyEvent.KEYCODE_BACK == event?.keyCode){
+
+                    etDescription.clearFocus()
+                    hideKeyboard(this@PhotoUploadToPageActivity)
+                    tvDescription.text = etDescription.text
+                    val handler = Handler()
+                    handler.postDelayed({
+                        writeCommentContainer?.visibility = View.GONE
+                        profileOverView.visibility = View.VISIBLE
+                    }, 200)
+                }
+            }
+
+        })
+
 
         tvDescription.setOnClickListener {
+            profileOverView.visibility = View.GONE
             etDescription.requestFocus()
             imm.showSoftInput(etDescription, 0)
             writeCommentContainer.visibility = View.VISIBLE
@@ -130,6 +151,13 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
 
         val actualImageFile = File(selectedPhoto)
         file = saveBitmapToFile(actualImageFile)
+        newFile = CompressHelper.Builder(this)
+            .setQuality(80)    // 默认压缩质量为80
+            .setFileName(file?.name) // 设置你需要修改的文件名
+            .setCompressFormat(Bitmap.CompressFormat.JPEG) // 设置默认压缩为jpg格式
+            .build()
+            .compressToFile(file)
+
 
         fun getPlaceData(placeId: Int){
 
@@ -207,12 +235,14 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
         etDescription.setOnEditorActionListener(object : TextView.OnEditorActionListener{
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if(actionId== EditorInfo.IME_ACTION_DONE){
+
                     etDescription.clearFocus()
                     hideKeyboard(this@PhotoUploadToPageActivity)
                     tvDescription.text = etDescription.text
                     val handler = Handler()
                     handler.postDelayed({
                         writeCommentContainer?.visibility = View.GONE
+                        profileOverView.visibility = View.VISIBLE
                     }, 200)
                 }
                 return false
@@ -269,9 +299,11 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
     private fun uploadToServer(desc: String) {
 
 
+
         progressBar?.visibility = View.VISIBLE
+
         val fileBody = ProgressRequestBody(
-            file!!,
+            newFile!!,
             "image",
             this
         )
@@ -299,7 +331,6 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
                     call: Call<ServerResonse>,
                     response: Response<ServerResonse>
                 ) {
-
                     val intent = Intent(this@PhotoUploadToPageActivity, PlacePage::class.java)
                     intent.putExtra("placeName", placeName)
                     intent.putExtra("placeId", placeId!!)
@@ -322,6 +353,8 @@ class PhotoUploadToPageActivity: AppCompatActivity(), ProgressRequestBody.Upload
 
 
     }
+
+
 
     override fun onProgressUpdate(percentage: Int) {
         progressBar?.progress = percentage

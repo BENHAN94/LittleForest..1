@@ -6,10 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -33,6 +30,7 @@ import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.pnikosis.materialishprogress.ProgressWheel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -54,6 +52,8 @@ class PlacePage : AppCompatActivity() {
     var name : String? = null
     var tvWhenEmptyPost : TextView? = null
 
+    var progressWheel: ProgressWheel? = null
+
 
 
 
@@ -71,7 +71,7 @@ class PlacePage : AppCompatActivity() {
         )
 
 
-
+        progressWheel = findViewById(R.id.progress_wheel)
         val tvTopPageName = findViewById<TextView>(R.id.topPlaceName)
         val ivPlacePhoto = findViewById<ImageView>(R.id.placePhoto)
         val tvPostNumber = findViewById<TextView>(R.id.postNumber)
@@ -87,6 +87,9 @@ class PlacePage : AppCompatActivity() {
         val ivLike = findViewById<ImageView>(R.id.ivLike)
         welcome = findViewById(R.id.welcome)
         name = sharedPreference.getString(this, "name")
+
+
+        pageRecyclerView?.visibility = View.GONE
 
         tvWhenEmptyPost = findViewById(R.id.tvWhenEmptyPost)
 
@@ -417,6 +420,15 @@ class PlacePage : AppCompatActivity() {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        if(MyApplication.isChanged){
+            postDataList.removeAll(postDataList)
+            getPostData(placeId, 0)
+            MyApplication.isChanged = false
+        }
+    }
+
 
 
     fun getPostData(place_id: Int, index: Int){
@@ -430,12 +442,13 @@ class PlacePage : AppCompatActivity() {
                 call: Call<ArrayList<PostImageData>>,
                 response: Response<ArrayList<PostImageData>>
             ) {
-
+                progressWheel?.visibility = View.GONE
                 response.body()?.let { postDataList.addAll(it) }
                 adapter.notifyDataChanged()
                 if(postDataList.size == 0){
-
                     tvWhenEmptyPost?.visibility = View.VISIBLE
+                } else {
+                    pageRecyclerView?.visibility = View.VISIBLE
                 }
 
 

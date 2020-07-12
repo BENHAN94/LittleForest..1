@@ -3,13 +3,15 @@ package com.benhan.bluegreen.tree
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -36,6 +38,7 @@ import com.benhan.bluegreen.network.ApiInterface
 import com.benhan.bluegreen.place.PlacePage
 import com.benhan.bluegreen.plus.PhotoUploadActivity
 import com.benhan.bluegreen.user.OtherUser
+import com.benhan.bluegreen.utill.CommentEditText
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader
@@ -43,6 +46,10 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.ethanhua.skeleton.Skeleton
+import com.ethanhua.skeleton.SkeletonScreen
+import com.pnikosis.materialishprogress.ProgressWheel
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
 import retrofit2.Call
 import retrofit2.Callback
@@ -62,15 +69,13 @@ class FragmentTree : Fragment() {
     val sharedPreference = SharedPreference()
     var adapter: HomeRecyclerAdapter? = null
     private var rootView: View? = null
-
     var recyclerview: RecyclerView? = null
-
-
-
+    var skeletonScreen: SkeletonScreen? = null
     var imm: InputMethodManager? = null
+    var ivCommentProfilePhoto: ImageView? = null
 
     var writeCommentContainer: LinearLayout? = null
-    var writeComment: EditText? = null
+    var writeComment: CommentEditText? = null
 
     var navi: LinearLayout? = null
 
@@ -85,6 +90,7 @@ class FragmentTree : Fragment() {
 
     lateinit var tree: ImageView
 
+    var progressWheel : ProgressWheel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,19 +103,33 @@ class FragmentTree : Fragment() {
         imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         writeCommentContainer = rootView?.findViewById(R.id.writeCommentContainer)
         writeComment = rootView?.findViewById(R.id.writeComment)
+        writeComment?.setKeyImeChangeListener(object : CommentEditText.KeyImeChange{
+            override fun onKeyIme(keyCode: Int, event: KeyEvent?) {
+                if(KeyEvent.KEYCODE_BACK == event?.keyCode){
+                    val handler = Handler()
+                    handler.postDelayed({
+                        navi?.visibility = View.VISIBLE
+                        writeCommentContainer?.visibility = View.GONE
+                    }, 100)
+                }
+            }
+
+        })
         navi = requireActivity().findViewById(R.id.navigation_bar)
         tree = requireActivity().findViewById(R.id.tree)
 
+        progressWheel = rootView?.findViewById(R.id.progress_wheel)
+        recyclerview?.visibility = View.INVISIBLE
+        progressWheel?.visibility = View.GONE
 
         email = sharedPreference.getString(requireContext(), "email")!!
         name = sharedPreference.getString(requireContext(), "name")
 
-        profilePhoto = sharedPreference.getString(requireContext(), "profilePhoto")
-        val profilePhotoUri = MyApplication.severUrl + profilePhoto
-        val ivCommentProfilePhoto = rootView?.findViewById<ImageView>(R.id.myProfilePhoto)
-        Glide.with(requireActivity()).load(profilePhotoUri)
-            .override(ivCommentProfilePhoto!!.width, ivCommentProfilePhoto.height)
-            .into(ivCommentProfilePhoto)
+        profilePhoto = MyApplication.severUrl + sharedPreference.getString(requireContext(), "profilePhoto")
+        ivCommentProfilePhoto = rootView?.findViewById<ImageView>(R.id.myProfilePhoto)
+        Glide.with(requireActivity()).load(profilePhoto)
+            .override(ivCommentProfilePhoto!!.width, ivCommentProfilePhoto!!.height)
+            .into(ivCommentProfilePhoto!!)
 
         Log.d("프로필", profilePhoto)
 
@@ -117,8 +137,7 @@ class FragmentTree : Fragment() {
         adapter = HomeRecyclerAdapter(
             requireContext(),
             requireActivity(),
-            postDataList,
-            profilePhoto!!
+            postDataList
         )
 
 
@@ -141,6 +160,8 @@ class FragmentTree : Fragment() {
             postDataList.removeAll(postDataList)
             adapter?.notifyDataChanged()
             adapter?.isMoreDataAvailable = true
+            progressWheel?.spin()
+            progressWheel?.visibility = View.VISIBLE
             load(0)
             swipeLayout.isRefreshing = false
         }
@@ -154,13 +175,10 @@ class FragmentTree : Fragment() {
         welcome3 = rootView?.findViewById(R.id.welcome3)
 
 
-        val skeletonScreen = Skeleton.bind(recyclerview)
+        skeletonScreen = Skeleton.bind(recyclerview)
             .adapter(adapter).shimmer(true).angle(20).duration(1000)
             .load(R.layout.layout_default_item_skeleton).show()
-
-
-
-        recyclerview!!.postDelayed({ skeletonScreen.hide() }, 1000)
+        recyclerview?.visibility = View.GONE
 
 
         /////////////////////////////////////////////////////////
@@ -177,8 +195,10 @@ class FragmentTree : Fragment() {
         photoUploadActivity.responseListener = responseListener
 
 
-        if (adapter?.itemCount == 0)
+        if (adapter?.itemCount == 0) {
+            progressWheel?.visibility = View.VISIBLE
             load(0)
+        }
 
 
         val onPageClickListener = object : HomeRecyclerAdapter.OnPageClickListener {
@@ -248,8 +268,9 @@ class FragmentTree : Fragment() {
             HomeRecyclerAdapter.OnWriteCommentClicked {
             override fun onWriteCommentClicked(position: Int) {
 
-
-
+                val handler = Handler()
+                handler.postDelayed({navi?.visibility = View.GONE
+                    writeCommentContainer?.visibility = View.VISIBLE}, 50)
                 writeComment?.requestFocus()
                 imm?.showSoftInput(writeComment, 0)
                 Log.d("나비", "곤")
@@ -259,6 +280,8 @@ class FragmentTree : Fragment() {
                         val comment = writeComment?.text.toString()
                         writeComment?.text = null
                         writeComment?.clearFocus()
+                        navi?.visibility = View.VISIBLE
+                        writeCommentContainer?.visibility = View.GONE
                         UIUtil.hideKeyboard(activity)
                         val call: Call<java.util.ArrayList<CommentData>> =
                             apiInterface.writeComment(
@@ -302,27 +325,6 @@ class FragmentTree : Fragment() {
 
         })
 
-        rootView?.viewTreeObserver?.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener{
-            override fun onGlobalLayout() {
-                val heightDiff: Int =
-                    rootView!!.rootView.height - rootView!!.height
-                if (heightDiff > dpToPx(
-                        requireContext(),
-                        200F
-                    )
-                ) {
-                    navi?.visibility = View.GONE
-                    writeCommentContainer?.visibility = View.VISIBLE
-                } else{
-                    val handler = Handler()
-                    handler.postDelayed({
-                        navi?.visibility = View.VISIBLE
-                        writeCommentContainer?.visibility = View.GONE
-                    }, 100)
-
-                }
-            }
-        })
 
 
 
@@ -332,11 +334,6 @@ class FragmentTree : Fragment() {
 
     }
 
-
-    fun dpToPx(context: Context, valueInDp: Float): Float {
-        val metrics: DisplayMetrics = context.getResources().getDisplayMetrics()
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics)
-    }
 
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -348,6 +345,12 @@ class FragmentTree : Fragment() {
                 recyclerview!!.smoothScrollToPosition(0)
             }
 
+        if(MyApplication.isProfileUpdated){
+            profilePhoto = MyApplication.severUrl + sharedPreference.getString(requireContext(), "profilePhoto")
+            Glide.with(requireActivity()).load(profilePhoto)
+                .override(ivCommentProfilePhoto!!.width, ivCommentProfilePhoto!!.height)
+                .into(ivCommentProfilePhoto!!)
+        }
     }
 
 
@@ -402,7 +405,9 @@ class FragmentTree : Fragment() {
             ) {
 
                 if (response.isSuccessful) {
-
+                    skeletonScreen?.hide()
+                    recyclerview?.visibility = View.VISIBLE
+                    progressWheel?.visibility = View.INVISIBLE
                     response.body()?.let { postDataList.addAll(it) }
                     recyclerview!!.adapter = adapter
                     adapter?.notifyDataChanged()
@@ -532,6 +537,8 @@ class FragmentTree : Fragment() {
         })
 
     }
+
+
 
 
 }

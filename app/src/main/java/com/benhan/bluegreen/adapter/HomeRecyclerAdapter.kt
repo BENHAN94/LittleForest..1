@@ -5,9 +5,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.benhan.bluegreen.R
 import com.benhan.bluegreen.localdata.SharedPreference
@@ -17,6 +21,7 @@ import com.benhan.bluegreen.network.ApiInterface
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import org.ocpsoft.prettytime.PrettyTime
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,13 +29,13 @@ import java.util.*
 class HomeRecyclerAdapter(
     val context: Context,
     val activity: Activity,
-    private var postList: ArrayList<PostData>,
-    val profilePhoto: String
+    private var postList: ArrayList<PostData>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         const val TYPE_POST = 0
         const val TYPE_LOAD = 1
+        const val NUM_CACHED_VIEWS = 5
 
     }
 
@@ -85,6 +90,7 @@ class HomeRecyclerAdapter(
             var isLikingPost = postData.isLikingPost
             var postLikes = postData.postLikes
             var commentCount = postData.commentNumber
+            val profilePhoto = sharedPreference.getString(context, "profilePhoto")
             val profileUrl = MyApplication.severUrl + profilePhoto
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 
@@ -102,6 +108,7 @@ class HomeRecyclerAdapter(
                 .into(ivMyProfile)
 
             Glide.with(context).load(postImageUrl)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(ivPostImage)
 
@@ -161,26 +168,37 @@ class HomeRecyclerAdapter(
             tvUserName.setOnClickListener {
                 onUserClickListener?.onUserClick(position)
             }
-
-
             tvShowAllComents.setOnClickListener {
                 onClickShowAllListener?.onClickShowAll(position)
             }
-
-
             likeBtn.setOnClickListener {
                 onLikeClickListener?.onLikeClick(position)
             }
-
-
             tvWriteComment.setOnClickListener {
                 onWriteCommentClicked?.onWriteCommentClicked(position)
             }
-
         }
 
 
     }
+
+
+
+
+    private val asyncLayoutInflater = AsyncLayoutInflater(context)
+    private val cachedViews = Stack<View>()
+
+
+    init {
+        //Create some views asynchronously and add them to our stack
+        for (i in 0..NUM_CACHED_VIEWS) {
+            asyncLayoutInflater.inflate(R.layout.tree_recycler_row, null) { view, layoutRes, viewGroup ->
+                cachedViews.push(view)
+            }
+        }
+    }
+
+
 
     class LoadHolder(view: View) : RecyclerView.ViewHolder(view)
 
@@ -188,14 +206,19 @@ class HomeRecyclerAdapter(
 
         val inflater: LayoutInflater =
             context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val treeRecyclerRow = inflater.inflate(R.layout.tree_recycler_row, parent, false)
+        val treeRecyclerRow = if(cachedViews.isEmpty()) {
+            inflater.inflate(R.layout.tree_recycler_row, parent, false)
+        } else {
+            cachedViews.pop().also { it.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT) }
+        }
         val loadLayout = inflater.inflate(R.layout.search_recycler_load, parent, false)
 
 
-        if (viewType == TYPE_POST) {
-            return MyViewHolder(treeRecyclerRow)
+
+        return if (viewType == TYPE_POST) {
+            MyViewHolder(treeRecyclerRow)
         } else {
-            return LoadHolder(
+            LoadHolder(
                 loadLayout
             )
         }

@@ -28,6 +28,7 @@ import com.benhan.bluegreen.utill.Functions
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.pnikosis.materialishprogress.ProgressWheel
 import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
 import org.ocpsoft.prettytime.PrettyTime
@@ -210,6 +211,7 @@ class FullPost : AppCompatActivity() {
                         .into(ivPageProfilePhoto)
                     Glide.with(this@FullPost).load(postImageUri)
                         .fitCenter()
+                        .transition(DrawableTransitionOptions.withCrossFade())
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(ivPostImage)
                     Glide.with(this@FullPost).load(userProfileUri)
@@ -393,7 +395,7 @@ class FullPost : AppCompatActivity() {
                         commentContainer.visibility = View.VISIBLE
                     tvMainComentUserName.text =
                         sharedPreference.getString(this@FullPost, "name")
-                    val call: Call<java.util.ArrayList<CommentData>> = this@FullPost.apiInterface
+                    val call: Call<ArrayList<CommentData>> = this@FullPost.apiInterface
                         .writeComment(
                             myEmail,
                             post_id,
@@ -401,17 +403,17 @@ class FullPost : AppCompatActivity() {
                             etWriteComment.text.toString()
                         )
                     if (etWriteComment.text.isNotEmpty() && etWriteComment.text.isNotBlank()) {
-                        call.clone().enqueue(object : Callback<java.util.ArrayList<CommentData>> {
+                        call.clone().enqueue(object : Callback<ArrayList<CommentData>> {
                             override fun onFailure(
-                                call: Call<java.util.ArrayList<CommentData>>,
+                                call: Call<ArrayList<CommentData>>,
                                 t: Throwable
                             ) {
 
                             }
 
                             override fun onResponse(
-                                call: Call<java.util.ArrayList<CommentData>>,
-                                response: Response<java.util.ArrayList<CommentData>>
+                                call: Call<ArrayList<CommentData>>,
+                                response: Response<ArrayList<CommentData>>
                             ) {
 
                             }

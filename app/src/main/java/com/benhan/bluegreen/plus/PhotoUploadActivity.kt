@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -37,6 +38,7 @@ import com.daimajia.numberprogressbar.NumberProgressBar
 import com.daimajia.numberprogressbar.OnProgressBarListener
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.nanchen.compresshelper.CompressHelper
 import kotlinx.android.synthetic.main.plus_fragment_gallery_upload.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -68,6 +70,8 @@ class PhotoUploadActivity: AppCompatActivity(),
     var recyclerView: RecyclerView? = null
     var email : String? = null
     var progressBar: NumberProgressBar? = null
+    var newFile: File? = null
+
 
 
 
@@ -95,6 +99,11 @@ class PhotoUploadActivity: AppCompatActivity(),
         val selectedPhoto: String = Uri.parse(selectedPhotoString).path!!
         val actualImageFile = File(selectedPhoto)
         file = saveBitmapToFile(actualImageFile)
+        newFile = CompressHelper.Builder(this)
+            .setQuality(80)
+            .setCompressFormat(Bitmap.CompressFormat.JPEG)
+            .build()
+            .compressToFile(file);
 
         window.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
@@ -142,6 +151,11 @@ class PhotoUploadActivity: AppCompatActivity(),
             OnItemClickListener {
 
             override fun OnItemClick(viewHolder: RecyclerView.ViewHolder, position: Int) {
+
+                tvPost.setOnClickListener {
+                    uploadToServer(etDescription?.text.toString())
+                }
+
                 val place: PlaceSearchData = adapter.placeList[position]
                 val placeSelectedBefore: PlaceSearchData? = adapter.placeList.find{
                     it.isSelected
@@ -165,10 +179,9 @@ class PhotoUploadActivity: AppCompatActivity(),
 
         Glide.with(this).load(selectedPhoto).centerCrop()
             .into(ivSelectedPhoto)
-       tvPost.setOnClickListener {
-            uploadToServer(etDescription?.text.toString())
 
-        }
+
+
 
 
         val ivBack = findViewById<ImageView>(R.id.ivBack)
@@ -269,7 +282,7 @@ class PhotoUploadActivity: AppCompatActivity(),
                     response.body()?.let { places.addAll(it) }
                     adapter.notifyDataChanged()
                     Log.d("사이즈", response.body()?.size.toString())
-                    if (response.body()?.size == 30)
+                    if (response.body()?.size == 30 && index == 0)
                         setOnLoadMoreListener()
                 }
             }
@@ -295,7 +308,7 @@ class PhotoUploadActivity: AppCompatActivity(),
                 if(response.isSuccessful){
                     response.body()?.let { places.addAll(it) }
                     adapter.notifyDataChanged()
-                    if(response.body()?.size == 30 )
+                    if(response.body()?.size == 30 && index == 0)
                         setOnLoadCloseMoreListener()
                 }
             }
@@ -411,7 +424,7 @@ class PhotoUploadActivity: AppCompatActivity(),
             }
         }
 
-        adapter?.onLoadMoreListener = onLoadMoreListener
+        adapter.onLoadMoreListener = onLoadMoreListener
     }
 
     fun hideKeyboard(activity: Activity) {
@@ -429,16 +442,18 @@ class PhotoUploadActivity: AppCompatActivity(),
     private fun uploadToServer(desc: String) {
 
             progressBar?.visibility = View.VISIBLE
+
+
             val fileBody =
                 ProgressRequestBody(
-                    file!!,
+                    newFile!!,
                     "image",
                     this
                 )
             val filePart = MultipartBody.Part.createFormData("file", file?.name, fileBody)
 //            val requestBody = file!!.asRequestBody("image/*".toMediaTypeOrNull())
 //            val fileToUpload = MultipartBody.Part.createFormData("file", file!!.name, requestBody)
-            val filename = file!!.name.toRequestBody("text/plain".toMediaTypeOrNull())
+            val filename = newFile!!.name.toRequestBody("text/plain".toMediaTypeOrNull())
             val mEmail = email!!.toRequestBody("text/plain".toMediaTypeOrNull())
             val mdesc = desc.toRequestBody("text/plain".toMediaTypeOrNull())
             val callUpload: Call<ServerResonse> = this@PhotoUploadActivity.apiInterface.uploadImage(

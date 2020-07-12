@@ -30,7 +30,7 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
     var onLoadMoreListener: HomeRecyclerAdapter.OnLoadMoreListener? = null
     var onItemClickListener: OnItemClickListener? = null
 
-    class SearchHolder(view: View): RecyclerView.ViewHolder(view){
+    inner class SearchHolder(view: View): RecyclerView.ViewHolder(view){
 
         val ivPlacePhoto = view.findViewById<ImageView>(R.id.photo)
         val tvPlaceName = view.findViewById<TextView>(R.id.name)
@@ -39,6 +39,45 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
         val layoutSelected = view.findViewById<RelativeLayout>(R.id.layoutSelect)
         val layoutItem = view.findViewById<RelativeLayout>(R.id.searchItem)
         val tvDistance = view.findViewById<TextView>(R.id.distance)
+
+        fun bind(place: PlaceSearchData){
+
+
+            if(place.photo != null && place.photo!!.isNotEmpty() && place.photo!!.isNotBlank()) {
+                var photoUri = MyApplication.severUrl + place.photo
+
+                Glide.with(context).load(photoUri)
+                    .override(ivPlacePhoto.width, ivPlacePhoto.height)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivPlacePhoto)
+            } else {
+                ivPlacePhoto.setImageResource(
+                    R.drawable.tree
+                )
+            }
+
+            tvPlaceName.setText(place.name)
+            tvPlaceProvince.setText(place.province)
+            tvPlaceType.setText(place.type)
+
+            if(place.distance == null){
+                tvDistance.visibility = View.GONE
+            }else {
+                tvDistance.text = place.distance!!.toInt().toString()+"km"
+                tvDistance.visibility = View.VISIBLE
+            }
+
+
+
+            if (place.isSelected){
+                layoutSelected.visibility = View.VISIBLE
+            }else {
+                layoutSelected.visibility = View.INVISIBLE
+            }
+
+
+
+        }
 
     }
 
@@ -98,38 +137,7 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
 
         if(getItemViewType(position)== TYPE_PLACE) {
             val item = placeList[position]
-            if(item.photo != null && item.photo!!.isNotEmpty() && item.photo!!.isNotBlank()) {
-                var photoUri = MyApplication.severUrl + item.photo
-
-                Glide.with(context).load(photoUri)
-                    .override((holder as SearchHolder).ivPlacePhoto.width, holder.ivPlacePhoto.height)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into((holder as SearchHolder).ivPlacePhoto)
-            } else {
-                (holder as SearchHolder).ivPlacePhoto.setImageResource(
-                    R.drawable.tree
-                )
-            }
-
-            holder.tvPlaceName.setText(item.name)
-            holder.tvPlaceProvince.setText(item.province)
-            holder.tvPlaceType.setText(item.type)
-
-            if(item.distance == null){
-                holder.tvDistance.visibility = View.GONE
-            }else {
-                holder.tvDistance.text = item.distance!!.toInt().toString()+"km"
-                holder.tvDistance.visibility = View.VISIBLE
-            }
-
-
-
-            if (item.isSelected){
-                holder.layoutSelected.visibility = View.VISIBLE
-            }else {
-                holder.layoutSelected.visibility = View.INVISIBLE
-            }
-
+            (holder as SearchHolder).bind(item)
             holder.layoutItem.setOnClickListener(object : View.OnClickListener{
 
 

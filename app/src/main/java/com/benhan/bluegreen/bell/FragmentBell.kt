@@ -19,6 +19,7 @@ import com.benhan.bluegreen.dataclass.BellData
 import com.benhan.bluegreen.localdata.SharedPreference
 import com.benhan.bluegreen.network.ApiClient
 import com.benhan.bluegreen.network.ApiInterface
+import com.pnikosis.materialishprogress.ProgressWheel
 import kotlinx.android.synthetic.main.home_fragment_bell.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,6 +35,7 @@ class FragmentBell: Fragment() {
     var myEmail: String? = null
     var bell: ImageView? = null
     var recyclerView: RecyclerView? = null
+    var progressWheel: ProgressWheel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +47,10 @@ class FragmentBell: Fragment() {
         myEmail = sharedPreference.getString(requireContext(), "email")
 
         recyclerView = rootView.findViewById(R.id.recyclerview)
+        progressWheel = rootView.findViewById(R.id.progress_wheel)
 
+        recyclerView?.visibility = View.GONE
+        progressWheel?.visibility = View.VISIBLE
 
 
         bell = requireActivity().findViewById(R.id.bell)
@@ -114,8 +119,28 @@ class FragmentBell: Fragment() {
                 call: Call<ArrayList<BellData>>,
                 response: Response<ArrayList<BellData>>
             ) {
+                progressWheel?.visibility = View.GONE
+                recyclerView?.visibility = View.VISIBLE
                 response.body()?.let { bellDataList.addAll(it) }
                 adapter?.notifyDataSetChanged()
+                if(response.body()?.size == 20 && index == 0){
+                    val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener {
+                        override fun onLoadMore() {
+
+                            recyclerview!!.post(object : Runnable {
+                                override fun run() {
+                                    val index = bellDataList.size - 1
+                                    getMoreNotificationData(index)
+                                }
+
+                            })
+                        }
+
+                    }
+
+
+                    adapter?.onLoadMoreListener = onLoadMoreListener
+                }
             }
 
 
@@ -148,24 +173,6 @@ class FragmentBell: Fragment() {
                     }else{
                         adapter!!.isMoreDataAvailable = false
                     }
-                }
-                if(bellDataList[0].total!! > 20) {
-                    val onLoadMoreListener = object : HomeRecyclerAdapter.OnLoadMoreListener {
-                        override fun onLoadMore() {
-
-                            recyclerview!!.post(object : Runnable {
-                                override fun run() {
-                                    val index = bellDataList.size - 1
-                                    getMoreNotificationData(index)
-                                }
-
-                            })
-                        }
-
-                    }
-
-
-                    adapter?.onLoadMoreListener = onLoadMoreListener
                 }
                 adapter?.notifyDataChanged()
             }

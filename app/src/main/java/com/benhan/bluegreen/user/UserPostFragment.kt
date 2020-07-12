@@ -40,7 +40,7 @@ class UserPostFragment: Fragment() {
     var recyclerView : RecyclerView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
     var tvWhenEmptyPost: TextView? = null
-    val myApplication = MyApplication()
+
 
 
 
@@ -110,6 +110,9 @@ class UserPostFragment: Fragment() {
         adapter!!.onItemClickListener = mOnItemClickListener
 
 
+        if(postImageDataList.size == 0)
+            load(0)
+
         return rootView
 
 
@@ -140,7 +143,7 @@ class UserPostFragment: Fragment() {
                 if(response.isSuccessful) {
                     response.body()?.let { postImageDataList.addAll(it) }
                     adapter?.notifyDataChanged()
-                    if(response.body()?.size == 30){
+                    if(response.body()?.size == 30 && index == 0){
                         setOnLoadMoreListener()
                     }
                     if(postImageDataList.size == 0){
@@ -197,10 +200,10 @@ class UserPostFragment: Fragment() {
 
     override fun onStart() {
         super.onStart()
-
+        if(MyApplication.isChanged) {
             postImageDataList.removeAll(postImageDataList)
             load(0)
-
+        }
     }
 
 
