@@ -54,16 +54,15 @@ class UserPlaceFragment: Fragment() {
 
         recyclerView = rootview.findViewById(R.id.recyclerview)
         swipeRefreshLayout = rootview.findViewById(R.id.swipeLayout)
-        adapter = SearchRecyclerAdapter(
-            requireContext(),
-            places
-        )
+        adapter = SearchRecyclerAdapter(places)
+
 
 
 
         myEmail = sharedPreference.getString(requireContext(), "email")
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         recyclerView?.hasFixedSize()
+        recyclerView?.setItemViewCacheSize(3)
         tvWhenEmptyFollow = rootview.findViewById(R.id.tvWhenEmptyFollow)
         val searchBar: EditText = rootview.findViewById(R.id.searchBar)
         searchBar.visibility = View.GONE

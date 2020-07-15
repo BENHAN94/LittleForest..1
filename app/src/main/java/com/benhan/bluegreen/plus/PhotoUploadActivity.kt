@@ -62,7 +62,7 @@ class PhotoUploadActivity: AppCompatActivity(),
     private var etDescription: EditText? = null
     val places = ArrayList<PlaceSearchData>()
     val adapter =
-        SearchRecyclerAdapter(this, places)
+        SearchRecyclerAdapter(places)
     var keyword: String = ""
     var id: Int? = null
     private var file: File? = null

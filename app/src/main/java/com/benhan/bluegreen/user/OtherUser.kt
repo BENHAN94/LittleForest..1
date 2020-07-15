@@ -263,7 +263,7 @@ class OtherUser : AppCompatActivity() {
         locationTab.setOnClickListener {
 
             locationAdapter =
-                SearchRecyclerAdapter(this, places)
+                SearchRecyclerAdapter(places)
             recyclerView?.removeItemDecoration(dividerDecoration!!)
 
 

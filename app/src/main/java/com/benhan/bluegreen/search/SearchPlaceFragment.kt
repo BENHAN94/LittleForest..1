@@ -59,10 +59,7 @@ class SearchPlaceFragment: Fragment() {
         val rootview = layoutInflater.inflate(R.layout.search_place_fragment, container, false)
 
         recyclerView = rootview.findViewById(R.id.recyclerview)
-        adapter = SearchRecyclerAdapter(
-            requireContext(),
-            places
-        )
+        adapter = SearchRecyclerAdapter(places)
 
         progressWheel = rootview.findViewById(R.id.progress_wheel)
 
@@ -76,7 +73,11 @@ class SearchPlaceFragment: Fragment() {
             .check()
 
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView?.hasFixedSize()
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.setItemViewCacheSize(20)
+        adapter?.setHasStableIds(true)
+
+
 
         val placeOnItemClickListener = object:
             OnItemClickListener {
@@ -110,11 +111,11 @@ class SearchPlaceFragment: Fragment() {
 
         //////////////swipe ///////////////////
 
-        swipeRefreshLayout = rootview.findViewById(R.id.swipeLayout)
-        val backgroundColor = ContextCompat.getColor(requireContext(),
-            R.color.background
-        )
-        swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
+//        swipeRefreshLayout = rootview.findViewById(R.id.swipeLayout)
+//        val backgroundColor = ContextCompat.getColor(requireContext(),
+//            R.color.background
+//        )
+//        swipeRefreshLayout?.setColorSchemeColors(backgroundColor)
 
 
 
@@ -168,14 +169,14 @@ class SearchPlaceFragment: Fragment() {
             val x = gpsTracker.fetchLatitude()
             val y = gpsTracker.fetchLongtitude()
 
-            swipeRefreshLayout?.setOnRefreshListener {
-                places.removeAll(places)
-                adapter?.notifyDataChanged()
-                loadClose("",0, x, y)
-                searchBar?.text = null
-                adapter?.isMoreDataAvailable = true
-                swipeRefreshLayout?.isRefreshing = false
-            }
+//            swipeRefreshLayout?.setOnRefreshListener {
+//                places.removeAll(places)
+//                adapter?.notifyDataChanged()
+//                loadClose("",0, x, y)
+//                searchBar?.text = null
+//                adapter?.isMoreDataAvailable = true
+//                swipeRefreshLayout?.isRefreshing = false
+//            }
             searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
                 override fun onEditorAction(
                     v: TextView?,
@@ -209,14 +210,14 @@ class SearchPlaceFragment: Fragment() {
             Toast.makeText(requireContext(), "권한 거부", Toast.LENGTH_SHORT).show()
 
 
-            swipeRefreshLayout?.setOnRefreshListener {
-                searchBar?.text = null
-                places.removeAll(places)
-                adapter?.notifyDataChanged()
-                load("", 0)
-                adapter?.isMoreDataAvailable = true
-                swipeRefreshLayout?.isRefreshing = false
-            }
+//            swipeRefreshLayout?.setOnRefreshListener {
+//                searchBar?.text = null
+//                places.removeAll(places)
+//                adapter?.notifyDataChanged()
+//                load("", 0)
+//                adapter?.isMoreDataAvailable = true
+//                swipeRefreshLayout?.isRefreshing = false
+//            }
             searchBar?.setOnEditorActionListener(object : TextView.OnEditorActionListener {
                 override fun onEditorAction(
                     v: TextView?,

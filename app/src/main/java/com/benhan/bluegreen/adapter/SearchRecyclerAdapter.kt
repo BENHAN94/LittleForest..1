@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.benhan.bluegreen.R
 import com.benhan.bluegreen.dataclass.PlaceSearchData
 import com.benhan.bluegreen.listener.OnItemClickListener
+import com.benhan.bluegreen.utill.AsyncFrameLayout
 import com.benhan.bluegreen.utill.MyApplication
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 
-class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<PlaceSearchData>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchRecyclerAdapter(val placeList: ArrayList<PlaceSearchData>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     companion object{
@@ -30,7 +31,7 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
     var onLoadMoreListener: HomeRecyclerAdapter.OnLoadMoreListener? = null
     var onItemClickListener: OnItemClickListener? = null
 
-    inner class SearchHolder(view: View): RecyclerView.ViewHolder(view){
+    inner class SearchHolder(val view: View, val context: Context): RecyclerView.ViewHolder(view){
 
         val ivPlacePhoto = view.findViewById<ImageView>(R.id.photo)
         val tvPlaceName = view.findViewById<TextView>(R.id.name)
@@ -40,6 +41,7 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
         val layoutItem = view.findViewById<RelativeLayout>(R.id.searchItem)
         val tvDistance = view.findViewById<TextView>(R.id.distance)
 
+
         fun bind(place: PlaceSearchData){
 
 
@@ -48,7 +50,8 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
 
                 Glide.with(context).load(photoUri)
                     .override(ivPlacePhoto.width, ivPlacePhoto.height)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .skipMemoryCache(false)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(ivPlacePhoto)
             } else {
                 ivPlacePhoto.setImageResource(
@@ -66,9 +69,6 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
                 tvDistance.text = place.distance!!.toInt().toString()+"km"
                 tvDistance.visibility = View.VISIBLE
             }
-
-
-
             if (place.isSelected){
                 layoutSelected.visibility = View.VISIBLE
             }else {
@@ -81,25 +81,23 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
 
     }
 
-    class LoadHolder(view: View): RecyclerView.ViewHolder(view){
+    class LoadHolder(view: View): RecyclerView.ViewHolder(view)
 
-
+    override fun getItemId(position: Int): Long {
+        return placeList[position].id.hashCode().toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):RecyclerView.ViewHolder {
 
-
+        val context = parent.context
         val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val itemLayout = inflater.inflate(R.layout.search_recycler_item, parent, false)
         val loadLayout = inflater.inflate(R.layout.search_recycler_load, parent, false)
+
         if(viewType == TYPE_PLACE) {
-            return SearchHolder(
-                itemLayout
-            )
+            return SearchHolder(itemLayout, context)
         }else {
-            return LoadHolder(
-                loadLayout
-            )
+            return LoadHolder(loadLayout)
         }
 
 
@@ -126,8 +124,6 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-
-
         if(position >= itemCount-1 && isMoreDataAvailable && !isLoading && onLoadMoreListener!=null)
 
         {
@@ -139,19 +135,11 @@ class SearchRecyclerAdapter(val context: Context, val placeList: ArrayList<Place
             val item = placeList[position]
             (holder as SearchHolder).bind(item)
             holder.layoutItem.setOnClickListener(object : View.OnClickListener{
-
-
-
                 override fun onClick(v: View?) {
                     if(onItemClickListener != null){
                         onItemClickListener?.OnItemClick(holder, position)
                     }
-
-
                 }
-
-
-
             })
 
 
